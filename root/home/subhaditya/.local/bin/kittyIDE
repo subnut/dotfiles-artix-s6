@@ -1,0 +1,8 @@
+#!/usr/bin/sh
+# Support opening terminal from nautilus
+# Nautilus is hard-coded to open "gnome-terminal" from the $PATH
+# So, we symlink gnome-terminal to this file. :P
+# NOTE: Ensure ~/.local/bin is included in $PATH
+
+# See https://unix.stackexchange.com/a/41595 for why to use "$@" instead of $* or "$*"
+kitty --detach --single-instance --config ~/.config/kitty/kittyIDE.conf "$@"
