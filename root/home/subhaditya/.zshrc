@@ -55,6 +55,43 @@ zinit light-mode for \
 ### End of Zinit's installer chunk ###############
 
 
+### Prompt ######################
+() {
+function _my_transient_prompt_trigger {
+
+	typeset -g TRANSIENT_PROMPT='❯ '
+	typeset -g TRANSIENT_RPROMPT='%?'
+
+	typeset -g _my_transient_prompt_saved_PROMPT=$PROMPT
+	typeset -g _my_transient_prompt_saved_RPROMPT=$RPROMPT
+	PROMPT=$TRANSIENT_PROMPT
+	RPROMPT=$TRANSIENT_RPROMPT
+	zle reset-prompt
+	zle accept-line
+}
+function _my_transient_prompt_reset {
+	if [[ -n $_my_transient_prompt_saved_PROMPT && $PROMPT == $TRANSIENT_PROMPT ]]
+	then
+		PROMPT=$_my_transient_prompt_saved_PROMPT
+		RPROMPT=$_my_transient_prompt_saved_RPROMPT
+	fi
+	unset _my_transient_prompt_saved_PROMPT
+	unset _my_transient_prompt_saved_RPROMPT
+	unset TRANSIENT_PROMPT
+	unset TRANSIENT_RPROMPT
+	zle && zle reset-prompt
+}
+add-zsh-hook precmd _my_transient_prompt_reset
+zle -N _my_transient_prompt_trigger _my_transient_prompt_trigger
+bindkey -r '^M'
+bindkey '^M' _my_transient_prompt_trigger
+}
+#################################
+
+
+
+
+
 
 ## Plugins
 #use `zinit load` instead of `zinit light` to see how the plugin is being loaded
@@ -64,7 +101,10 @@ zinit ice as"z" pick"z.sh"
 zinit light rupa/z
 
 ## ohmyzsh plugins
+zinit snippet OMZ::lib/clipboard.zsh
+zinit snippet OMZ::lib/directories.zsh
 zinit snippet OMZ::lib/key-bindings.zsh
+zinit snippet OMZ::lib/termsupport.zsh
 # Both are same -
 #     zinit snippet OMZ::plugins/git/git.plugin.zsh
 #     zinit snippet 'https://github.com/ohmyzsh/ohmyzsh/raw/master/plugins/git/git.plugin.zsh'
