@@ -4,5 +4,15 @@
 # So, we symlink gnome-terminal to this file. :P
 # NOTE: Ensure ~/.local/bin is included in $PATH
 
-# See https://unix.stackexchange.com/a/41595 for why to use "$@" instead of $* or "$*"
-kitty --detach --single-instance --config ~/.config/kitty/kittyIDE.conf "$@"
+# # See https://unix.stackexchange.com/a/41595 for why to use "$@" instead of $* or "$*"
+# kitty --detach --single-instance --config ~/.config/kitty/kittyIDE.conf "$@"
+
+# nautilus executes something like this -
+#		gnome-terminal -- nvim path/to/some/file
+# so, we get '-- path/to/something' as $*
+# so, we need to remove the initial '-- ' using `tail -c +4`
+
+# also, we need to run get_theme() from the .zshrc to set correct bg in nvim,
+# so we source the file that get_theme() does
+
+kitty --detach --single-instance --config ~/.config/kitty/kittyIDE.conf zsh -c "source ~/.config/kitty/custom_zsh_source; \$(echo -n $* | tail -c +4)"
