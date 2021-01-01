@@ -2,6 +2,7 @@ acpid
 acpid-s6
 alsa-utils
 apulse
+artools-base
 base
 bat
 bspwm

@@ -3,7 +3,7 @@
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.zsh_history
 HISTSIZE=1000
-SAVEHIST=50000
+SAVEHIST=30000
 setopt autocd
 bindkey -e
 # End of lines configured by zsh-newuser-install
@@ -26,6 +26,7 @@ setopt histverify				# VERY IMPORTANT. `sudo !!` <enter> doesn't execute directl
 setopt histreduceblanks			# RemoveTrailingWhiteSpace
 setopt incappendhistory			# immediately _append_ to HISTFILE instead of _replacing_ it _after_ the shell exits
 setopt histignorespace			# command prefixed by space are incognito
+setopt histignoredups			# ignore duplicate
 bindkey "^[" vi-cmd-mode		# vi-mode
 export PATH=/usr/games:$PATH	# Add Games to PATH
 export PATH=/home/subhaditya/.local/bin:$PATH
@@ -57,10 +58,34 @@ zinit light-mode for \
 
 ### Prompt ######################
 () {
+typeset -g MY_PROMPT_FIRST_PROMPT=1
+
+PROMPT=''
+#Curdir
+PROMPT=$PROMPT'%F{99}%f%K{99} %F{232}%~%f %k'
+#Kernel upgraded
+if grep -qs '^ID=arch$\|^ID=artix$' /etc/os-release && test -e /lib/modules/`uname -r`
+then
+	PROMPT=$PROMPT'%F{99}%f'
+else
+	PROMPT=$PROMPT'%K{1}%F{99}%f%k'
+	PROMPT=$PROMPT'%K{1}%F{0}%{ REBOOT%}%f %k%F{1}%f%b'
+fi
+#newline
+PROMPT=$PROMPT$'\n'
+#prompt
+PROMPT=$PROMPT'%F{%(?.16.1)}%f%K{%(?.16.1)} %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}%f '
+
+#exitcode if not 0
+RPROMPT='%B%(?..%F{1}%f%K{1} %F{220}%?%f %k%F{1}%f)%b'
+
 function _my_transient_prompt_trigger {
 
-	typeset -g TRANSIENT_PROMPT='❯ '
-	typeset -g TRANSIENT_RPROMPT='%?'
+	# If last exit-code 0, green(2) else red(1)
+	typeset -g TRANSIENT_PROMPT='%F{%(?.2.1)}❯%f '
+
+	# Right-side propmt for transient prompt
+	# typeset -g TRANSIENT_RPROMPT='%?'
 
 	typeset -g _my_transient_prompt_saved_PROMPT=$PROMPT
 	typeset -g _my_transient_prompt_saved_RPROMPT=$RPROMPT
@@ -68,6 +93,10 @@ function _my_transient_prompt_trigger {
 	RPROMPT=$TRANSIENT_RPROMPT
 	zle reset-prompt
 	zle accept-line
+	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
+	then
+		add-zsh-hook precmd _my_transient_prompt_reset
+	fi
 }
 function _my_transient_prompt_reset {
 	if [[ -n $_my_transient_prompt_saved_PROMPT && $PROMPT == $TRANSIENT_PROMPT ]]
@@ -79,9 +108,14 @@ function _my_transient_prompt_reset {
 	unset _my_transient_prompt_saved_RPROMPT
 	unset TRANSIENT_PROMPT
 	unset TRANSIENT_RPROMPT
+	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
+	then
+		unset MY_PROMPT_FIRST_PROMPT
+		# Add a newline before prompt
+		PROMPT=$'\n'$PROMPT
+	fi
 	zle && zle reset-prompt
 }
-add-zsh-hook precmd _my_transient_prompt_reset
 zle -N _my_transient_prompt_trigger _my_transient_prompt_trigger
 bindkey -r '^M'
 bindkey '^M' _my_transient_prompt_trigger
