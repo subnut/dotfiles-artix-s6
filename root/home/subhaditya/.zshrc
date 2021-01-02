@@ -57,34 +57,142 @@ zinit light-mode for \
 
 
 ### Prompt ######################
+autoload -Uz vcs_info
+vcs_info
+add-zsh-hook precmd vcs_info
+setopt promptsubst
+
 () {
 typeset -g MY_PROMPT_FIRST_PROMPT=1
 
 PROMPT=''
-#Curdir
-PROMPT=$PROMPT'%F{99}%f%K{99} %F{232}%~%f %k'
-#Kernel upgraded
-if grep -qs '^ID=arch$\|^ID=artix$' /etc/os-release && test -e /lib/modules/`uname -r`
-then
-	PROMPT=$PROMPT'%F{99}%f'
+RPROMPT=''
+PROMPT_LEFT_SEP=$'\ue0b6'		# 
+PROMPT_RIGHT_SEP=$'\ue0b4'		# 
+PROMPT_PROMPT_SYMBOL=$'\ue0b0'	# 
+
+#### Left prompt ########
+_left_prompt_elements=()
+
+# Curdir
+#  PROMPT=$PROMPT'%F{99}${PROMPT_LEFT_SEP}%f%K{99} %F{232}%~%f %k'
+typeset -A prompt_curdir
+prompt_curdir[fg]=232
+prompt_curdir[bg]=99
+prompt_curdir[content]='%~'
+_left_prompt_elements+=(prompt_curdir)
+
+# Kernel upgraded
+if grep -qs '^ID=arch$\|^ID=artix$' /etc/os-release && test -e /lib/modules/`uname -r`; then
+	PROMPT=$PROMPT'%F{99}${PROMPT_RIGHT_SEP}%f'
 else
-	PROMPT=$PROMPT'%K{1}%F{99}%f%k'
-	PROMPT=$PROMPT'%K{1}%F{0}%{ REBOOT%}%f %k%F{1}%f%b'
+	PROMPT=$PROMPT'%K{1}%F{99}${PROMPT_RIGHT_SEP}%f%k'
+	PROMPT=$PROMPT'%K{1}%F{0}%6{ REBOOT%}%f %k%F{1}${PROMPT_RIGHT_SEP}%f%b'
 fi
+typeset -A prompt_kernel
+prompt_kernel[fg]=0
+prompt_kernel[bg]=1
+prompt_kernel[content]='%0($(grep -qs "^ID=arch$\|^ID=artix$" /etc/os-release && test -e /lib/modules/`uname -r` || echo 1)..%6{REBOOT%})'
+prompt_kernel[bold]=1
+# _left_prompt_elements+=(prompt_kernel)
+
+
+# Test
+typeset -A test_prompt
+test_prompt[fg]=14
+test_prompt[bg]=2
+test_prompt[content]='%4{adsf%}'
+_left_prompt_elements+=(test_prompt)
+
+
+() {
+	PROMPT=''
+	local LAST_BGCOLOR=''
+	local element
+	for element in $_left_prompt_elements
+	do
+		local sep
+		bgcolor=${${(P)element}[bg]}
+		fgcolor=${${(P)element}[fg]}
+		content=${${(P)element}[content]}
+		if [[ -z $LAST_BGCOLOR ]]; then
+			sep=$PROMPT_LEFT_SEP
+			PROMPT=$PROMPT"%F{$bgcolor}$sep%f"
+		else
+			sep=$PROMPT_RIGHT_SEP
+			PROMPT=$PROMPT"%F{$LAST_BGCOLOR}%K{$bgcolor}$sep%f%k"
+		fi
+		PROMPT=$PROMPT"%K{$bgcolor}%F{$fgcolor}"
+		PROMPT=$PROMPT" $content "
+		PROMPT=$PROMPT"%k%f"
+		LAST_BGCOLOR=$bgcolor
+		unset sep
+		unset bgcolor fgcolor content
+	done
+	PROMPT=$PROMPT"%F{$LAST_BGCOLOR}$PROMPT_RIGHT_SEP%f"
+	unset LAST_BGCOLOR
+}
+
+
 #newline
 PROMPT=$PROMPT$'\n'
 #prompt
-PROMPT=$PROMPT'%F{%(?.16.1)}%f%K{%(?.16.1)} %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}%f '
+PROMPT=$PROMPT'%k%F{%(?.16.1)}${PROMPT_LEFT_SEP}%f%K{%(?.16.1)} %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}${PROMPT_PROMPT_SYMBOL}%f '
+
+#### Right prompt ########################################
+# NOTE: Elements will be shown in the reverse order
+_right_prompt_elements=()
+_right_prompt_elements+=(test_prompt)
 
 #exitcode if not 0
-RPROMPT='%B%(?..%F{1}%f%K{1} %F{220}%?%f %k%F{1}%f)%b'
+RPROMPT='%B%(?..%F{1}${PROMPT_LEFT_SEP}%f%K{1} %F{220}%?%f %k%F{1}${PROMPT_RIGHT_SEP}%f)%b'
+typeset -A rprompt_exitcode
+rprompt_exitcode[bg]=1
+rprompt_exitcode[fg]=220
+rprompt_exitcode[content]='%B%?%b'
+_right_prompt_elements+=(rprompt_exitcode)
 
+() {
+	RPROMPT=''
+	local LAST_BGCOLOR=''
+	local element
+	for element in $_right_prompt_elements
+	do
+		local sep
+		bgcolor=${${(P)element}[bg]}
+		fgcolor=${${(P)element}[fg]}
+		content=${${(P)element}[content]}
+		# Simply do the bolding,underlining,etc in the 'content' field itself
+		# shall take less space
+		# 	if [[ -n ${${(P)element}[bold]]} ]]; then
+		# 		content="%B$content%b"
+		# 	fi
+		if [[ -z $LAST_BGCOLOR ]]; then
+			sep=$PROMPT_RIGHT_SEP
+			RPROMPT="%F{$bgcolor}$sep%f"$RPROMPT
+		else
+			sep=$PROMPT_LEFT_SEP
+			RPROMPT="%F{$LAST_BGCOLOR}%K{$bgcolor}$sep%f%k"$RPROMPT
+		fi
+		RPROMPT="%k%f"$RPROMPT
+		RPROMPT=" $content "$RPROMPT
+		RPROMPT="%K{$bgcolor}%F{$fgcolor}"$RPROMPT
+		LAST_BGCOLOR=$bgcolor
+		unset sep
+		unset bgcolor fgcolor content
+	done
+	RPROMPT="%F{$LAST_BGCOLOR}$PROMPT_LEFT_SEP%f"$RPROMPT
+	unset LAST_BGCOLOR
+}
+
+
+#### Transient prompt ####################################
 function _my_transient_prompt_trigger {
 
 	# If last exit-code 0, green(2) else red(1)
 	typeset -g TRANSIENT_PROMPT='%F{%(?.2.1)}❯%f '
 
-	# Right-side propmt for transient prompt
+	# Right-side prompt for transient prompt
 	# typeset -g TRANSIENT_RPROMPT='%?'
 
 	typeset -g _my_transient_prompt_saved_PROMPT=$PROMPT
@@ -120,7 +228,8 @@ zle -N _my_transient_prompt_trigger _my_transient_prompt_trigger
 bindkey -r '^M'
 bindkey '^M' _my_transient_prompt_trigger
 }
-#################################
+
+#### End of prompt ######################################
 
 
 
@@ -131,8 +240,9 @@ bindkey '^M' _my_transient_prompt_trigger
 #use `zinit load` instead of `zinit light` to see how the plugin is being loaded
 zinit light zsh-users/zsh-autosuggestions
 zinit light zdharma/fast-syntax-highlighting
-zinit ice as"z" pick"z.sh"
+zinit ice as'z' pick'z.sh'
 zinit light rupa/z
+# zinit ice depth=1; zinit light romkatv/powerlevel10k; source ~/.p10k.zsh
 
 ## ohmyzsh plugins
 zinit snippet OMZ::lib/clipboard.zsh
