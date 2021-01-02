@@ -56,32 +56,40 @@ zinit light-mode for \
 ### End of Zinit's installer chunk ###############
 
 
-### Prompt ######################
-autoload -Uz vcs_info
-vcs_info
-add-zsh-hook precmd vcs_info
+### Prompt ####################################
 setopt promptsubst
 
 typeset -g MY_PROMPT_FIRST_PROMPT=1
 typeset -g PROMPT_NEW_LINE_IS_INSERTED=0
-_left_prompt_elements=()
 
 PROMPT=''
 PROMPT_LEFT_SEP=$'\ue0b6'		# 
 PROMPT_RIGHT_SEP=$'\ue0b4'		# 
 PROMPT_PROMPT_SYMBOL=$'\ue0b0'	# 
 
-#### Left prompt ########
+#### Left prompt #############################
+_left_prompt_elements=()
 
-# Curdir
-#  PROMPT=$PROMPT'%F{99}${PROMPT_LEFT_SEP}%f%K{99} %F{232}%~%f %k'
+#### Curdir ########
+# Old format -
+#   PROMPT=$PROMPT'%F{99}${PROMPT_LEFT_SEP}%f%K{99} %F{232}%~%f %k'
 typeset -A prompt_curdir
 prompt_curdir[fg]=232
 prompt_curdir[bg]=99
-prompt_curdir[content]='%~'
+prompt_curdir[content]='%(!.%/.%~)'
 _left_prompt_elements+=(prompt_curdir)
 
+#### ROOT #####
+typeset -A prompt_root
+prompt_root[fg]=1
+prompt_root[bg]=16
+prompt_root[content]='%B%4{ROOT%}%b'
+prompt_root[prefix]='%(!.'
+prompt_root[suffix]='.)'
+# _left_prompt_elements+=(prompt_root)
+
 # Kernel upgraded
+# TODO: upgrade to new format
 if grep -qs '^ID=arch$\|^ID=artix$' /etc/os-release && test -e /lib/modules/`uname -r`; then
 	PROMPT=$PROMPT'%F{99}${PROMPT_RIGHT_SEP}%f'
 else
@@ -91,17 +99,41 @@ fi
 typeset -A prompt_kernel
 prompt_kernel[fg]=0
 prompt_kernel[bg]=1
-prompt_kernel[content]='%0($(grep -qs "^ID=arch$\|^ID=artix$" /etc/os-release && test -e /lib/modules/`uname -r` || echo 1)..%{REBOOT%})'
-prompt_kernel[bold]=1
 # _left_prompt_elements+=(prompt_kernel)
 
+#### Vi mode prompt #######################
+typeset -A vi_mode_prompt
+vi_mode_prompt[fg]=16
+vi_mode_prompt[bg]=10
+vi_mode_prompt[content]='$PROMPT_VI_MODE'
+vi_mode_prompt[prefix]='$(if [[ -n $PROMPT_VI_MODE ]]; then; echo -n "'
+vi_mode_prompt[suffix]='";fi)'
+typeset -g PROMPT_VI_MODE
+_zle_keymap_select () { typeset -g PROMPT_VI_MODE=${${KEYMAP/vicmd/'NORMAL'}/(main|viins)/} && zle && zle reset-prompt }
+zle -N zle-keymap-select _zle_keymap_select
+add-zsh-hook precmd _zle_keymap_select
+_left_prompt_elements+=(vi_mode_prompt)
 
-# Test
-typeset -A test_prompt
-test_prompt[fg]=1
-test_prompt[bg]=16
-test_prompt[content]='%{whoami%}'
-_left_prompt_elements+=(test_prompt)
+#### Git prompt #############################
+autoload -Uz vcs_info
+vcs_info
+add-zsh-hook precmd vcs_info
+local git_formats="%b%c%u:%.7i"
+zstyle ':vcs_info:git*' enable git
+zstyle ':vcs_info:git*' check-for-changes true
+zstyle ':vcs_info:git*' get-revision true
+zstyle ':vcs_info:git*' stagedstr "+"
+zstyle ':vcs_info:git*' unstagedstr "!"
+zstyle ':vcs_info:git*' formats "$git_formats"
+zstyle ':vcs_info:git*' actionformats "%a $git_formats"
+
+typeset -A git_prompt
+git_prompt[fg]=0
+git_prompt[bg]=2
+git_prompt[content]='${vcs_info_msg_0_}'
+git_prompt[prefix]='$(if git rev-parse &> /dev/null; then; echo -n "'
+git_prompt[suffix]='";fi)'
+_left_prompt_elements+=(git_prompt)
 
 
 () {
@@ -111,9 +143,12 @@ _left_prompt_elements+=(test_prompt)
 	for element in $_left_prompt_elements
 	do
 		local sep
+		local segment
 		bgcolor=${${(P)element}[bg]}
 		fgcolor=${${(P)element}[fg]}
 		content=${${(P)element}[content]}
+		prefix=${${(P)element}[prefix]}
+		suffix=${${(P)element}[suffix]}
 		# Simply do the bolding,underlining,etc in the 'content' field itself
 		# shall take less space
 		#	if [[ -n ${${(P)element}[bold]]} ]]; then
@@ -121,17 +156,20 @@ _left_prompt_elements+=(test_prompt)
 		#	fi
 		if [[ -z $LAST_BGCOLOR ]]; then
 			sep=$PROMPT_LEFT_SEP
-			PROMPT=$PROMPT"%F{$bgcolor}"
+			segment=$segment"%F{$bgcolor}"
 		else
 			sep=$PROMPT_RIGHT_SEP
-			PROMPT=$PROMPT"%K{$bgcolor}"
+			segment=$segment"%K{$bgcolor}"
 		fi
-		PROMPT=$PROMPT$sep
-		PROMPT=$PROMPT"%F{$bgcolor}%K{$fgcolor}"
-		PROMPT=$PROMPT"%S $content %s"
+		segment=$segment$sep
+		segment=$segment"%F{$bgcolor}%K{$fgcolor}"
+		segment=$segment"%S $content %s"
+		segment=$prefix$segment$suffix
+		PROMPT=$PROMPT$segment
 		LAST_BGCOLOR=$bgcolor
 		unset sep
 		unset bgcolor fgcolor content
+		unset segment
 	done
 	PROMPT=$PROMPT"%k$PROMPT_RIGHT_SEP%f"
 	unset LAST_BGCOLOR
@@ -140,17 +178,35 @@ _left_prompt_elements+=(test_prompt)
 
 #newline
 PROMPT=$PROMPT$'\n'
+#ROOT
+# Style 1 - (same background)
+#   PROMPT=$PROMPT'%(!.%B%F{%(?.16.1)}${PROMPT_LEFT_SEP}%K{%(?.1.220)}%B%S ROOT%b%s%K{%(?.16.1)}${PROMPT_RIGHT_SEP}.)'
+# Style 2 - (opposite background)
+  PROMPT=$PROMPT'%(!.%B%F{%(?.1.16)}${PROMPT_LEFT_SEP}%K{%(?.16.1)}%B%S ROOT %b%s%K{%(?.16.1)}${PROMPT_RIGHT_SEP}.)'
 #prompt
-PROMPT=$PROMPT'%k%F{%(?.16.1)}${PROMPT_LEFT_SEP}%f%K{%(?.16.1)} %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}${PROMPT_PROMPT_SYMBOL}%f '
+PROMPT=$PROMPT'%F{%(?.16.1)}%(!..${PROMPT_LEFT_SEP})%K{%(?.10.220)}%S %(?.✔.✘) %s%k${PROMPT_PROMPT_SYMBOL}%f '
+# PROMPT=$PROMPT'%k%F{%(?.16.1)}${PROMPT_LEFT_SEP}%f%K{%(?.16.1)}%(!.%B%F{1}%6{ ROOT %}%f%b.) %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}${PROMPT_PROMPT_SYMBOL}%f '
 
 #### Right prompt ########################################
+_left_prompt_elements=()
+
+typeset -Ag _exitcode_to_signal
+for exitcode in $(seq 1 255)
+do
+	if [[ $exitcode -gt 128 ]]; then
+		_exitcode_to_signal[$exitcode]="$(kill -l $(($exitcode - 128)))"
+	else
+		_exitcode_to_signal[$exitcode]=$exitcode
+	fi
+done
 
 #exitcode if not 0
-RPROMPT='%B%(?..%F{1}${PROMPT_LEFT_SEP}%f%K{1} %F{220}%?%f %k%F{1}${PROMPT_RIGHT_SEP}%f)%b'
+RPROMPT='%B%(?..%F{1}${PROMPT_LEFT_SEP}%f%K{1} %F{220}${_exitcode_to_signal[$?]}%f %k%F{1}${PROMPT_RIGHT_SEP}%f)%b'
 
 
 #### Transient prompt ####################################
-function _my_transient_prompt_trigger {
+
+function _my_transient_prompt_trigger { # {{{
 
 	# If last exit-code 0, green(2) else red(1)
 	typeset -g TRANSIENT_PROMPT='%F{%(?.2.1)}❯%f '
@@ -164,14 +220,15 @@ function _my_transient_prompt_trigger {
 	RPROMPT=$TRANSIENT_RPROMPT
 	zle reset-prompt
 	zle accept-line
+} # }}}
+function _my_transient_prompt_reset { # {{{
 	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
 	then
-		add-zsh-hook precmd _my_transient_prompt_reset
+		clear
 		PROMPT_NEW_LINE_IS_INSERTED=0
 		unset MY_PROMPT_FIRST_PROMPT
+		return
 	fi
-}
-function _my_transient_prompt_reset {
 	if [[ -n $_my_transient_prompt_saved_PROMPT && $PROMPT == $TRANSIENT_PROMPT ]]
 	then
 		PROMPT=$_my_transient_prompt_saved_PROMPT
@@ -188,8 +245,8 @@ function _my_transient_prompt_reset {
 		PROMPT_NEW_LINE_IS_INSERTED=1
 	fi
 	zle && zle reset-prompt
-}
-function _my_transient_prompt_remove_newline_screen_cleared {
+} # }}}
+function _my_transient_prompt_remove_newline_screen_cleared { # {{{
 	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 1 ]]
 	then
 		# Remove a newline before prompt
@@ -197,7 +254,8 @@ function _my_transient_prompt_remove_newline_screen_cleared {
 		PROMPT_NEW_LINE_IS_INSERTED=0
 	fi
 	zle && zle clear-screen
-}
+} # }}}
+add-zsh-hook precmd _my_transient_prompt_reset
 
 zle -N _my_transient_prompt_trigger _my_transient_prompt_trigger
 bindkey -r '^M'
@@ -210,17 +268,15 @@ bindkey '^L' _my_transient_prompt_remove_newline_screen_cleared
 #### End of prompt ######################################
 
 
-
-
-
-
-## Plugins
-#use `zinit load` instead of `zinit light` to see how the plugin is being loaded
-zinit light zsh-users/zsh-autosuggestions
+#### Plugins ##############################
+# use `zinit load` instead of `zinit light` to see how the plugin is being loaded
 zinit light zdharma/fast-syntax-highlighting
+zinit light mfaerevaag/wd
+#  zinit ice depth=1; zinit light romkatv/powerlevel10k; source ~/.p10k.zsh
 zinit ice as'z' pick'z.sh'
 zinit light rupa/z
-# zinit ice depth=1; zinit light romkatv/powerlevel10k; source ~/.p10k.zsh
+zinit ice wait lucid atload'_zsh_autosuggest_start'
+zinit light zsh-users/zsh-autosuggestions
 
 ## ohmyzsh plugins
 zinit snippet OMZ::lib/clipboard.zsh
@@ -232,12 +288,14 @@ zinit snippet OMZ::lib/termsupport.zsh
 #     zinit snippet 'https://github.com/ohmyzsh/ohmyzsh/raw/master/plugins/git/git.plugin.zsh'
 () {
 local plugin
-local omz_plugins_that_are_only_a_script=(git sudo fancy-ctrl-z zsh_reload taskwarrior virtualenv pyenv fzf wd)
+local omz_plugins_that_are_only_a_script=(sudo fancy-ctrl-z zsh_reload)
 for plugin in $omz_plugins_that_are_only_a_script
 do
 	zinit snippet OMZ::plugins/$plugin/$plugin.plugin.zsh
 done
 }
+#### End of plugins ##########################
+
 
 ## fzf Fuzzy Finder
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -369,14 +427,32 @@ alias g=git
 alias ga='git add'
 alias gaa='git add --all'
 alias gaav='git add --all --verbose'
-alias gdh="git diff HEAD"
-alias gdh1="git diff HEAD~1 HEAD"
+alias gdh='git diff HEAD'
+alias gdh1='git diff HEAD~1 HEAD'
 alias gc='git commit -v'
 alias gca='git commit -v -a'
 alias gp='git push'
-alias gpull="git pull"
+alias gpull='git pull'
 my_gcm () { git commit -m "$*" }
 alias gcm=my_gcm
+alias gst='git status'
+alias gsw='git switch'
+
+# Taken from snippet OMZ:plugins/git
+alias glg='git log --stat'
+alias glgp='git log --stat -p'
+alias glgg='git log --graph'
+alias glgga='git log --graph --decorate --all'
+alias glgm='git log --graph --max-count=10'
+alias glo='git log --oneline --decorate'
+alias glol="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
+alias glols="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --stat"
+alias glod="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset'"
+alias glods="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad) %C(bold blue)<%an>%Creset' --date=short"
+alias glola="git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --all"
+alias glog='git log --oneline --decorate --graph'
+alias gloga='git log --oneline --decorate --graph --all'
+
 
 alias ls='ls --color'
 alias l='ls -lA'
