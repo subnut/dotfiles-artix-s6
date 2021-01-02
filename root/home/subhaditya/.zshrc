@@ -62,8 +62,8 @@ vcs_info
 add-zsh-hook precmd vcs_info
 setopt promptsubst
 
-() {
 typeset -g MY_PROMPT_FIRST_PROMPT=1
+typeset -g PROMPT_NEW_LINE_IS_INSERTED=0
 _left_prompt_elements=()
 
 PROMPT=''
@@ -98,8 +98,8 @@ prompt_kernel[bold]=1
 
 # Test
 typeset -A test_prompt
-test_prompt[fg]=14
-test_prompt[bg]=1
+test_prompt[fg]=1
+test_prompt[bg]=16
 test_prompt[content]='%{whoami%}'
 _left_prompt_elements+=(test_prompt)
 
@@ -167,6 +167,8 @@ function _my_transient_prompt_trigger {
 	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
 	then
 		add-zsh-hook precmd _my_transient_prompt_reset
+		PROMPT_NEW_LINE_IS_INSERTED=0
+		unset MY_PROMPT_FIRST_PROMPT
 	fi
 }
 function _my_transient_prompt_reset {
@@ -179,18 +181,31 @@ function _my_transient_prompt_reset {
 	unset _my_transient_prompt_saved_RPROMPT
 	unset TRANSIENT_PROMPT
 	unset TRANSIENT_RPROMPT
-	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
+	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 0 ]]
 	then
-		unset MY_PROMPT_FIRST_PROMPT
 		# Add a newline before prompt
 		PROMPT=$'\n'$PROMPT
+		PROMPT_NEW_LINE_IS_INSERTED=1
 	fi
 	zle && zle reset-prompt
 }
+function _my_transient_prompt_remove_newline_screen_cleared {
+	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 1 ]]
+	then
+		# Remove a newline before prompt
+		PROMPT=${PROMPT/$'\n'/''}
+		PROMPT_NEW_LINE_IS_INSERTED=0
+	fi
+	zle && zle clear-screen
+}
+
 zle -N _my_transient_prompt_trigger _my_transient_prompt_trigger
 bindkey -r '^M'
 bindkey '^M' _my_transient_prompt_trigger
-}
+
+zle -N _my_transient_prompt_remove_newline_screen_cleared _my_transient_prompt_remove_newline_screen_cleared
+bindkey -r '^L'
+bindkey '^L' _my_transient_prompt_remove_newline_screen_cleared
 
 #### End of prompt ######################################
 
