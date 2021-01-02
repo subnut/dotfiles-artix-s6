@@ -64,15 +64,14 @@ setopt promptsubst
 
 () {
 typeset -g MY_PROMPT_FIRST_PROMPT=1
+_left_prompt_elements=()
 
 PROMPT=''
-RPROMPT=''
 PROMPT_LEFT_SEP=$'\ue0b6'		# 
 PROMPT_RIGHT_SEP=$'\ue0b4'		# 
 PROMPT_PROMPT_SYMBOL=$'\ue0b0'	# 
 
 #### Left prompt ########
-_left_prompt_elements=()
 
 # Curdir
 #  PROMPT=$PROMPT'%F{99}${PROMPT_LEFT_SEP}%f%K{99} %F{232}%~%f %k'
@@ -87,12 +86,12 @@ if grep -qs '^ID=arch$\|^ID=artix$' /etc/os-release && test -e /lib/modules/`una
 	PROMPT=$PROMPT'%F{99}${PROMPT_RIGHT_SEP}%f'
 else
 	PROMPT=$PROMPT'%K{1}%F{99}${PROMPT_RIGHT_SEP}%f%k'
-	PROMPT=$PROMPT'%K{1}%F{0}%6{ REBOOT%}%f %k%F{1}${PROMPT_RIGHT_SEP}%f%b'
+	PROMPT=$PROMPT'%K{1}%F{0}%{ REBOOT%}%f %k%F{1}${PROMPT_RIGHT_SEP}%f%b'
 fi
 typeset -A prompt_kernel
 prompt_kernel[fg]=0
 prompt_kernel[bg]=1
-prompt_kernel[content]='%0($(grep -qs "^ID=arch$\|^ID=artix$" /etc/os-release && test -e /lib/modules/`uname -r` || echo 1)..%6{REBOOT%})'
+prompt_kernel[content]='%0($(grep -qs "^ID=arch$\|^ID=artix$" /etc/os-release && test -e /lib/modules/`uname -r` || echo 1)..%{REBOOT%})'
 prompt_kernel[bold]=1
 # _left_prompt_elements+=(prompt_kernel)
 
@@ -100,8 +99,8 @@ prompt_kernel[bold]=1
 # Test
 typeset -A test_prompt
 test_prompt[fg]=14
-test_prompt[bg]=2
-test_prompt[content]='%4{adsf%}'
+test_prompt[bg]=1
+test_prompt[content]='%{whoami%}'
 _left_prompt_elements+=(test_prompt)
 
 
@@ -112,36 +111,29 @@ _left_prompt_elements+=(test_prompt)
 	for element in $_left_prompt_elements
 	do
 		local sep
-		local segment=''
 		bgcolor=${${(P)element}[bg]}
 		fgcolor=${${(P)element}[fg]}
 		content=${${(P)element}[content]}
+		# Simply do the bolding,underlining,etc in the 'content' field itself
+		# shall take less space
+		#	if [[ -n ${${(P)element}[bold]]} ]]; then
+		#		content="%B$content%b"
+		#	fi
 		if [[ -z $LAST_BGCOLOR ]]; then
 			sep=$PROMPT_LEFT_SEP
-			segment=$segment"%F{$bgcolor}$sep%f"
+			PROMPT=$PROMPT"%F{$bgcolor}"
 		else
 			sep=$PROMPT_RIGHT_SEP
-			segment=$segment"%F{$LAST_BGCOLOR}%K{$bgcolor}$sep%f%k"
+			PROMPT=$PROMPT"%K{$bgcolor}"
 		fi
-		segment=$segment"%K{$bgcolor}%F{$fgcolor}"
-		segment=$segment" $content "
-		segment=$segment"%k%f"
-		condition=${${(P)element}[condition]}
-		if [[ -n $condition ]]; then
-			condition_sep=${${(P)element}[condition_sep]}
-			cond_expected_val=${${(P)element}[cond_expected_val]}
-				if [[ -n $cond_expected_val ]]; then
-					cond_expected_val=0
-				fi
-			segment="%$cond_expected_val($condition$condition_sep${condition_sep}$segment)"
-		fi
-		PROMPT=$PROMPT$segment
+		PROMPT=$PROMPT$sep
+		PROMPT=$PROMPT"%F{$bgcolor}%K{$fgcolor}"
+		PROMPT=$PROMPT"%S $content %s"
 		LAST_BGCOLOR=$bgcolor
 		unset sep
 		unset bgcolor fgcolor content
-		unset segment cond_expected_val condition condition_sep
 	done
-	PROMPT=$PROMPT"%F{$LAST_BGCOLOR}$PROMPT_RIGHT_SEP%f"
+	PROMPT=$PROMPT"%k$PROMPT_RIGHT_SEP%f"
 	unset LAST_BGCOLOR
 }
 
@@ -152,64 +144,9 @@ PROMPT=$PROMPT$'\n'
 PROMPT=$PROMPT'%k%F{%(?.16.1)}${PROMPT_LEFT_SEP}%f%K{%(?.16.1)} %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}${PROMPT_PROMPT_SYMBOL}%f '
 
 #### Right prompt ########################################
-# NOTE: Elements will be shown in the reverse order
-_right_prompt_elements=()
-_right_prompt_elements+=(test_prompt)
 
 #exitcode if not 0
 RPROMPT='%B%(?..%F{1}${PROMPT_LEFT_SEP}%f%K{1} %F{220}%?%f %k%F{1}${PROMPT_RIGHT_SEP}%f)%b'
-typeset -A rprompt_exitcode
-rprompt_exitcode[bg]=1
-rprompt_exitcode[fg]=220
-rprompt_exitcode[content]='%B%?%b'
-rprompt_exitcode[condition]='%(?A1A0)'
-rprompt_exitcode[condition_sep]='.'
-_right_prompt_elements+=(rprompt_exitcode)
-
-() {
-	RPROMPT=''
-	local LAST_BGCOLOR=''
-	local element
-	for element in $_right_prompt_elements
-	do
-		local sep
-		local segment=''
-		bgcolor=${${(P)element}[bg]}
-		fgcolor=${${(P)element}[fg]}
-		content=${${(P)element}[content]}
-		# Simply do the bolding,underlining,etc in the 'content' field itself
-		# shall take less space
-		# 	if [[ -n ${${(P)element}[bold]]} ]]; then
-		# 		content="%B$content%b"
-		# 	fi
-		if [[ -z $LAST_BGCOLOR ]]; then
-			sep=$PROMPT_RIGHT_SEP
-			segment="%F{$bgcolor}$sep%f"$segment
-		else
-			sep=$PROMPT_LEFT_SEP
-			segment="%F{$LAST_BGCOLOR}%K{$bgcolor}$sep%f%k"$segment
-		fi
-		segment="%k%f"$segment
-		segment=" $content "$segment
-		segment="%K{$bgcolor}%F{$fgcolor}"$segment
-		condition=${${(P)element}[condition]}
-		if [[ -n $condition ]]; then
-			condition_sep=${${(P)element}[condition_sep]}
-			cond_expected_val=${${(P)element}[cond_expected_val]}
-				if [[ -n $cond_expected_val ]]; then
-					cond_expected_val=0
-				fi
-			segment="%$cond_expected_val($condition$condition_sep$segment$condition_sep)"
-			LAST_BGCOLOR="%$cond_expected_val($condition$condition_sep$bgcolor$condition_sep$LAST_BGCOLOR)"
-		fi
-		RPROMPT=$segment$RPROMPT
-		unset sep
-		unset bgcolor fgcolor content
-		unset segment cond_expected_val condition condition_sep
-	done
-	RPROMPT="%F{$LAST_BGCOLOR}$PROMPT_LEFT_SEP%f"$RPROMPT
-	unset LAST_BGCOLOR
-}
 
 
 #### Transient prompt ####################################
