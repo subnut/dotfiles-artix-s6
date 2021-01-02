@@ -112,22 +112,34 @@ _left_prompt_elements+=(test_prompt)
 	for element in $_left_prompt_elements
 	do
 		local sep
+		local segment=''
 		bgcolor=${${(P)element}[bg]}
 		fgcolor=${${(P)element}[fg]}
 		content=${${(P)element}[content]}
 		if [[ -z $LAST_BGCOLOR ]]; then
 			sep=$PROMPT_LEFT_SEP
-			PROMPT=$PROMPT"%F{$bgcolor}$sep%f"
+			segment=$segment"%F{$bgcolor}$sep%f"
 		else
 			sep=$PROMPT_RIGHT_SEP
-			PROMPT=$PROMPT"%F{$LAST_BGCOLOR}%K{$bgcolor}$sep%f%k"
+			segment=$segment"%F{$LAST_BGCOLOR}%K{$bgcolor}$sep%f%k"
 		fi
-		PROMPT=$PROMPT"%K{$bgcolor}%F{$fgcolor}"
-		PROMPT=$PROMPT" $content "
-		PROMPT=$PROMPT"%k%f"
+		segment=$segment"%K{$bgcolor}%F{$fgcolor}"
+		segment=$segment" $content "
+		segment=$segment"%k%f"
+		condition=${${(P)element}[condition]}
+		if [[ -n $condition ]]; then
+			condition_sep=${${(P)element}[condition_sep]}
+			cond_expected_val=${${(P)element}[cond_expected_val]}
+				if [[ -n $cond_expected_val ]]; then
+					cond_expected_val=0
+				fi
+			segment="%$cond_expected_val($condition$condition_sep${condition_sep}$segment)"
+		fi
+		PROMPT=$PROMPT$segment
 		LAST_BGCOLOR=$bgcolor
 		unset sep
 		unset bgcolor fgcolor content
+		unset segment cond_expected_val condition condition_sep
 	done
 	PROMPT=$PROMPT"%F{$LAST_BGCOLOR}$PROMPT_RIGHT_SEP%f"
 	unset LAST_BGCOLOR
@@ -150,6 +162,8 @@ typeset -A rprompt_exitcode
 rprompt_exitcode[bg]=1
 rprompt_exitcode[fg]=220
 rprompt_exitcode[content]='%B%?%b'
+rprompt_exitcode[condition]='%(?A1A0)'
+rprompt_exitcode[condition_sep]='.'
 _right_prompt_elements+=(rprompt_exitcode)
 
 () {
@@ -159,6 +173,7 @@ _right_prompt_elements+=(rprompt_exitcode)
 	for element in $_right_prompt_elements
 	do
 		local sep
+		local segment=''
 		bgcolor=${${(P)element}[bg]}
 		fgcolor=${${(P)element}[fg]}
 		content=${${(P)element}[content]}
@@ -169,17 +184,28 @@ _right_prompt_elements+=(rprompt_exitcode)
 		# 	fi
 		if [[ -z $LAST_BGCOLOR ]]; then
 			sep=$PROMPT_RIGHT_SEP
-			RPROMPT="%F{$bgcolor}$sep%f"$RPROMPT
+			segment="%F{$bgcolor}$sep%f"$segment
 		else
 			sep=$PROMPT_LEFT_SEP
-			RPROMPT="%F{$LAST_BGCOLOR}%K{$bgcolor}$sep%f%k"$RPROMPT
+			segment="%F{$LAST_BGCOLOR}%K{$bgcolor}$sep%f%k"$segment
 		fi
-		RPROMPT="%k%f"$RPROMPT
-		RPROMPT=" $content "$RPROMPT
-		RPROMPT="%K{$bgcolor}%F{$fgcolor}"$RPROMPT
-		LAST_BGCOLOR=$bgcolor
+		segment="%k%f"$segment
+		segment=" $content "$segment
+		segment="%K{$bgcolor}%F{$fgcolor}"$segment
+		condition=${${(P)element}[condition]}
+		if [[ -n $condition ]]; then
+			condition_sep=${${(P)element}[condition_sep]}
+			cond_expected_val=${${(P)element}[cond_expected_val]}
+				if [[ -n $cond_expected_val ]]; then
+					cond_expected_val=0
+				fi
+			segment="%$cond_expected_val($condition$condition_sep$segment$condition_sep)"
+			LAST_BGCOLOR="%$cond_expected_val($condition$condition_sep$bgcolor$condition_sep$LAST_BGCOLOR)"
+		fi
+		RPROMPT=$segment$RPROMPT
 		unset sep
 		unset bgcolor fgcolor content
+		unset segment cond_expected_val condition condition_sep
 	done
 	RPROMPT="%F{$LAST_BGCOLOR}$PROMPT_LEFT_SEP%f"$RPROMPT
 	unset LAST_BGCOLOR
