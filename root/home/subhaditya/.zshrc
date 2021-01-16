@@ -2,22 +2,34 @@
 
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.zsh_history
-HISTSIZE=1000
+HISTSIZE=4000
 SAVEHIST=30000
 setopt autocd
 bindkey -e
 # End of lines configured by zsh-newuser-install
 
 # The following lines were added by compinstall
-zstyle ':completion:*' completer _expand _complete _ignored
+zstyle ':completion:*' completer _complete _approximate _ignored
 zstyle ':completion:*' matcher-list '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}'
 zstyle ':completion:*' menu select
-zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+# zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
 zstyle :compinstall filename '/home/subhaditya/.zshrc'
 
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
+
+## Show completion dots
+expand-or-complete-with-dots() {
+    print -Pn "%F{red}…%f"
+    zle expand-or-complete
+    zle redisplay
+  }
+zle -N expand-or-complete-with-dots
+# Set the function as the default tab completion widget
+bindkey -M emacs "^I" expand-or-complete-with-dots
+bindkey -M viins "^I" expand-or-complete-with-dots
+bindkey -M vicmd "^I" expand-or-complete-with-dots
 
 
 ## Config

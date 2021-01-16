@@ -8,6 +8,7 @@ bat
 bspwm
 clang
 clipster
+dash
 dmenu
 efibootmgr
 elogind-s6
@@ -29,6 +30,7 @@ lsof
 lxappearance-gtk3
 man-db
 mpv
+musl
 nautilus
 neovim
 networkmanager
@@ -36,6 +38,7 @@ networkmanager-s6
 noto-fonts
 ntfs-3g
 openssh
+patch
 picom
 polybar
 python
@@ -50,13 +53,14 @@ spotify
 spotify-adblock-git
 sx
 sxhkd-git
+time
 tlp-s6
 tree
 ttf-joypixels
 udisks2
+vim
 xcape
 xclip
-xorg-xev
 xorg-xinput
 xorg-xmodmap
 xorg-xset
@@ -64,4 +68,6 @@ xorg-xsetroot
 xsettingsd
 yay-bin
 ytop-bin
+zathura
+zathura-pdf-mupdf
 zsh
