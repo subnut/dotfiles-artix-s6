@@ -1,7 +1,6 @@
 acpid
 acpid-s6
 alsa-utils
-apulse
 artools-base
 base
 bat
@@ -9,7 +8,6 @@ bspwm
 clang
 clipster
 dash
-dmenu
 efibootmgr
 elogind-s6
 fd
@@ -53,12 +51,10 @@ spotify
 spotify-adblock-git
 sx
 sxhkd-git
-time
 tlp-s6
 tree
 ttf-joypixels
 udisks2
-vim
 xcape
 xclip
 xorg-xinput
@@ -68,6 +64,4 @@ xorg-xsetroot
 xsettingsd
 yay-bin
 ytop-bin
-zathura
-zathura-pdf-mupdf
 zsh

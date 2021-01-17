@@ -296,17 +296,17 @@ zinit ice as'z' pick'z.sh'
 zinit light rupa/z
 zinit ice wait lucid atload'_zsh_autosuggest_start'
 zinit light zsh-users/zsh-autosuggestions
-# zinit ice pick'gitstatus.plugin.zsh'
-# zinit light 'https://github.com/romkatv/gitstatus'
 
 ## ohmyzsh plugins
 zinit snippet OMZ::lib/clipboard.zsh
 zinit snippet OMZ::lib/directories.zsh
 zinit snippet OMZ::lib/key-bindings.zsh
 zinit snippet OMZ::lib/termsupport.zsh
+
 # Both are same -
 #     zinit snippet OMZ::plugins/git/git.plugin.zsh
 #     zinit snippet 'https://github.com/ohmyzsh/ohmyzsh/raw/master/plugins/git/git.plugin.zsh'
+
 () {
 local plugin
 local omz_plugins_that_are_only_a_script=(sudo fancy-ctrl-z zsh_reload)
@@ -315,6 +315,7 @@ do
 	zinit snippet OMZ::plugins/$plugin/$plugin.plugin.zsh
 done
 }
+
 #### End of plugins ##########################
 
 
