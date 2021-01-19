@@ -1,12 +1,15 @@
 acpid
 acpid-s6
 alsa-utils
+arc-gtk-theme
+arc-icon-theme
 artools-base
 base
 bat
 bspwm
 clang
 clipster
+colordiff
 dash
 efibootmgr
 elogind-s6
@@ -17,10 +20,12 @@ flameshot
 gifcast
 git
 gnome-calculator
+gparted
 grub
 htop
 i3lock-color
 kitty
+lf-bin
 light
 linux
 linux-firmware
@@ -47,8 +52,6 @@ ristretto
 rofi
 s6
 screenkey
-spotify
-spotify-adblock-git
 sx
 sxhkd-git
 tlp-s6
