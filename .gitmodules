@@ -1,0 +1,3 @@
+[submodule "root/home/subhaditya/.config/bat/themes/gruvbox-tmTheme"]
+	path = root/home/subhaditya/.config/bat/themes/gruvbox-tmTheme
+	url = https://github.com/subnut/gruvbox-tmTheme.git
