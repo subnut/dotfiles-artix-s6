@@ -1,0 +1,130 @@
+#!/bin/sh
+bluetooth off
+
+xinput set-button-map 'TPPS/2 Elan TrackPoint' 1 0 3
+xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Accel Speed' 0.001
+xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Tapping Enabled' 1
+xsetroot -cursor_name left_ptr &
+xset r rate 250 30
+
+# Set CapsLock to LeftCtrl
+#Set XF86Favorites (Fn+F12 on E495) to CapsLock
+xmodmap -e "keysym XF86Favorites = Caps_Lock"
+#xmodmap -e "remove Lock = Caps_Lock"
+#xmodmap -e "keysym Caps_Lock = Control_L"
+#xmodmap -e "remove Lock = Caps_Lock"
+#xmodmap -e "remove control = Control_L"
+#xmodmap -e "keysym Caps_Lock = Control_L"
+#xmodmap -e "keysym XF86Favorites = Caps_Lock"
+#xmodmap -e "add Lock = Caps_Lock"
+#xmodmap -e "add control = Control_L"
+spare_modifier="Hyper_L"
+xmodmap -e "remove Lock = Caps_Lock"
+xmodmap -e "keysym Caps_Lock = $spare_modifier"
+xmodmap -e "remove mod4 = $spare_modifier"
+# Hyper_L is mod4 by default
+xmodmap -e "add control = $spare_modifier"
+xmodmap -e "keycode any = Caps_Lock"
+xmodmap -e "add Lock = Caps_Lock"
+killall xcape
+xcape -t 150 -e "$spare_modifier=Caps_Lock"
+# NOTE: DO NOT PUT SPACES AROUND THE EQUAL SIGN
+
+
+killall -q sxhkd
+sh -c "sxhkd &> /dev/null &"
+
+killall -q /usr/lib/gsd-xsettings
+/usr/lib/gsd-xsettings &> /dev/null &
+disown
+
+if ! [[ `bspc query --desktops --names` =~ "Desktop" ]]
+then
+	for MONITOR in $(bspc query -M --names)
+	do
+		bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII $(
+		for y in $(bspc query -D -m $MONITOR --names | grep temp)
+		do
+				echo -n "$y "
+		done
+)
+	done
+else
+	for MONITOR in $(bspc query -M --names)
+	do
+		bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXI
+	done
+fi
+
+kill $(pgrep --full "this is a comment for my borderer")
+zsh -c "while read -r my_auto_something; do if [[ \$my_auto_something =~ 'T@' ]];then bspc config border_width 10;else bspc config border_width 0;fi ;done < <(bspc subscribe); # this is a comment for my borderer" &
+disown
+
+#else bspc monitor -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII; fi
+
+bspc config border_width         0
+bspc config window_gap          20
+
+bspc config split_ratio          0.50
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+
+bspc config normal_border_color '#000000'
+bspc config focused_border_color '#ff0000'
+
+# bspc config swallow_first_click true
+bspc config focus_follows_pointer true
+bspc config pointer_follows_monitor true
+bspc config merge_overlapping_monitors true
+bspc config ignore_ewmh_fullscreen true
+# bspc config pointer_follows_focus true
+
+bspc rule -a Gimp desktop='^8' state=floating follow=on
+bspc rule -a Chromium desktop='^2'
+bspc rule -a mplayer2 state=floating
+bspc rule -a Kupfer.py focus=on
+# bspc rule -a Screenkey manage=off
+
+bspc rule -a VirtualBoxVM state=floating
+bspc rule -a "VirtualBox Machine" state=tiled
+bspc rule -a jome state=floating
+bspc rule -a xdman-Main state=floating
+bspc rule -a my_zoom state=floating
+bspc rule -a Git-gui--askpass state=floating layer=above
+bspc rule -a Yad state=floating layer=above
+
+bspc rule -a '*:*:Picture-in-Picture' state=floating layer=above sticky=on focus=off
+bspc rule -a '*:*:Picture-in-picture' state=floating layer=above sticky=on focus=off
+bspc rule -a Safeeyes state=floating layer=above fullscreen=off focus=off
+bspc rule -a Clipster layer=above
+bspc rule -a mpv state=pseudo_tiled
+bspc rule -a Pulseaudio-equalizer-gtk state=floating
+
+killall xmousepasteblock
+sh -c "xmousepasteblock &> /dev/null &"
+
+killall clipster
+sh -c "clipster -d &> /dev/null &"
+# killall clipit
+# clipit -d &> /dev/null &
+
+
+# safeeyes -e &> /dev/null &
+sh -c "$(which safeeyes) -e &> /dev/null &"
+
+#if [[ $((10#$(date +'%H'))) -gt 5 && $((10#$(date +'%H'))) -lt 18 ]] ; then feh --bg-fill light.png; else feh --bg-fill dark.png; fi
+feh --bg-fill light.png  &
+
+killall -q polybar
+zsh -c "if ! [[ $(bspc config top_padding) -eq $((`bspc config bottom_padding` + 35)) ]]; then bspc config top_padding $((`bspc config bottom_padding` + 35)); fi &"
+# polybar mybar &
+zsh <<< "polybar --list-monitors | cut -d':' -f1 | while IFS= read -r MONITOR; do if ! [[ \$MONITOR == \$(polybar --list-monitors | grep primary | cut -d':' -f1) ]]; then MONITOR=\$MONITOR polybar secondary_restack &> /dev/null &; else polybar mybar_restack &> /dev/null &; fi; done &"
+
+# zsh <<< 'if [[ $(bluetooth | cut -d"=" -f2 | cut -d" " -f2) =~ on ]] ; then notify-send.sh -u critical "Bluetooth is ON" -i bluetooth -t 0 -a Bluetooth $(if [[ -a bluetooth-on-notification.id ]] ; then echo -n "-r "; cat bluetooth-on-notification.id ; fi) -p > bluetooth-on-notification.id; fi'
+
+if pidof acpid; then true; else zsh <<< "kitty sh -c 'echo \"Starting acpid ...\"; sudo acpid' &"; fi &
+if [[ -r /dev/video0 || -r /dev/video1 ]]; then zsh <<< "kitty sh -c 'echo \"Disabling camera ...\"; sudo chmod -r /dev/video*' &"; fi &
+
+killall -q picom
+picom &> /dev/null &
+disown
