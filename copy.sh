@@ -11,6 +11,7 @@ cp ~/.config/sx			-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/kitty		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/bspwm		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/sxhkd		-t	./root/home/subhaditya/.config		-rv
+cp ~/.config/falkon		-t	./root/home/subhaditya/.config		-rv
 cp ~/.local/bin				./root/home/subhaditya/.local/		-rv
 cp ~/.zshrc				./root/home/subhaditya/.zshrc
 cp ~/.p10k.zsh				./root/home/subhaditya/.p10k.zsh
