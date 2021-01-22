@@ -14,6 +14,7 @@ colordiff
 dash
 efibootmgr
 elogind-s6
+eog
 falkon
 fd
 feh
@@ -50,7 +51,6 @@ python
 python-pip
 reflector
 ripgrep
-ristretto
 rofi
 s6
 screenkey

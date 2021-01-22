@@ -36,8 +36,8 @@ super + Escape
 	killall sxhkd && exec sxhkd &> /dev/null
 
 # run some custom programs
-super + ctrl + Return ; {f,c,t,v,n,x,p,q}
-	{firefox,google-chrome-stable,thunar,vlc,nautilus,xdman,pavucontrol,qutebrowser} &> /dev/null
+super + ctrl + Return ; {f,g,c,t,v,n,x,p,q}
+	{falkon,firefox,google-chrome-stable,thunar,vlc,nautilus,xdman,pavucontrol,qutebrowser} &> /dev/null
 
 # exclude rounded corners current window
 super + {Delete,shift + BackSpace}

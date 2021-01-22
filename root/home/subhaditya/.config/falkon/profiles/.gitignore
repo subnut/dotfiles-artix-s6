@@ -1,4 +1,5 @@
 */blob_storage
+*/Local Storage
 */GPUCache
 */Platform Notifications
 */Session Storage
@@ -8,8 +9,7 @@
 */Cookies
 */Cookies-journal
 */Network Persistent State
-*/session.dat
-*/session.dat.old
+*/session.dat*
 */TransportSecurity
 */Visited Links
 */adblock/easylist.txt
