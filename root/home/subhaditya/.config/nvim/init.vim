@@ -617,13 +617,13 @@ augroup end
 
 " Undo history
 " ------------	" {{{1
-if has('persistent_undo')										" guard for distributions lacking the persistent_undo feature.
-   let target_path = expand('~/.nvim-undo-history/')		" define a path to store persistent_undo files
-   if !isdirectory(target_path)							" if the location does not exist,
-   	call system('mkdir -p ' . target_path)				" create the directory and any parent directories
-   endif
-   let &undodir = target_path								" point Vim to the defined undo directory
-   set undofile											" finally, enable undo persistence
+if has('persistent_undo')									" guard for distributions lacking the persistent_undo feature.
+	let target_path = expand('~/.nvim-undo-history/')		" define a path to store persistent_undo files
+	if !isdirectory(target_path)							" if the location does not exist,
+		call system('mkdir -p ' . target_path)				" create the directory and any parent directories
+	endif
+	let &undodir = target_path								" point Vim to the defined undo directory
+	set undofile											" finally, enable undo persistence
 endif	" }}}
 
 
