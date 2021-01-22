@@ -5,7 +5,6 @@ ROOT_DIR=$(
 )
 cd "$ROOT_DIR"
 
-cp /etc/profile.d/polybar.sh	-t	./root/etc/profile.d/			-rv
 cp /etc/modprobe.d/alsa.conf	-t	./root/etc/modprobe.d 			-rv
 cp ~/.config/sx			-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/kitty		-t	./root/home/subhaditya/.config		-rv
