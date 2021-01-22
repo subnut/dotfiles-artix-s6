@@ -1,5 +1,7 @@
 */blob_storage
 */Local Storage
+*/File System
+*/QuotaManager*
 */GPUCache
 */Platform Notifications
 */Session Storage

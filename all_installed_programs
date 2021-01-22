@@ -15,6 +15,7 @@ dash
 efibootmgr
 elogind-s6
 eog
+evince
 falkon
 fd
 feh
