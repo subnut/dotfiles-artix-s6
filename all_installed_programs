@@ -50,6 +50,7 @@ picom
 polybar
 python
 python-pip
+qt5ct
 reflector
 ripgrep
 rofi

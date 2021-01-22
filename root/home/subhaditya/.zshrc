@@ -44,6 +44,9 @@ export PATH=/usr/games:$PATH	# Add Games to PATH
 export PATH=/home/subhaditya/.local/bin:$PATH
 export PATH=./:$PATH
 
+## For qt5ct
+export QT_QPA_PLATFORMTHEME=qt5ct
+
 
 ### Added by Zinit's installer ###################
 if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
