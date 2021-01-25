@@ -1,9 +1,37 @@
 " vim: fdm=marker noet ts=4 nowrap
 scriptencoding utf-8
 
+" Open file at last cursor position " {{{1
+" ---------------------------------
+augroup file_open_last_pos
+au!
+autocmd BufReadPost *
+	\ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+	\ |   exe "normal! g`\""
+	\ | endif
+augroup end " }}}
+" Use our specific python venv only {{{
+let g:python3_host_prog = '/home/subhaditya/.config/nvim/venv/bin/python'
+if len($VIRTUAL_ENV) == 0
+	let $PATH = '/home/subhaditya/.config/nvim/venv/bin:' . $PATH
+else
+	let $PATH = join(insert(split($PATH, ':'),'/home/subhaditya/.config/nvim/venv/bin',1),':')
+endif " }}}
+" Save Undo history " {{{1
+if has('persistent_undo')									" guard for distributions lacking the persistent_undo feature.
+	" define a path to store persistent_undo files
+	let target_path = split(expand('<sfile>:p'),expand('<sfile>:t'))[0] . '.undo_history'
+	if !isdirectory(target_path)							" if the location does not exist,
+		call system('mkdir -p ' . target_path)				" create the directory and any parent directories
+	endif
+	let &undodir = target_path								" point Vim to the defined undo directory
+	set undofile											" finally, enable undo persistence
+endif	" }}}
+
+
 " Polyglot sets "noswapfile"
 " stop it from doing that
-let g:polyglot_disabled = ['sensible']
+	let g:polyglot_disabled = ['sensible']
 " see ":h swapfile" for why not
 
 " Disable polyglot plasticboy markdown to avoid clashing with gabrielelana
@@ -12,15 +40,70 @@ let g:polyglot_disabled = ['sensible']
 
 " let g:polyglot_disabled += ['ftdetect']
 
-let g:python3_host_prog = '/home/subhaditya/.config/nvim/venv/bin/python'
-if len($VIRTUAL_ENV) == 0
-	let $PATH = '/home/subhaditya/.config/nvim/venv/bin:' . $PATH
-else
-	let $PATH = join(insert(split($PATH, ':'),'/home/subhaditya/.config/nvim/venv/bin',1),':')
-endif
+
+" Custom settings
+" ---------------
+" set colorcolumn=+1
+" aug my_git_colorcolumn
+" 	au!
+" 	au BufEnter * if &ft == 'gitcommit' | let w:my_saved_cc=&cc | let &cc='+1' | endif
+" 	au BufLeave * if &ft == 'gitcommit' | let &cc=w:my_saved_cc | endif
+" aug END
+set splitright		" default split direction
+set splitbelow		" default split direction
+set tildeop			" use ~<motion> to change case of characters over <motion>
+set ignorecase		" Ignore uppercase and lowercase
+set smartcase		" If search contains UPPERCASE letter, then set "noignorecase"
+set mouse=a
+set clipboard+=unnamedplus
+set cursorline
+" set noexpandtab					" DO NOT replace tabs with spaces
+" set tabstop=4					" No. of spaces that <TAB> stands for
+" set shiftwidth=0				" i.e. tabstop value will be used for auto-indenting
+" au BufWinEnter *.py %retab!	" Replace all tabs with spaces when entering a python file
+" set foldmethod=marker
+" set nowrap
+set showbreak=¬\ 				" The backslash is used to escape the space after it
+set autoread
+set autowrite
+"set nonumber nornu
+set number relativenumber
+set signcolumn=yes
+" nnoremap <silent> <C-n> :set number!<CR>
+" nnoremap <silent> <C-A-n> :set relativenumber!<CR>
+au User AirlineAfterInit ++once nnoremap <silent> <c-v> <cmd>set virtualedit=all<CR><c-v><cmd>au User AirlineModeChanged ++once set virtualedit=<CR>
+nnoremap <silent> gB :bprev<CR>
+nnoremap <silent> gb :bnext<CR>
+nnoremap <silent> <C-g> :Goyo<CR>
+nnoremap <silent> <C-l> :set list!<CR>
+nnoremap <silent> <C-n> :call ToggleLineNrCustom()<CR>
+nnoremap <silent> <C-A-n> :call ToggleLineNrCustomLocal()<CR>
+nnoremap <silent> yY :%y<CR>
+
+" NOTE: These are pretty darn useful.
+	inoremap <a-o> <c-o>
+	inoremap <A-Space> <Esc>
+
+" inoremap <C-w> <C-o>
+
+let mapleader = ' '
+com! YankAll %y
+
+" nmap <Leader>s <Plug>(Scalpel)
+nnoremap <leader>e <cmd>CHADopen<cr>
+nnoremap <silent> <leader>r :LspRename<cr>
+nnoremap <silent> <leader>m :MundoToggle<cr>
+nnoremap <silent> <leader>u :UndotreeToggle<cr>
+nnoremap <silent> <leader>i :IndentLinesToggle<cr>
+
+" Goto specific line-number using <LineNr>Enter
+nnoremap <silent><expr> <CR> (v:count ? 'G' : '<CR>')
+
+
+" Plugins
+" ---------
 
 call plug#begin()	" Make sure you use single-quotes in all Plug commands below
-
 " " YouCompleteMe	{{{1
 " " -------------
 " " Plug 'ycm-core/YouCompleteMe', { 'do': './install.py', 'on': [] }
@@ -41,7 +124,7 @@ Plug 'ncm2/ncm2-html-subscope'
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
 Plug 'ncm2/ncm2-bufword'
 Plug 'ncm2/ncm2-path'
-Plug 'ncm2/ncm2-jedi'		"python
+" Plug 'ncm2/ncm2-jedi'		"python
 Plug 'ncm2/ncm2-pyclang'	"c/cpp
 Plug 'ncm2/ncm2-vim' | Plug 'Shougo/neco-vim'
 Plug 'svermeulen/ncm2-yoink', { 'on': [] }
@@ -57,7 +140,7 @@ let g:lsp_documentation_float_docked = 0
 let g:lsp_diagnostics_enabled = 1
 
 " Integration with ncm2
-" Plug 'ncm2/ncm2-vim-lsp'
+Plug 'ncm2/ncm2-vim-lsp'
 let g:ncm2_vim_lsp_blocklist = ['vim-language-server']
 
 " Server installer
@@ -360,6 +443,10 @@ let g:goyo_width='70%'
 " 	autocmd User GoyoEnter nested call <SID>goyo_enter()
 " 	autocmd User GoyoLeave nested call <SID>goyo_leave()
 " augroup end
+augroup goyo_customization
+	au!
+	autocmd User GoyoEnter echo
+augroup end
 
 
 " Get the higlight group of the character under cursor
@@ -369,66 +456,9 @@ fun Get_hi_group()
 endfun
 command! GetHiGroup call Get_hi_group()
 
-" Custom settings
-" ---------------
-" set colorcolumn=+1
-" aug my_git_colorcolumn
-" 	au!
-" 	au BufEnter * if &ft == 'gitcommit' | let w:my_saved_cc=&cc | let &cc='+1' | endif
-" 	au BufLeave * if &ft == 'gitcommit' | let &cc=w:my_saved_cc | endif
-" aug END
-set splitright		" default split direction
-set splitbelow		" default split direction
-set tildeop			" use ~<motion> to change case of characters over <motion>
-set ignorecase		" Ignore uppercase and lowercase
-set smartcase		" If search contains UPPERCASE letter, then set "noignorecase"
-set mouse=a
-set clipboard+=unnamedplus
-set cursorline
-" set noexpandtab					" DO NOT replace tabs with spaces
-" set tabstop=4					" No. of spaces that <TAB> stands for
-" set shiftwidth=0				" i.e. tabstop value will be used for auto-indenting
-" au BufWinEnter *.py %retab!	" Replace all tabs with spaces when entering a python file
-" set foldmethod=marker
-" set nowrap
-set showbreak=¬\ 				" The backslash is used to escape the space after it
-set autoread
-set autowrite
-"set nonumber nornu
-set number relativenumber
-set signcolumn=yes
-" nnoremap <silent> <C-n> :set number!<CR>
-" nnoremap <silent> <C-A-n> :set relativenumber!<CR>
-au User AirlineAfterInit ++once nnoremap <silent> <c-v> <cmd>set virtualedit=all<CR><c-v><cmd>au User AirlineModeChanged ++once set virtualedit=<CR>
-nnoremap <silent> gB :bprev<CR>
-nnoremap <silent> gb :bnext<CR>
-nnoremap <silent> <C-g> :Goyo<CR>
-nnoremap <silent> <C-l> :set list!<CR>
-nnoremap <silent> <C-n> :call ToggleLineNrCustom()<CR>
-nnoremap <silent> <C-A-n> :call ToggleLineNrCustomLocal()<CR>
-nnoremap <silent> yY :%y<CR>
-
-" NOTE: These are pretty darn useful.
-	inoremap <a-o> <c-o>
-	inoremap <A-Space> <Esc>
-
-" inoremap <C-w> <C-o>
-
-let mapleader = ' '
-com! YankAll %y
-
-" nmap <Leader>s <Plug>(Scalpel)
-nnoremap <leader>e <cmd>CHADopen<cr>
-nnoremap <silent> <leader>r :LspRename<cr>
-nnoremap <silent> <leader>m :MundoToggle<cr>
-nnoremap <silent> <leader>u :UndotreeToggle<cr>
-nnoremap <silent> <leader>i :IndentLinesToggle<cr>
 
 " Advanced customization
 " ----------------------
-" Goto specific line-number using <LineNr>Enter
-	nnoremap <silent><expr> <CR> (v:count ? 'G' : '<CR>')
-
 " Automatically close in markdown and html
 "
 "		*	"<" --> "<>" with cursor in between < and >
@@ -566,16 +596,6 @@ augroup end	" }}}
 " nnoremap <silent> <C-e> :NERDTreeToggle<CR>
 
 
-" Open file at last cursor position		" {{{1
-" ---------------------------------
-augroup file_open_last_pos
-au!
-autocmd BufReadPost *
-	\ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-	\ |   exe "normal! g`\""
-	\ | endif
-augroup end	" }}}
-
 
 " Live substitution (syntax: :%s/from/to)
 " -----------------
@@ -614,17 +634,6 @@ augroup AutoFZFLayout
 	au VimResized * if &lines < 15 | let g:fzf_layout = { 'down': '~40%' } | else | let g:fzf_layout = {'window': {'width': 0.9, 'height': 0.8}} | endif
 augroup end
 
-
-" Undo history
-" ------------	" {{{1
-if has('persistent_undo')									" guard for distributions lacking the persistent_undo feature.
-	let target_path = expand('~/.nvim-undo-history/')		" define a path to store persistent_undo files
-	if !isdirectory(target_path)							" if the location does not exist,
-		call system('mkdir -p ' . target_path)				" create the directory and any parent directories
-	endif
-	let &undodir = target_path								" point Vim to the defined undo directory
-	set undofile											" finally, enable undo persistence
-endif	" }}}
 
 
 " Notational velocity

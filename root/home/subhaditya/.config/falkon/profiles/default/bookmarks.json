@@ -1,29 +1,97 @@
 {
- "roots": {
-  "bookmark_bar": {
-   "children": [ ],
-   "description": "Bookmarks located in Bookmarks Toolbar",
-   "expanded": true,
-   "expanded_sidebar": true,
-   "name": "Bookmarks Toolbar",
-   "type": "folder"
-  },
-  "bookmark_menu": {
-   "children": [],
-   "description": "Bookmarks located in Bookmarks Menu",
-   "expanded": true,
-   "expanded_sidebar": true,
-   "name": "Bookmarks Menu",
-   "type": "folder"
-  },
-  "other": {
-   "children": [],
-   "description": "All other bookmarks",
-   "expanded": true,
-   "expanded_sidebar": true,
-   "name": "Unsorted Bookmarks",
-   "type": "folder"
-  }
- },
- "version": 1
+    "roots": {
+        "bookmark_bar": {
+            "children": [
+            ],
+            "description": "Bookmarks located in Bookmarks Toolbar",
+            "expanded": true,
+            "expanded_sidebar": true,
+            "name": "Bookmarks Toolbar",
+            "type": "folder"
+        },
+        "bookmark_menu": {
+            "children": [
+            ],
+            "description": "Bookmarks located in Bookmarks Menu",
+            "expanded": true,
+            "expanded_sidebar": true,
+            "name": "Bookmarks Menu",
+            "type": "folder"
+        },
+        "other": {
+            "children": [
+                {
+                    "children": [
+                        {
+                            "description": "",
+                            "keyword": "",
+                            "name": "cgit - A hyperfast web frontend for git repositories written in C.",
+                            "type": "url",
+                            "url": "https://git.zx2c4.com/cgit/about/",
+                            "visit_count": 0
+                        },
+                        {
+                            "description": "",
+                            "keyword": "",
+                            "name": "GitList - An elegant and modern git repository viewer",
+                            "type": "url",
+                            "url": "http://gitlist.org/",
+                            "visit_count": 0
+                        },
+                        {
+                            "description": "",
+                            "keyword": "",
+                            "name": "Log - stagit - static git page generator",
+                            "type": "url",
+                            "url": "https://git.codemadness.org/stagit/",
+                            "visit_count": 0
+                        },
+                        {
+                            "description": "",
+                            "keyword": "",
+                            "name": "P3X GitList",
+                            "type": "url",
+                            "url": "https://gitlist.patrikx3.com/gitlist.git/blob/master/README.md",
+                            "visit_count": 0
+                        },
+                        {
+                            "description": "",
+                            "keyword": "",
+                            "name": "Migrating from cgit to stagit - a3nm's blog",
+                            "type": "url",
+                            "url": "https://a3nm.net/blog/cgit_stagit.html",
+                            "visit_count": 0
+                        },
+                        {
+                            "description": "",
+                            "keyword": "",
+                            "name": "icy's git forge",
+                            "type": "url",
+                            "url": "https://git.icyphox.sh/",
+                            "visit_count": 0
+                        },
+                        {
+                            "description": "",
+                            "keyword": "",
+                            "name": "Self-hosting Git · peppe.rs",
+                            "type": "url",
+                            "url": "https://peppe.rs/posts/self-hosting_git/",
+                            "visit_count": 0
+                        }
+                    ],
+                    "description": "",
+                    "expanded": false,
+                    "expanded_sidebar": false,
+                    "name": "git webpage/viewer-only",
+                    "type": "folder"
+                }
+            ],
+            "description": "All other bookmarks",
+            "expanded": true,
+            "expanded_sidebar": true,
+            "name": "Unsorted Bookmarks",
+            "type": "folder"
+        }
+    },
+    "version": 1
 }

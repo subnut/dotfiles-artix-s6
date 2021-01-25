@@ -8,6 +8,7 @@ artools-base
 base
 bat
 bspwm
+busybox
 clang
 clipster
 colordiff
@@ -16,6 +17,7 @@ efibootmgr
 elogind-s6
 eog
 evince
+fakeroot
 falkon
 fd
 feh
@@ -30,11 +32,13 @@ htop
 i3lock-color
 kitty
 lf-bin
+libgit2
 light
 linux
 linux-firmware
 lsof
 lxappearance-gtk3
+make
 man-db
 mpv
 musl
@@ -59,6 +63,7 @@ screenkey
 sx
 sxhkd-git
 tlp-s6
+toybox
 tree
 ttf-joypixels
 udisks2
