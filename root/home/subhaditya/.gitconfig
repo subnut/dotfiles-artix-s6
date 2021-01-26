@@ -1,0 +1,8 @@
+[user]
+	name = Subhaditya Nath
+	email = sn03.general@gmail.com
+	signingkey = 637557108F5322F6
+[commit]
+	gpgsign = true
+[init]
+	defaultBranch = main

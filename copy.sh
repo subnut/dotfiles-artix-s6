@@ -6,6 +6,7 @@ ROOT_DIR=$(
 cd "$ROOT_DIR"
 
 cp /etc/modprobe.d/alsa.conf	-t	./root/etc/modprobe.d 			-rv
+cp ~/.config/nvim/init.vim	-t	./root/home/subhaditya/.config/nvim	-rv
 cp ~/.config/sx			-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/kitty		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/bspwm		-t	./root/home/subhaditya/.config		-rv
@@ -15,9 +16,9 @@ cp ~/.config/fontconfig		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/qt5ct		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/polybar		-t	./root/home/subhaditya/.config		-rv
 cp ~/.local/bin				./root/home/subhaditya/.local/		-rv
-cp ~/.zshrc				./root/home/subhaditya/.zshrc
-cp ~/.p10k.zsh				./root/home/subhaditya/.p10k.zsh
-cp ~/.config/nvim/init.vim	-t	./root/home/subhaditya/.config/nvim	-rv
+cp ~/.zshrc			-t	./root/home/subhaditya/
+cp ~/.p10k.zsh			-t	./root/home/subhaditya/
+cp ~/.gitconfig			-t	./root/home/subhaditya/
 
 pacman -Qe | cut -d' ' -f1 > ./all_installed_programs
 
