@@ -647,3 +647,38 @@ _udisksctl_completion() { # {{{
 }
 # }}}
 complete -o nospace -F _udisksctl_completion udisksctl
+media_control() {
+	local input
+	while true
+	do
+		clear
+		echo $input
+		printf "> "
+		read -k 1 input
+		case "$input" in
+			q)
+				clear
+				return;;
+			p|\ )
+				playerctl play-pause;;
+			P)
+				playerctl previous ;;
+			n)
+				playerctl next;;
+			s)
+				playerctl stop;;
+			0)
+				playerctl position 0;;
+			,)
+				playerctl position 5-;;
+			\.)
+				playerctl position 5+;;
+			+|=)
+				amixer set Master 5%+ &>/dev/null;;
+				# playerctl volume 0.05+;;
+			-)
+				amixer set Master 5%- &>/dev/null;;
+				# playerctl volume 0.05-;;
+			esac
+		done
+}
