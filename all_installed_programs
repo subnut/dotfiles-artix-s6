@@ -2,6 +2,7 @@ acpi_call
 acpid
 acpid-s6
 alsa-utils
+alsaequal
 arc-gtk-theme
 arc-icon-theme
 artools-base
@@ -28,6 +29,7 @@ git
 gnome-calculator
 gparted
 grub
+gst-plugins-good
 htop
 i3lock-color
 kitty
@@ -40,9 +42,12 @@ lsof
 lxappearance-gtk3
 make
 man-db
+mingetty
 mpv
 musl
 nautilus
+ncdu
+neofetch
 neovim
 networkmanager
 networkmanager-s6
@@ -51,7 +56,9 @@ ntfs-3g
 openssh
 patch
 picom
+playerctl
 polybar
+pragha
 python
 python-pip
 qt5ct

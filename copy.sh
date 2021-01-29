@@ -19,6 +19,8 @@ cp ~/.local/bin				./root/home/subhaditya/.local/		-rv
 cp ~/.zshrc			-t	./root/home/subhaditya/
 cp ~/.p10k.zsh			-t	./root/home/subhaditya/
 cp ~/.gitconfig			-t	./root/home/subhaditya/
+cp ~/.asoundrc			-t	./root/home/subhaditya/
+cp ~/.alsaequal.bin		-t	./root/home/subhaditya/
 
 pacman -Qe | cut -d' ' -f1 > ./all_installed_programs
 

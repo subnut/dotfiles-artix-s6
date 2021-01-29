@@ -8,6 +8,7 @@ xsetroot -cursor_name left_ptr &
 xset r rate 250 30
 
 # Set CapsLock to LeftCtrl
+
 #Set XF86Favorites (Fn+F12 on E495) to CapsLock
 xmodmap -e "keysym XF86Favorites = Caps_Lock"
 #xmodmap -e "remove Lock = Caps_Lock"
@@ -18,17 +19,26 @@ xmodmap -e "keysym XF86Favorites = Caps_Lock"
 #xmodmap -e "keysym XF86Favorites = Caps_Lock"
 #xmodmap -e "add Lock = Caps_Lock"
 #xmodmap -e "add control = Control_L"
-spare_modifier="Hyper_L"
+
+# spare_modifier="Hyper_L"
+# xmodmap -e "remove Lock = Caps_Lock"
+# xmodmap -e "keysym Caps_Lock = $spare_modifier"
+# xmodmap -e "remove mod4 = $spare_modifier"
+# # Hyper_L is mod4 by default
+# xmodmap -e "add control = $spare_modifier"
+# xmodmap -e "keycode any = Caps_Lock"
+# xmodmap -e "add Lock = Caps_Lock"
+# killall xcape
+# xcape -t 150 -e "$spare_modifier=Caps_Lock"
+# # NOTE: DO NOT PUT SPACES AROUND THE EQUAL SIGN
+
 xmodmap -e "remove Lock = Caps_Lock"
-xmodmap -e "keysym Caps_Lock = $spare_modifier"
-xmodmap -e "remove mod4 = $spare_modifier"
-# Hyper_L is mod4 by default
-xmodmap -e "add control = $spare_modifier"
-xmodmap -e "keycode any = Caps_Lock"
+xmodmap -e "remove control = Control_L"
+xmodmap -e "keysym Caps_Lock = Control_L"
+xmodmap -e "keysym Print = Caps_Lock"
+xmodmap -e "keysym F13 = Print"
 xmodmap -e "add Lock = Caps_Lock"
-killall xcape
-xcape -t 150 -e "$spare_modifier=Caps_Lock"
-# NOTE: DO NOT PUT SPACES AROUND THE EQUAL SIGN
+xmodmap -e "add control = Control_L"
 
 
 killall -q sxhkd

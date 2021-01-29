@@ -323,6 +323,7 @@ done
 }
 
 #### End of plugins ##########################
+unalias md
 
 
 ## fzf Fuzzy Finder
@@ -356,13 +357,13 @@ alias runbat=my_run_bat_4
 
 
 
-yays () { yay -S $(yay -Ss $* | cut -d' ' --fields=1 | grep .  | fzf --multi) --needed }
+yays () { yay -S $(yay -Ss $* | cut -d ' ' -f 1 | grep .  | fzf --multi) --needed }
 yayss () { yay -Ss $* }
-pacs () { sudo pacman -S $(pacman -Ss $* | cut -d' ' --fields=1 | grep . | cut --fields=2 -d'/' | fzf --multi) --needed }
+pacs () { sudo pacman -S $(pacman -Ss $* | cut -d ' ' -f 1 | grep . | cut -f 2 -d '/' | fzf --multi) --needed }
 alias pacsss="pacman -Ss"
-pacss() { pacman -Ss $* | cut --fields=2 -d'/' | cut --fields=1 -d' '| grep . | fzf --multi --preview-window 'right:50%:nohidden:wrap' --preview 'pacman -Si {}' }
-pacr () { sudo pacman -R $(pacman -Qe $* | cut --fields=2 -d'/' | cut --fields=1 -d' '| fzf --multi --preview-window 'right:50%:nohidden:wrap' --preview 'pacman -Qi {} | grep "Name\|Version\|Description\|Required By\|Optional For\|Install Reason\|Size\|Groups" | cat') }
-pacrr () { sudo pacman -R $(pacman -Q $* | cut --fields=2 -d'/' | cut --fields=1 -d' '| fzf --multi --preview-window 'right:50%:nohidden:wrap' --preview 'pacman -Qi {} | grep "Name\|Version\|Description\|Required By\|Optional For\|Install Reason\|Size\|Groups" | cat') }
+pacss() { pacman -Ss $* | cut -f 2 -d'/' | cut -f 1 -d' '| grep . | fzf --multi --preview-window 'right:50%:nohidden:wrap' --preview 'pacman -Si {}' }
+pacr () { sudo pacman -R $(pacman -Qe $* | cut -f 2 -d'/' | cut -f 1 -d' '| fzf --multi --preview-window 'right:50%:nohidden:wrap' --preview 'pacman -Qi {} | grep "Name\|Version\|Description\|Required By\|Optional For\|Install Reason\|Size\|Groups" | cat') }
+pacrr () { sudo pacman -R $(pacman -Q $* | cut -f 2 -d'/' | cut -f 1 -d' '| fzf --multi --preview-window 'right:50%:nohidden:wrap' --preview 'pacman -Qi {} | grep "Name\|Version\|Description\|Required By\|Optional For\|Install Reason\|Size\|Groups" | cat') }
 
 alias ydl=youtube-dl
 my_calendar () { while true; do tput civis;clear; cal; sleep $(( 24*60*60 - `date +%H`*60*60 - `date +%M`*60 - `date +%S` )); done }
@@ -388,7 +389,7 @@ alias cameradisable="sudo chmod -r /dev/video*"
 alias cameraenable="sudo chmod ug+r /dev/video*"
 alias camerastatus="l /dev/video*"
 
-if ! [[ -z $MY_NVIM_BG ]] && [[ $KITTY_WINDOW_ID -eq 1 ]];then
+if ! [[ -z $MY_NVIM_BG ]] && [[ $KITTY_WINDOW_ID -eq 1 ]] && [[ $SHLVL -eq 3 ]];then
 	echo 'if [[ $MY_NVIM_BG == "light" ]];then export MY_NVIM_BG="dark"; alias colorls="colorls"; export BAT_THEME="gruvbox (Dark) (Hard)"; fi' > ~/.config/kitty/custom_zsh_source
 fi
 
