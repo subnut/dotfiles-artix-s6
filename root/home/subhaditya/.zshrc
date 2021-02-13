@@ -453,6 +453,7 @@ my_diff () { colordiff -u $* | less }
 alias diff=my_diff
 
 export GPG_TTY=$(tty)
+alias git='DISPLAY= git' # we unset DISPLAY to make gpg-agent use pinentry-curses instead of pinentry-gtk-2
 alias g=git
 alias ga='git add'
 alias gaa='git add --all'
