@@ -660,7 +660,7 @@ media_control() {
 				clear
 				return;;
 			p|\ )
-				playerctl play-pause;;
+				playerctl -a play-pause;;
 			P)
 				playerctl previous ;;
 			n)
@@ -682,3 +682,31 @@ media_control() {
 			esac
 		done
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if [ $(tty) = '/dev/tty1' ]; then; sx; fi

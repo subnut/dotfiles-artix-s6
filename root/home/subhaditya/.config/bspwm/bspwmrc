@@ -32,14 +32,15 @@ xmodmap -e "keysym XF86Favorites = Caps_Lock"
 # xcape -t 150 -e "$spare_modifier=Caps_Lock"
 # # NOTE: DO NOT PUT SPACES AROUND THE EQUAL SIGN
 
-xmodmap -e "remove Lock = Caps_Lock"
-xmodmap -e "remove control = Control_L"
-xmodmap -e "keysym Caps_Lock = Control_L"
-xmodmap -e "keysym Print = Caps_Lock"
-xmodmap -e "keysym F13 = Print"
-xmodmap -e "add Lock = Caps_Lock"
-xmodmap -e "add control = Control_L"
-
+sh -c ' \
+xmodmap -e "remove Lock = Caps_Lock"; \ 
+xmodmap -e "remove control = Control_L"; \ 
+xmodmap -e "keysym Caps_Lock = Control_L"; \ 
+xmodmap -e "keysym Print = Caps_Lock"; \ 
+xmodmap -e "keysym F13 = Print"; \ 
+xmodmap -e "add Lock = Caps_Lock"; \ 
+xmodmap -e "add control = Control_L"; \ 
+' &
 
 killall -q sxhkd
 sh -c "sxhkd &> /dev/null &"
@@ -50,20 +51,21 @@ disown
 
 if ! [[ `bspc query --desktops --names` =~ "Desktop" ]]
 then
-	for MONITOR in $(bspc query -M --names)
-	do
-		bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII $(
-		for y in $(bspc query -D -m $MONITOR --names | grep temp)
-		do
-				echo -n "$y "
-		done
+  for MONITOR in $(bspc query -M --names)
+  do
+    bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII \
+$(
+    for y in $(bspc query -D -m $MONITOR --names | grep temp)
+    do
+        echo -n "$y "
+    done
 )
-	done
+ done
 else
-	for MONITOR in $(bspc query -M --names)
-	do
-		bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXI
-	done
+  for MONITOR in $(bspc query -M --names)
+  do
+    bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXI
+  done
 fi
 
 kill $(pgrep --full "this is a comment for my borderer")
@@ -109,6 +111,7 @@ bspc rule -a Safeeyes state=floating layer=above fullscreen=off focus=off
 bspc rule -a Clipster layer=above
 bspc rule -a mpv state=pseudo_tiled
 bspc rule -a Pulseaudio-equalizer-gtk state=floating
+bspc rule -a GParted state=floating layer=above
 
 killall xmousepasteblock
 sh -c "xmousepasteblock &> /dev/null &"
@@ -136,5 +139,5 @@ if pidof acpid; then true; else zsh <<< "kitty sh -c 'echo \"Starting acpid ...\
 if [[ -r /dev/video0 || -r /dev/video1 ]]; then zsh <<< "kitty sh -c 'echo \"Disabling camera ...\"; sudo chmod -r /dev/video*' &"; fi &
 
 killall -q picom
-picom &> /dev/null &
+picom --experimental-backends &> /dev/null &
 disown
