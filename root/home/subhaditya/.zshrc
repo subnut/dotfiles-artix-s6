@@ -417,12 +417,14 @@ toggle_theme () { # {{{
 		alias colorls="colorls --light"
 		export BAT_THEME="gruvbox (Light) (Hard)"
 		echo 'if [[ $MY_NVIM_BG == "dark" ]];then export MY_NVIM_BG="light"; alias colorls="colorls --light"; export BAT_THEME="gruvbox (Light) (Hard)"; fi' > ~/.config/kitty/custom_zsh_source
+		alias alsamixer='alsamixer -g'
 	else if [[ $MY_NVIM_BG == 'light' ]]
 	then export MY_NVIM_BG='dark'
 		kitty @ set-colors -a -c ~/.config/kitty/gruvbox_dark_hard.conf
 		alias colorls="colorls"
 		export BAT_THEME="gruvbox (Dark) (Hard)"
 		echo 'if [[ $MY_NVIM_BG == "light" ]];then export MY_NVIM_BG="dark"; alias colorls="colorls"; export BAT_THEME="gruvbox (Dark) (Hard)"; fi' > ~/.config/kitty/custom_zsh_source
+		unalias alsamixer
 	fi
 	fi
 	echo -n "get_theme\n" | kitty @ send-text -t="title:subhaditya@$(cat /proc/sys/kernel/hostname)" --stdin
@@ -465,8 +467,8 @@ alias gca='git commit -v -a'
 alias gp='git push'
 alias gpf='git push --force-with-lease'
 alias gpull='git pull'
-my_gcm () { git commit -m "$*" }
-alias gcm=my_gcm
+gcm () { git commit    -m "$*" }
+gcma() { git commit -a -m "$*" }
 alias gst='git status'
 alias gsw='git switch'
 

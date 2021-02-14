@@ -46,10 +46,11 @@ augroup END
 
 " Custom settings
 " ---------------
+" set tildeop         " use ~<motion> to change case of characters over <motion>
 " set colorcolumn=+1
+let &colorcolumn='+'.join(range(1,100),',+')
 set splitright      " default split direction
 set splitbelow      " default split direction
-set tildeop         " use ~<motion> to change case of characters over <motion>
 set ignorecase      " Ignore uppercase and lowercase
 set smartcase       " If search contains UPPERCASE letter, then set "noignorecase"
 set mouse=a
@@ -97,11 +98,6 @@ nnoremap <silent><expr> <CR> (v:count ? 'G' : '<CR>')
 " ---------
 
 call plug#begin()   " Make sure you use single-quotes in all Plug commands below
-" " YouCompleteMe   {{{2
-" " -------------
-" " Plug 'ycm-core/YouCompleteMe', { 'do': './install.py', 'on': [] }
-" " Initialized later
-" " }}}
 
 " NCM2
 " -----------------------------------------------------------------------
@@ -185,11 +181,10 @@ Plug 'tpope/vim-fugitive', {'on': []}       " Needed by GV, optional for airline
 
 " Statusline
 Plug 'bling/vim-bufferline'
-Plug 'vim-airline/vim-airline', { 'on': [] }
+" Plug 'vim-airline/vim-airline', { 'on': [] }
 
 " Python
 " -------
-" Plug 'nvie/vim-flake8', { 'for': 'python' }                   " Python linter
 Plug 'Vimjas/vim-python-pep8-indent', { 'for': 'python' }   " Python PEP8 autoindent
 Plug 'kalekundert/vim-coiled-snake', { 'for': 'python' }    " Python folding
 Plug 'psf/black', { 'branch': 'stable', 'on': [] }          " Auto-formatter
@@ -239,14 +234,12 @@ let g:undotree_WindowLayout = 2
 let g:undotree_SetFocusWhenToggle = 1
 Plug 'simnalamburt/vim-mundo', {'on': 'MundoToggle'}
 let g:mundo_preview_bottom = 1
-Plug 'svermeulen/vim-yoink', {'on': []}                         " Clipboard
 Plug 'inkarkat/vim-ShowTrailingWhitespace', {'on': []}          " Trailing whitespace
 " Plug 'subnut/vim-smoothie', {'branch': 'devel'}               " Smooth-scroll
 " Plug 'psliwka/vim-smoothie'                                   " Smooth-scroll
 Plug 'mox-mox/vim-localsearch'
 Plug 'justinmk/vim-sneak', {'on': []}                           " s<char><char> (z<char><char> for operator-pending mode)
 Plug 'subnut/nvim-ghost.nvim', {'on': [], 'do': ':call nvim_ghost#installer#install()', 'branch': 'devel'}
-let g:nvim_ghost_logging_enabled = 1
 
 " Vanity
 " ------
@@ -257,17 +250,16 @@ Plug 'kkoomen/vim-doge', {'do':{->doge#install()}, 'on': ['<Plug>(doge-generate)
 call plug#end()
 augroup delayed_plug_load
     au!
-    au VimEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-yoink')")})
     au BufEnter *     ++once call timer_start(10, {id->execute("call plug#load('nvim-ghost.nvim')")})
     " au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('ale')")})
-    au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-sneak')")})
+    au BufEnter *     ++once call timer_start(800, {id->execute("call plug#load('vim-sneak')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('fzf')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('fzf.vim')")})
     au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-fugitive')")})
     au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-gitgutter')|doau gitgutter CursorHold")})
-    au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-airline')")})
+    " au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-airline')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-ShowTrailingWhitespace')")})
-    au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-abolish')")})
+    au BufEnter *     ++once call timer_start(1000, {id->execute("call plug#load('vim-abolish')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('quick-scope')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('black')")})
 
@@ -281,23 +273,8 @@ augroup delayed_plug_load
 augroup end
 augroup black_on_write
     au!
-    autocmd BufWritePre * if &ft == "python" | execute ':Black' | endif
+    autocmd BufWritePre * if &ft == "python" | let &ch=2 | execute ':Black' | endif
 augroup end
-
-" YouCompleteMe lazy loading
-" ---------------------------   " {{{2
-"let g:YouCompleteMeLazyLoaded = 0
-"function! LazyLoadingYMC()
-"  if g:YouCompleteMeLazyLoaded == 0
-"    let g:YouCompleteMeLazyLoaded = 1
-"    call plug#load('YouCompleteMe') | call youcompleteme#Enable()
-"  endif
-"endfunction
-"autocmd InsertEnter * call LazyLoadingYMC()
-"autocmd BufWinEnter * call timer_start(0, {id->execute('call LazyLoadingYMC()')} )
-"autocmd UIEnter * call timer_start(0, {id->execute('call LazyLoadingYMC()')} )
-"autocmd InsertEnter * ++once call timer_start(0, {id->execute("call plug#load('YouCompleteMe')")} )
-" }}}
 "}}}
 
 
@@ -780,24 +757,6 @@ let g:indentLine_char = '│'
 let g:indentLine_setColors = 0
 " nnoremap <silent> <C-i> :IndentLinesToggle <CR>
 
-" vim-yoink
-" ---------
-nmap p <plug>(YoinkPaste_p)
-nmap P <Plug>(YoinkPaste_P)
-" Rotate Yank ring
-nmap [y <plug>(YoinkRotateBack)
-nmap ]y <plug>(YoinkRotateForward)
-" Alt+P and Alt+Shift+P to change "current" paste
-nmap <a-p> <plug>(YoinkPostPasteSwapBack)
-nmap <a-s-p> <plug>(YoinkPostPasteSwapForward)
-" Do not change cursor position after yanking
-nmap y <plug>(YoinkYankPreserveCursorPosition)
-xmap y <plug>(YoinkYankPreserveCursorPosition)
-let g:yoinkIncludeDeleteOperations = 1
-let g:yoinkMoveCursorToEndOfPaste = 1       " ... after pasting
-let g:yoinkSwapClampAtEnds = 0              " Cycle thru the list while swapping
-let g:yoinkMaxItems = 25
-
 " vim-localsearch
 " ---------------
 " Toggle local search (leader is backlash \, the one beneath Backspace)
@@ -1132,6 +1091,8 @@ let g:gitgutter_highlight_linenrs = 1
 
 " nvim-ghost.nvim
 " --------------
+let g:nvim_ghost_disabled = 1
+let g:nvim_ghost_logging_enabled = 1
 aug nvim_ghost_user_autocommands
     au!
     au User www.reddit.com set filetype=markdown
