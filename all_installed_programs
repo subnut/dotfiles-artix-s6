@@ -32,7 +32,6 @@ gst-plugins-good
 htop
 i3lock-color
 kitty
-lf-bin
 libgit2
 light
 linux
@@ -61,6 +60,7 @@ pv
 python
 python-pip
 qt5ct
+ranger
 reflector
 ripgrep
 rofi
