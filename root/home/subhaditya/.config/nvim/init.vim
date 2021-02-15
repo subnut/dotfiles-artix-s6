@@ -46,9 +46,9 @@ augroup END
 
 " Custom settings
 " ---------------
-" set tildeop         " use ~<motion> to change case of characters over <motion>
 " set colorcolumn=+1
-let &colorcolumn='+'.join(range(1,100),',+')
+" let &colorcolumn = exists('$MY_NVIM_BG') ? '+'.join(range(1,100),',+') : ''
+" set tildeop         " use ~<motion> to change case of characters over <motion>
 set splitright      " default split direction
 set splitbelow      " default split direction
 set ignorecase      " Ignore uppercase and lowercase
@@ -67,6 +67,7 @@ set autoread
 set autowrite
 set number relativenumber
 set signcolumn=yes
+
 nnoremap <silent> <C-n> :set number! relativenumber!<CR>
 nnoremap <silent> <C-A-n> :set relativenumber!<CR>
 au User AirlineAfterInit ++once nnoremap <silent> <c-v> <cmd>set virtualedit=all<CR><c-v><cmd>au User AirlineModeChanged ++once set virtualedit=<CR>
@@ -92,6 +93,9 @@ nnoremap <leader>i <cmd>IndentLinesToggle<cr>
 
 " Goto specific line-number using <LineNr>Enter
 nnoremap <silent><expr> <CR> (v:count ? 'G' : '<CR>')
+
+" buffers
+nnoremap <leader>l :ls<CR>
 
 
 " Plugins{{{1
@@ -180,8 +184,10 @@ Plug 'junegunn/gv.vim', {'on': 'GV'}        " Commit browser
 Plug 'tpope/vim-fugitive', {'on': []}       " Needed by GV, optional for airline-branch extension
 
 " Statusline
-Plug 'bling/vim-bufferline'
-" Plug 'vim-airline/vim-airline', { 'on': [] }
+" Plug 'bling/vim-bufferline'
+Plug 'vim-airline/vim-airline', { 'on': [] }
+" Plug 'itchyny/lightline.vim'
+let g:lightline = {}
 
 " Python
 " -------
@@ -257,7 +263,7 @@ augroup delayed_plug_load
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('fzf.vim')")})
     au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-fugitive')")})
     au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-gitgutter')|doau gitgutter CursorHold")})
-    " au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-airline')")})
+    " au BufEnter *     ++once call timer_start(1000, {id->execute("call plug#load('vim-airline')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-ShowTrailingWhitespace')")})
     au BufEnter *     ++once call timer_start(1000, {id->execute("call plug#load('vim-abolish')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('quick-scope')")})
@@ -316,12 +322,14 @@ endfun  " }}}
 augroup kitty_terminal customization
     autocmd!
     autocmd ColorScheme * call s:kitty_term_custom()
-    autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20
+    " autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20
+    autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor
     " autocmd ColorScheme * hi clear ALEErrorSign
     " autocmd ColorScheme * hi clear ALEWarningSign
 augroup end
 call s:kitty_term_custom()
-set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20-Cursor/lCursor
+" set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20-Cursor/lCursor
+set guicursor=n-v-c-sm:block-Cursor/lCursor
 endif
 
 " gruvbox-material
@@ -333,22 +341,18 @@ let g:gruvbox_material_sign_column_background = 'none'
 let g:gruvbox_material_background = 'hard'
 let g:gruvbox_material_palette = 'mix'
 let g:gruvbox_material_enable_italic = 1
-au colorscheme_overrides ColorScheme gruvbox-material hi CurrentWord gui=underline
+au colorscheme_overrides ColorScheme gruvbox-material hi CurrentWord gui=underline cterm=underline
 au colorscheme_overrides ColorScheme gruvbox-material if get(g:,'gruvbox_material_transparent_background',0) | hi clear Cursorline | endif
+au colorscheme_overrides ColorScheme gruvbox-material silent! exec 'hi CursorLineNr guibg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'gui')
+au colorscheme_overrides ColorScheme gruvbox-material silent! exec 'hi CursorLineNr ctermbg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'cterm')
 
 " set colorscheme
 " -----------
 " colorscheme gruvbox-material
-let g:my_env_bg = $MY_NVIM_BG
 fun My_bg_setter()
-    if g:my_env_bg ==? 'light'
-        set background=light
-        colorscheme gruvbox-material
-    else
-        set background=dark
-        colorscheme gruvbox-material
-        " colorscheme gruvbox
-    endif
+    let &background = get(environ(),'MY_NVIM_BG','dark')
+    colorscheme gruvbox-material
+    let g:lightline.colorscheme = 'gruvbox_material'
 endfun
 call My_bg_setter()
 
@@ -381,10 +385,31 @@ augroup end
 
 " Get the higlight group of the character under cursor
 " ----------------------------------------------------
-fun Get_hi_group()
-    echo synIDattr(synID(line('.'), col('.'), 1), 'name')
+fun GetHiGroup()
+    return synIDattr(synID(line('.'), col('.'), 1), 'name')
 endfun
-command! GetHiGroup call Get_hi_group()
+command! GetHiGroup echo GetHiGroup()
+
+" Colorcolumn toggler
+" ------------------
+fun ColorColumnToggle(local)
+    if a:local
+        if &l:colorcolumn == 0
+            let &l:colorcolumn = '+'.join(range(1,100),',+')
+        else
+            let &l:colorcolumn = 0
+        endif
+    else
+        if &colorcolumn == 0
+            let &colorcolumn = '+'.join(range(1,100),',+')
+        else
+            let &colorcolumn = 0
+        endif
+    endif
+endfun
+command! ColorColumnToggle      call ColorColumnToggle(0)
+command! ColorColumnToggleLocal call ColorColumnToggle(1)
+
 
 
 " Advanced customization
@@ -556,12 +581,15 @@ let g:ale_sign_warning = '🔸'
 
 let g:ale_python_flake8_options='--extend-ignore E231,E252,E501'
 
-" vim-airline
+" vim-bufferline
 " -----------
-" set noshowmode
 let g:bufferline_echo = 0
 let g:bufferline_modified = ' +'
 let g:bufferline_solo_highlight = 1
+
+" vim-airline {{{1
+" -----------
+" set noshowmode
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
@@ -580,10 +608,10 @@ let g:my_airline_sep_raw = '%#__accent_bold#'.g:my_airline_sep.'%#__restore__#'
 let g:my_airline_customcurpos_enabled = 0
 let g:my_airline_customcurpos_short = 0
 function! s:airline_custom()
-fun! MyAirlineSeparatorSpacerFunc() " {{{1
+fun! MyAirlineSeparatorSpacerFunc() " {{{2
     return g:airline_symbols.space . g:my_airline_sep .g:airline_symbols.space
 endfun
-fun! MyAirlineSeparatorWrapper(name,side)   " {{{1
+fun! MyAirlineSeparatorWrapper(name,side)   " {{{2
     if empty(airline#parts#get(a:name))
         return ''
     endif
@@ -605,12 +633,12 @@ fun! MyAirlineSeparatorWrapper(name,side)   " {{{1
         return airline#section#create([part_name, a:name])
     endif
 endfun  " }}}
-fun! Airline_bufferline_overrides() "{{{1
+fun! Airline_bufferline_overrides() "{{{2
     " hi bufferline_selected gui=NONE
     if exists('$NVIM_AIRLINE_MODE_NONBOLD') | execute('hi bufferline_selected gui=NONE') | endif
 endfun
 call Airline_bufferline_overrides()
-fun! AirlineRemoveModeBold()    " {{{1
+fun! AirlineRemoveModeBold()    " {{{2
     let initial_value = airline#section#create_left(['mode'])
     call airline#parts#define_accent('mode', 'none')
     if len(split(g:airline_section_a,initial_value)) == 1
@@ -621,7 +649,12 @@ fun! AirlineRemoveModeBold()    " {{{1
     endif
 endfun
 if exists('$NVIM_AIRLINE_MODE_NONBOLD') | call AirlineRemoveModeBold() | endif
-fun! CustomAirlineCursorPos()   " {{{1
+fun! Airline_bufferline_overrides() "{{{2
+    " hi bufferline_selected gui=NONE
+    if exists('$NVIM_AIRLINE_MODE_NONBOLD') | execute('hi bufferline_selected gui=NONE') | endif
+endfun
+call Airline_bufferline_overrides()
+fun! CustomAirlineCursorPos()   " {{{2
     let g:my_airline_customcurpos_short = get(g:,'my_airline_customcurpos_short', 0)
     if airline#util#winwidth() > 79 || !g:my_airline_customcurpos_short
     return line('.') . ':' . col('.')
@@ -633,22 +666,24 @@ let g:my_airline_customcurpos_enabled = get(g:,'my_airline_customcurpos_enabled'
 call airline#parts#define_function('CustomCurPos', 'CustomAirlineCursorPos')
 call airline#parts#define_condition('CustomCurPos', 'g:my_airline_customcurpos_enabled')
 " call airline#parts#define_condition('CustomCurPos', 'mode() =~? "v" || mode() ==# "\<C-V>"')  " }}}
-" g:airline_section_x   " {{{1
+" g:airline_section_x   " {{{2
 let g:airline_section_x = airline#section#create_right(['bookmark', 'tagbar', 'vista', 'gutentags', 'omnisharp', 'grepper'])
 " i.e. defaults with 'filetype' removed
-" g:airline_section_y   {{{1
+" g:airline_section_y   {{{2
 " let g:airline_section_y = '%{airline#util#wrap(airline#parts#filetype(),0)}%#__accent_bold#%{len(airline#util#prepend(airline#parts#ffenc(),0)) && len(airline#util#wrap(airline#parts#filetype(),0)) ? "  | " : ""}%#__restore__#%{trim(airline#util#prepend(airline#parts#ffenc(),0))}'
 let g:airline_section_y = "%{airline#util#wrap(airline#parts#filetype(),0)}%#__accent_bold#%{len(airline#util#prepend(airline#parts#ffenc(),0)) && len(airline#util#wrap(airline#parts#filetype(),0)) ? ' ' : ''}%#__restore__#%{trim(airline#util#prepend(airline#parts#ffenc(),0))}"
-" g:airline_section_z   {{{1
+" g:airline_section_z   {{{2
 " let g:airline_section_z = airline#section#create(['windowswap', 'obsession']) . '%p%% %#__accent_bold#|%#__restore__# %L' . airline#section#create(['CustomCurPos'])
 let g:airline_section_z = airline#section#create(['windowswap', 'obsession']) . '%p%% ' .g:my_airline_sep_raw.' %L' . MyAirlineSeparatorWrapper('CustomCurPos','l')
 " i.e. default  minus  [ '%p%%'.spc, 'linenr', 'maxlinenr', ':%v' ]
-" g:airline_section_warning     {{{1
+" g:airline_section_warning     {{{2
 " let g:airline_section_warning = airline#section#create(['ycm_warning_count',  'syntastic-warn', 'neomake_warning_count', 'ale_warning_count', 'lsp_warning_count', 'nvimlsp_warning_count', 'languageclient_warning_count', 'coc_warning_count']) . trim(airline#extensions#whitespace#check())
 " let g:airline_section_warning = join(split(g:airline_section_warning, airline#section#create(['whitespace']))) . trim(airline#extensions#whitespace#check())
 " ie default minus 'whitespace', with trimmed whitespace at the end
 " }}}
+call lightline#disable()
 AirlineRefresh
+let &statusline = &l:statusline
 endfun
 augroup airline_customization
     au!
@@ -656,20 +691,31 @@ augroup airline_customization
 augroup end
 nnoremap <silent> <leader>; :call CustomAirlineCursorPosToggler()<CR>
 nnoremap <silent> <leader>: :call CustomAirlineCursorPosLengthToggler()<CR>
-fun! CustomAirlineCursorPosToggler()    " {{{1
+fun! CustomAirlineCursorPosToggler()    " {{{2
     let g:my_airline_customcurpos_enabled += 1
     let g:my_airline_customcurpos_enabled %= 2
     if !g:my_airline_customcurpos_enabled
         let g:my_airline_customcurpos_short = 0
     endif
 endfun  " }}}
-fun! CustomAirlineCursorPosLengthToggler()  " {{{1
+fun! CustomAirlineCursorPosLengthToggler()  " {{{2
     let g:my_airline_customcurpos_short+= 1
     let g:my_airline_customcurpos_short%= 2
     if !g:my_airline_customcurpos_enabled
         let g:my_airline_customcurpos_enabled = 1
     endif
-endfun  " }}}
+endfun  " }}}2
+"}}}1
+
+" lightline.vim
+" -------------
+let g:lightline.tab_component_function = {
+            \ 'filename':       'lightline#tab#filename',
+            \ 'modified':'custom#lightline#tab#modified',
+            \ 'readonly':       'lightline#tab#readonly',
+            \ 'tabnum'  :'custom#lightline#tab#tabnum'
+            \}
+
 
 " Show non-printable characters
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
