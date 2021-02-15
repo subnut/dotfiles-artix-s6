@@ -29,6 +29,7 @@ gnome-calculator
 gparted
 grub
 gst-plugins-good
+herbe-git
 htop
 i3lock-color
 iwd
@@ -85,6 +86,7 @@ vim
 wget
 xcape
 xclip
+xmousepasteblock-git
 xorg-xev
 xorg-xinput
 xorg-xmodmap
