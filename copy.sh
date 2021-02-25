@@ -8,6 +8,7 @@ cd "$ROOT_DIR"
 cp /etc/modprobe.d/alsa.conf	-t	./root/etc/modprobe.d 			-rv
 cp /etc/NetworkManager/conf.d	-t	./root/etc/NetworkManager		-rv
 cp ~/.config/nvim/init.vim	-t	./root/home/subhaditya/.config/nvim	-rv
+cp ~/.config/nvim/tips.md	-t	./root/home/subhaditya/.config/nvim	-rv
 cp ~/.config/nvim/autoload	-t	./root/home/subhaditya/.config/nvim	-rv
 cp ~/.config/sx			-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/kitty		-t	./root/home/subhaditya/.config		-rv
