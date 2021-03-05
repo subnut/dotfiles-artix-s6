@@ -14,7 +14,6 @@ cp ~/.config/sx			-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/kitty		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/bspwm		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/sxhkd		-t	./root/home/subhaditya/.config		-rv
-cp ~/.config/falkon		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/fontconfig		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/qt5ct		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/polybar		-t	./root/home/subhaditya/.config		-rv
