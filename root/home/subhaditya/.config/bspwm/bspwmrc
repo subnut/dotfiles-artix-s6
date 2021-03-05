@@ -32,15 +32,15 @@ xmodmap -e "keysym XF86Favorites = Caps_Lock"
 # xcape -t 150 -e "$spare_modifier=Caps_Lock"
 # # NOTE: DO NOT PUT SPACES AROUND THE EQUAL SIGN
 
-sh -c ' \
-xmodmap -e "remove Lock = Caps_Lock"; \ 
-xmodmap -e "remove control = Control_L"; \ 
-xmodmap -e "keysym Caps_Lock = Control_L"; \ 
-xmodmap -e "keysym Print = Caps_Lock"; \ 
-xmodmap -e "keysym F13 = Print"; \ 
-xmodmap -e "add Lock = Caps_Lock"; \ 
-xmodmap -e "add control = Control_L"; \ 
-' &
+# sh -c ' \
+# xmodmap -e "remove Lock = Caps_Lock"; \
+# xmodmap -e "remove control = Control_L"; \
+# xmodmap -e "keysym Caps_Lock = Control_L"; \
+# xmodmap -e "keysym Print = Caps_Lock"; \
+# xmodmap -e "keysym F13 = Print"; \
+# xmodmap -e "add Lock = Caps_Lock"; \
+# xmodmap -e "add control = Control_L"; \
+# ' &
 
 killall -q sxhkd
 sh -c "sxhkd &> /dev/null &"

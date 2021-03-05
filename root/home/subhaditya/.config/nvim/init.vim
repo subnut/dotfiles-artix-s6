@@ -18,15 +18,15 @@ else
     let $PATH = join(insert(split($PATH, ':'),'/home/subhaditya/.config/nvim/venv/bin',1),':')
 endif " }}}
 " Save Undo history " {{{1
-if has('persistent_undo')                                   " guard for distributions lacking the persistent_undo feature.
-    " define a path to store persistent_undo files
-    let target_path = split(expand('<sfile>:p'),expand('<sfile>:t'))[0] . '.undo_history'
-    if !isdirectory(target_path)                            " if the location does not exist,
-        call system('mkdir -p ' . target_path)              " create the directory and any parent directories
-    endif
-    let &undodir = target_path                              " point Vim to the defined undo directory
-    set undofile                                            " finally, enable undo persistence
-endif   " }}}
+" if has('persistent_undo')                                   " guard for distributions lacking the persistent_undo feature.
+"     " define a path to store persistent_undo files
+"     let target_path = split(expand('<sfile>:p'),expand('<sfile>:t'))[0] . '.undo_history'
+"     if !isdirectory(target_path)                            " if the location does not exist,
+"         call system('mkdir -p ' . target_path)              " create the directory and any parent directories
+"     endif
+"     let &undodir = target_path                              " point Vim to the defined undo directory
+"     set undofile                                            " finally, enable undo persistence
+" endif   " }}}
 
 augroup colorscheme_overrides
     au!
@@ -51,11 +51,15 @@ augroup END
 " set tildeop         " use ~<motion> to change case of characters over <motion>
 set splitright      " default split direction
 set splitbelow      " default split direction
+set equalalways
+set helpheight=0    " Help window height is same as all other windows
 set ignorecase      " Ignore uppercase and lowercase
 set smartcase       " If search contains UPPERCASE letter, then set "noignorecase"
-set mouse=a
+set mouse=ar
 set clipboard+=unnamedplus
 set cursorline
+set undofile                    " keep undo history at &undodir
+set notimeout                   " do not timeout mappings
 " set noexpandtab               " DO NOT replace tabs with spaces
 " set tabstop=4                 " No. of spaces that <TAB> stands for
 " set shiftwidth=0              " i.e. tabstop value will be used for auto-indenting
@@ -68,18 +72,20 @@ set autowrite
 set number relativenumber
 set signcolumn=yes
 
-nnoremap <silent> <C-n> :set number! relativenumber!<CR>
-nnoremap <silent> <C-A-n> :set relativenumber!<CR>
+nnoremap <silent> <C-n>     :set number! relativenumber!<CR>
+nnoremap <silent> <C-A-n>   :set relativenumber!<CR>
+nnoremap <silent> gB        :bprev<CR>
+nnoremap <silent> gb        :bnext<CR>
+nnoremap <silent> <C-l>     :set list!<CR>
 au User AirlineAfterInit ++once nnoremap <silent> <c-v> <cmd>set virtualedit=all<CR><c-v><cmd>au User AirlineModeChanged ++once set virtualedit=<CR>
-nnoremap <silent> gB :bprev<CR>
-nnoremap <silent> gb :bnext<CR>
-" nnoremap <silent> <C-g> :Goyo<CR>
-nnoremap <silent> <C-l> :set list!<CR>
+" nnoremap <silent> <C-g>     :Goyo<CR>
 
 " NOTE: These are pretty darn useful.
     inoremap <a-o> <c-o>
-    inoremap <A-Space> <Esc>
-" inoremap <C-w> <C-o>
+"   inoremap <C-w> <C-o>
+
+" inoremap <A-Space> <Esc>
+" Just use <C-[>
 
 let mapleader = ' '
 com! YankAll %y
@@ -91,11 +97,14 @@ nnoremap <leader>m <cmd>MundoToggle<cr>
 nnoremap <leader>u <cmd>UndotreeToggle<cr>
 nnoremap <leader>i <cmd>IndentLinesToggle<cr>
 
+" Indent lines for tab-indented files
+nnoremap <expr> <leader><S-i> (&l:list ? '<cmd>setl nolist<CR><cmd>setl listchars<<CR>' : '<cmd>setl listchars=tab:│\ <CR><cmd>setl list<CR>')
+
 " Goto specific line-number using <LineNr>Enter
 nnoremap <silent><expr> <CR> (v:count ? 'G' : '<CR>')
 
-" buffers
-nnoremap <leader>l :ls<CR>
+" buffer-switching
+nnoremap <leader>b :ls<CR>:b<Space>
 
 
 " Plugins{{{1
@@ -123,21 +132,15 @@ Plug 'ncm2/ncm2-vim' | Plug 'Shougo/neco-vim'
 Plug 'subnut/ncm2-github-emoji', { 'do': 'python install.py' }
 " -----------------------------------------------------------------------
 
-" LSP
-" ------------------------------------------------------------------------
+" " LSP
+" " ------------------------------------------------------------------------
 " Plug 'prabirshrestha/vim-lsp'
-
-" Integration with ncm2
-" Plug 'ncm2/ncm2-vim-lsp'
-let g:ncm2_vim_lsp_blocklist = ['vim-language-server']
-
-" Server installer
 " Plug 'mattn/vim-lsp-settings'
-if !exists('g:Illuminate_ftblacklist')
-    let g:Illuminate_ftblacklist = []
-endif
-let g:Illuminate_ftblacklist += ['python', 'vim']
-" ------------------------------------------------------------------------
+
+" " Integration with ncm2
+" Plug 'ncm2/ncm2-vim-lsp'
+" let g:ncm2_vim_lsp_blocklist = ['vim-language-server']
+" " ------------------------------------------------------------------------
 
 " Neovim nightly
 " --------------
@@ -159,8 +162,8 @@ endif
 " Colorschemes that support Treesitter but also work in v0.4.4
 " ------------------------------------------------------------
 Plug 'sainnhe/gruvbox-material'
-Plug 'sainnhe/sonokai'
-Plug 'sainnhe/edge'
+Plug 'sainnhe/sonokai', {'on': 'color sonokai'}
+Plug 'sainnhe/edge', {'on': 'color edge'}
 
 
 " File explorer
@@ -184,8 +187,7 @@ Plug 'junegunn/gv.vim', {'on': 'GV'}        " Commit browser
 Plug 'tpope/vim-fugitive', {'on': []}       " Needed by GV, optional for airline-branch extension
 
 " Statusline
-" Plug 'bling/vim-bufferline'
-Plug 'vim-airline/vim-airline', { 'on': [] }
+" Plug 'vim-airline/vim-airline', { 'on': [] }
 " Plug 'itchyny/lightline.vim'
 let g:lightline = {}
 
@@ -202,7 +204,7 @@ Plug 'Yggdroot/indentLine', {'on': 'IndentLinesToggle'}
 " -----------------------------------
 Plug 'tpope/vim-surround'
 Plug 'airblade/vim-rooter'                          " Change root dir
-Plug 'Shougo/echodoc.vim'                           " Echo function usage
+" Plug 'Shougo/echodoc.vim'                           " Echo function usage
 Plug 'machakann/vim-highlightedyank'
 Plug 'tpope/vim-repeat'
 Plug 'Konfekt/FastFold'                             " Better folding
@@ -210,8 +212,10 @@ Plug 'sheerun/vim-polyglot'                         " Polyglot => one who knows 
 Plug 'norcalli/nvim-colorizer.lua'                  " :ColorizerAttachToBuffer
 Plug 'romainl/vim-cool'                             " Remove search highlight automatically
 Plug 'sgur/vim-editorconfig'
-Plug 'unblevable/quick-scope', {'on': []}
 Plug 'subnut/visualstar.vim'
+Plug 'unblevable/quick-scope', {'on': []}
+Plug 'justinmk/vim-sneak', {'on': []}                           " s<char><char> (z<char><char> for operator-pending mode)
+Plug 'mox-mox/vim-localsearch'
 
 
 " Misc
@@ -219,12 +223,8 @@ Plug 'subnut/visualstar.vim'
 "   Plug 'wincent/scalpel'
 " The above functionality can be accessed by simply using the /c switch
 
-" Plug 'chaoren/vim-wordmotion'
 " Plug 'majutsushi/tagbar'
 " Plug 'rhysd/git-messenger.vim', {'on': ['GitMessenger', '<Plug>(git-messenger)']} " :GitMessenger or <Plug>(git-messenger) to see git-blame of current line
-
-" Plug 'tpope/vim-dadbod'
-" Plug 'kristijanhusak/vim-dadbod-completion'
 
 Plug 'AndrewRadev/bufferize.vim'
 Plug 'AndrewRadev/inline_edit.vim', {'on': 'InlineEdit'}
@@ -233,7 +233,6 @@ Plug 'mtth/scratch.vim', {'on': ['Scratch', 'ScratchInsert', 'ScratchPreview', '
 " Plug 'tpope/vim-abolish', {'on': []}                " (c)oe(rc)e to case-change
 Plug 'tpope/vim-commentary'                         " gc<motion> = toggle comment
 Plug 'airblade/vim-gitgutter', {'on': []}           " Git diff
-" Plug 'dense-analysis/ale', {'on': []}               " Auto-linter
 Plug 'vim-syntastic/syntastic'
 Plug 'mbbill/undotree', {'on': 'UndotreeToggle'}
 let g:undotree_WindowLayout = 2
@@ -241,10 +240,6 @@ let g:undotree_SetFocusWhenToggle = 1
 Plug 'simnalamburt/vim-mundo', {'on': 'MundoToggle'}
 let g:mundo_preview_bottom = 1
 Plug 'inkarkat/vim-ShowTrailingWhitespace', {'on': []}          " Trailing whitespace
-" Plug 'subnut/vim-smoothie', {'branch': 'devel'}               " Smooth-scroll
-" Plug 'psliwka/vim-smoothie'                                   " Smooth-scroll
-Plug 'mox-mox/vim-localsearch'
-Plug 'justinmk/vim-sneak', {'on': []}                           " s<char><char> (z<char><char> for operator-pending mode)
 Plug 'subnut/nvim-ghost.nvim', {'on': [], 'do': ':call nvim_ghost#installer#install()', 'branch': 'devel'}
 
 " Vanity
@@ -257,7 +252,6 @@ call plug#end()
 augroup delayed_plug_load
     au!
     au BufEnter *     ++once call timer_start(10, {id->execute("call plug#load('nvim-ghost.nvim')")})
-    " au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('ale')")})
     au BufEnter *     ++once call timer_start(800, {id->execute("call plug#load('vim-sneak')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('fzf')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('fzf.vim')")})
@@ -286,13 +280,14 @@ augroup end
 
 " Set GUI colors
 " --------------
-if has('termguicolors')
+if ($TERM !~ 'linux\|screen') && has('termguicolors')
     set termguicolors
 endif
 syntax enable
 if &termguicolors
     silent! lua require'colorizer'.setup{''}
 endif
+
 
 " kitty-terminal-specific configuration
 " -------------------------------------
@@ -324,23 +319,22 @@ augroup kitty_terminal customization
     autocmd ColorScheme * call s:kitty_term_custom()
     " autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20
     autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor
-    " autocmd ColorScheme * hi clear ALEErrorSign
-    " autocmd ColorScheme * hi clear ALEWarningSign
 augroup end
 call s:kitty_term_custom()
 " set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20-Cursor/lCursor
 set guicursor=n-v-c-sm:block-Cursor/lCursor
 endif
 
+
 " gruvbox-material
 " ----------------
+" let g:gruvbox_material_enable_italic = 1  " Italic is disabled for Recursive Mono
 let g:gruvbox_material_transparent_background = exists('$MY_NVIM_BG') ? 0 : 1
 let g:gruvbox_material_better_performance = 1
 let g:gruvbox_material_sign_column_background = 'none'
-" let g:gruvbox_material_diagnostic_line_highlight = 1
 let g:gruvbox_material_background = 'hard'
 let g:gruvbox_material_palette = 'mix'
-let g:gruvbox_material_enable_italic = 1
+" let g:gruvbox_material_diagnostic_line_highlight = 1
 au colorscheme_overrides ColorScheme gruvbox-material hi CurrentWord gui=underline cterm=underline
 au colorscheme_overrides ColorScheme gruvbox-material if get(g:,'gruvbox_material_transparent_background',0) | hi clear Cursorline | endif
 au colorscheme_overrides ColorScheme gruvbox-material silent! exec 'hi CursorLineNr guibg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'gui')
@@ -354,33 +348,35 @@ fun My_bg_setter()
     colorscheme gruvbox-material
     let g:lightline.colorscheme = 'gruvbox_material'
 endfun
-call My_bg_setter()
+if &termguicolors
+    call My_bg_setter()
+endif
 
 
 " Goyo customization {{{1
-" ------------------
-" let g:goyo_width=100
-" let g:goyo_height=20
-let g:goyo_width='70%'
-fun! s:goyo_enter()
-  set eventignore+=FocusGained
-  let s:saved_signcolumn_state = &l:scl
-  set scl=no
-endfun
-fun! s:goyo_leave()
-    set eventignore-=FocusGained
-    if exists('s:saved_signcolumn_state')
-        let &l:scl = s:saved_signcolumn_state
-        unlet s:saved_signcolumn_state
-    endif
-endfun
-augroup goyo_customization
-    au!
-    autocmd User GoyoEnter nested call <SID>goyo_enter()
-    autocmd User GoyoLeave nested call <SID>goyo_leave()
-    autocmd User GoyoEnter echo
-augroup end
-" }}}1
+" " ------------------
+" " let g:goyo_width=100
+" " let g:goyo_height=20
+" let g:goyo_width='70%'
+" fun! s:goyo_enter()
+"   set eventignore+=FocusGained
+"   let s:saved_signcolumn_state = &l:scl
+"   set scl=no
+" endfun
+" fun! s:goyo_leave()
+"     set eventignore-=FocusGained
+"     if exists('s:saved_signcolumn_state')
+"         let &l:scl = s:saved_signcolumn_state
+"         unlet s:saved_signcolumn_state
+"     endif
+" endfun
+" augroup goyo_customization
+"     au!
+"     autocmd User GoyoEnter nested call <SID>goyo_enter()
+"     autocmd User GoyoLeave nested call <SID>goyo_leave()
+"     autocmd User GoyoEnter echo
+" augroup end
+" " }}}1
 
 
 " Get the higlight group of the character under cursor
@@ -392,7 +388,7 @@ command! GetHiGroup echo GetHiGroup()
 
 " Colorcolumn toggler
 " ------------------
-fun ColorColumnToggle(local)
+fun! ColorColumnToggle(local)
     if a:local
         if &l:colorcolumn == 0
             let &l:colorcolumn = '+'.join(range(1,100),',+')
@@ -409,6 +405,10 @@ fun ColorColumnToggle(local)
 endfun
 command! ColorColumnToggle      call ColorColumnToggle(0)
 command! ColorColumnToggleLocal call ColorColumnToggle(1)
+aug MyCustomColorColumn
+    au!
+    au BufEnter * if &ft == 'gitcommit' | let &l:colorcolumn = '+'.join(range(1,100),',+') | endif
+aug END
 
 
 
@@ -424,7 +424,7 @@ command! ColorColumnToggleLocal call ColorColumnToggle(1)
 
 augroup my_autoclose_au
     au!
-    au BufEnter,FileType * if index(['markdown','html'], &ft) >= 0 | execute("inoremap <silent><buffer><expr> < ((col('.') >= col('$') - 1) ? '<><C-o>i' : '<><C-o>h')") | endif
+    au BufEnter,FileType * if index(['markdown','html'], &ft) >= 0 | execute("inoremap <silent><buffer><expr> < ((col('.') >= col('$') - 1) ? '<><C-o>i' : '<><C-o>h')") | e            letndif
     au BufEnter,FileType * if index(['markdown','html'], &ft) >= 0 | execute("imap <silent><buffer> <> <>") | endif
     " au BufEnter,FileType * if &ft ==# 'markdown' | execute("inoremap <silent><buffer><expr> ` ((col('.') >= col('$') - 1) ? '``<C-o>i' : '``<C-o>h')") | endif
     " au BufEnter,FileType * if &ft ==# 'markdown' | execute("inoremap <buffer><silent> ``` ```<Enter>```<C-o>k<C-o>A") | endif
@@ -458,9 +458,7 @@ function! MyOnBattery() " {{{1
 endfunction
     " }}}
 if MyOnBattery()
-    let g:ale_lint_delay = 5000
-    let g:ale_lint_on_text_changed = 'normal'
-    let g:ncm2#complete_delay = 500
+    let g:ncm2#complete_delay = 1000
     let g:mkdp_refresh_slow = 1 " Only refresh on leaving insert mode
 endif
 
@@ -513,13 +511,13 @@ set gdefault        " Substitute all occurences on a line (i.e. reverse the work
 
 " MarkdownPreview
 " ---------------
-function MarkdownBrowserFirefox(url)    " {{{1
-    silent! execute '!firefox' shellescape('--new-window') string(a:url) | redraw!
+function MarkdownBrowserOtter(url)    " {{{1
+    silent! execute '!otter-browser' shellescape('--new-window') string(a:url) | redraw!
 endfunction
 function MarkdownBrowserQute(url)   " {{{1
     silent! execute '!qutebrowser' shellescape('--target') 'window' string(a:url) '&' | redraw!
 endfunction " }}}
-let g:mkdp_browserfunc='MarkdownBrowserFirefox'
+let g:mkdp_browserfunc='MarkdownBrowserOtter'
 let g:mkdp_auto_close = 0
 
 " FZF
@@ -529,10 +527,8 @@ let g:fzf_action = {
     \ 'ctrl-t': 'tab split',
     \ 'ctrl-x': 'split',
     \ 'ctrl-v': 'vsplit' }
-" Prefix FZF commands
-" let g:fzf_command_prefix = 'FZF'
 if len(split($FZF_DEFAULT_OPTS,'hidden')) - len(split($FZF_DEFAULT_OPTS,'nohidden')) == 1
-let $FZF_DEFAULT_OPTS = join(split($FZF_DEFAULT_OPTS,'hidden'),'nohidden')
+    let $FZF_DEFAULT_OPTS = join(split($FZF_DEFAULT_OPTS,'hidden'),'nohidden')
 endif
 
 if &lines < 15 | let g:fzf_layout = { 'down': '~40%' } | else | let g:fzf_layout = {'window': {'width': 0.9, 'height': 0.8}} | endif
@@ -551,11 +547,6 @@ let g:rooter_silent_chdir = 1
 let g:rooter_resolve_links = 1
 let g:rooter_cd_cmd= 'lcd'  " change directory for the current window only
 
-" Python folding (vim-coiled-snake)
-" --------------
-filetype plugin indent on
-let g:coiled_snake_set_foldtext = 1
-
 " Highlighted yank
 " -----------------
 let g:highlightedyank_highlight_duration = 3000
@@ -568,28 +559,9 @@ let g:highlightedyank_highlight_duration = 3000
 " highlight HighlightedyankRegion cterm=reverse gui=reverse
 " Note that the line should be located AFTER the :colorscheme command execution in your vimrc.  }}}
 
-" ALE
-" ---
-let g:ale_disable_lsp = 1
-let g:ale_completion_enabled = 0
-let g:ale_sign_error = '❌'
-" let g:ale_sign_info = ' i'
-" let g:ale_sign_warning = ' W'
-" let g:ale_sign_info = '💡'
-let g:ale_sign_info = '🔹'
-let g:ale_sign_warning = '🔸'
-
-let g:ale_python_flake8_options='--extend-ignore E231,E252,E501'
-
-" vim-bufferline
+" vim-airline
 " -----------
-let g:bufferline_echo = 0
-let g:bufferline_modified = ' +'
-let g:bufferline_solo_highlight = 1
-
-" vim-airline {{{1
-" -----------
-" set noshowmode
+" set noshowmode {{{1
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
@@ -770,7 +742,7 @@ inoremap <silent><expr> <down>  pumvisible() ? "<c-e><down>"    : "<down>"
 " enable ncm2 for all buffers
     augroup enable_ncm2
         au!
-        autocmd BufEnter * call ncm2#enable_for_buffer()
+        autocmd BufEnter * if &l:ft =~ 'python\|vim' | call ncm2#enable_for_buffer() | endif
     augroup end
 " IMPORTANT: :help Ncm2PopupOpen for more information
     set completeopt=noinsert,menuone,noselect
@@ -801,7 +773,6 @@ let g:indentLine_enabled = 0
 let g:indentLine_char = '│'
 " let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:indentLine_setColors = 0
-" nnoremap <silent> <C-i> :IndentLinesToggle <CR>
 
 " vim-localsearch
 " ---------------
@@ -1133,7 +1104,6 @@ nmap <leader>ga <Plug>(GitGutterStageHunk)
 nmap [g <Plug>(GitGutterPrevHunk)
 nmap ]g <Plug>(GitGutterNextHunk)
 let g:gitgutter_set_sign_backgrounds = 1
-let g:gitgutter_highlight_linenrs = 1
 
 " nvim-ghost.nvim
 " --------------
@@ -1149,3 +1119,8 @@ aug END
 xmap <leader>* <Plug>(VisualstarSearchReplace)
 nmap <leader>* <Plug>(VisualstarSearchReplace)
 
+" ranger integration
+" ------------------
+if exists('$RANGER_LEVEL')
+    nmap q <cmd>q<CR>
+endif

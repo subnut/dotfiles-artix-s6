@@ -1,0 +1,232 @@
+[subhaditya@artixpad ~]$ # Installation
+[subhaditya@artixpad ~]$ sudo pacman -S mpd
+[sudo] password for root:
+resolving dependencies...
+:: There are 2 providers available for libtevent.so=0-64:
+:: Repository world
+   1) tevent
+:: Repository extra
+   2) tevent
+
+Enter a number (default=1):
+:: There are 2 providers available for libao.so=4-64:
+:: Repository world
+   1) libao
+:: Repository extra
+   2) libao
+
+Enter a number (default=1):
+:: There are 2 providers available for libaudiofile.so=1-64:
+:: Repository world
+   1) audiofile
+:: Repository extra
+   2) audiofile
+
+Enter a number (default=1):
+:: There are 2 providers available for libfaad.so=2-64:
+:: Repository world
+   1) faad2
+:: Repository extra
+   2) faad2
+
+Enter a number (default=1):
+:: There are 2 providers available for libfluidsynth.so=2-64:
+:: Repository world
+   1) fluidsynth
+:: Repository extra
+   2) fluidsynth
+
+Enter a number (default=1):
+:: There are 2 providers available for libinstpatch-1.0.so=2-64:
+:: Repository world
+   1) libinstpatch
+:: Repository extra
+   2) libinstpatch
+
+Enter a number (default=1):
+:: There are 2 providers available for libportaudio.so=2-64:
+:: Repository world
+   1) portaudio
+:: Repository extra
+   2) portaudio
+
+Enter a number (default=1):
+:: There are 2 providers available for libmikmod.so=3-64:
+:: Repository world
+   1) libmikmod
+:: Repository extra
+   2) libmikmod
+
+Enter a number (default=1):
+:: There are 2 providers available for libupnp.so=17-64:
+:: Repository world
+   1) libupnp
+:: Repository extra
+   2) libupnp
+
+Enter a number (default=1):
+:: There are 2 providers available for liburing.so=1-64:
+:: Repository world
+   1) liburing
+:: Repository extra
+   2) liburing
+
+Enter a number (default=1):
+:: There are 2 providers available for libyajl.so=2-64:
+:: Repository world
+   1) yajl
+:: Repository extra
+   2) yajl
+
+Enter a number (default=1):
+looking for conflicting packages...
+warning: dependency cycle detected:
+warning: cifs-utils will be installed before its smbclient dependency
+
+Packages (28) audiofile-0.3.6-6  chromaprint-1.5.0-3  cifs-utils-6.12-1  faad2-2.10.0-1
+              fluidsynth-2.1.7-1  ldb-1:2.2.0-3  libao-1.2.2-5  libbsd-0.10.0-2  libgme-0.6.3-1
+              libinstpatch-1.1.6-1  libmad-0.15.1b-9  libmikmod-3.3.11.1-4  libmms-0.6.4-3
+              libmpcdec-1:0.1+r475-3  libnfs-4.0.0-4  libsidplayfp-2.0.2-1  libupnp-1.14.1-1
+              liburing-0.7-2  lmdb-0.9.28-1  openal-1.21.0-1  portaudio-1:19.6.0-7
+              smbclient-4.13.4-1  talloc-2.3.2-1  tevent-1:0.10.2-3  wildmidi-0.4.3-3
+              yajl-2.1.0-4  zziplib-0.13.72-1  mpd-0.22.6-1
+
+Total Installed Size:  44.49 MiB
+
+:: Proceed with installation? [Y/n]
+( 0/28) checking keys in keyring                          [###############################] 100%
+( 0/28) checking package integrity                        [###############################] 100%
+( 0/28) loading package files                             [###############################] 100%
+( 0/28) checking for file conflicts                       [###############################] 100%
+( 0/28) checking available disk space                     [###############################] 100%
+:: Processing package changes...
+( 1/28) installing chromaprint                            [###############################] 100%
+( 2/28) installing libgme                                 [###############################] 100%
+( 3/28) installing libmad                                 [###############################] 100%
+( 4/28) installing libmms                                 [###############################] 100%
+( 5/28) installing libmpcdec                              [###############################] 100%
+( 6/28) installing libnfs                                 [###############################] 100%
+( 7/28) installing libsidplayfp                           [###############################] 100%
+Optional dependencies for libsidplayfp
+    vice: better SID support
+( 8/28) installing openal                                 [###############################] 100%
+Optional dependencies for openal
+    qt5-base: alsoft-config GUI Configurator [installed]
+    fluidsynth: MIDI rendering [pending]
+    libmysofa: makemhr tool
+( 9/28) installing talloc                                 [###############################] 100%
+Optional dependencies for talloc
+    python: for python bindings [installed]
+(10/28) installing cifs-utils                             [###############################] 100%
+(11/28) installing tevent                                 [###############################] 100%
+Optional dependencies for tevent
+    python: for python bindings [installed]
+(12/28) installing lmdb                                   [###############################] 100%
+(13/28) installing ldb                                    [###############################] 100%
+Optional dependencies for ldb
+    python: for python bindings [installed]
+(14/28) installing libbsd                                 [###############################] 100%
+(15/28) installing smbclient                              [###############################] 100%
+Optional dependencies for smbclient
+    python-dnspython: samba_dnsupdate and samba_upgradedns in AD setup
+(16/28) installing wildmidi                               [###############################] 100%
+(17/28) installing zziplib                                [###############################] 100%
+(18/28) installing libao                                  [###############################] 100%
+(19/28) installing audiofile                              [###############################] 100%
+(20/28) installing faad2                                  [###############################] 100%
+(21/28) installing libinstpatch                           [###############################] 100%
+(22/28) installing portaudio                              [###############################] 100%
+(23/28) installing fluidsynth                             [###############################] 100%
+(24/28) installing libmikmod                              [###############################] 100%
+(25/28) installing libupnp                                [###############################] 100%
+(26/28) installing liburing                               [###############################] 100%
+(27/28) installing yajl                                   [###############################] 100%
+(28/28) installing mpd                                    [###############################] 100%
+:: Running post-transaction hooks...
+(1/4) Creating system user accounts...
+(2/4) Creating temporary files...
+(3/4) Updating icon theme caches...
+(4/4) Updating the info directory file...
+[subhaditya@artixpad ~]$
+[subhaditya@artixpad ~]$ # NOTE: cifs-client and utisls and smpbcientlient have a circlular dependency
+[subhaditya@artixpad ~]$ # Useful fowr uninstallaiontion
+[subhaditya@artixpad ~]$
+[subhaditya@artixpad ~]$ # Uninstallation
+[subhaditya@artixpad ~]$ pacmsudo pacman -R mpd
+checking dependencies...
+
+Packages (1) mpd-0.22.6-1
+
+Total Removed Size:  2.70 MiB
+
+:: Do you want to remove these packages? [Y/n]
+:: Processing package changes...
+(1/1) removing mpd                                        [###############################] 100%
+:: Running post-transaction hooks...
+(1/1) Updating icon theme caches...
+[subhaditya@artixpad ~]$ sudo pacman -Rns $(pacman -Qtdq)
+checking dependencies...
+
+Packages (17) audiofile-0.3.6-6  chromaprint-1.5.0-3  faad2-2.10.0-1  libao-1.2.2-5
+              libgme-0.6.3-1  libmad-0.15.1b-9  libmikmod-3.3.11.1-4  libmms-0.6.4-3
+              libmpcdec-1:0.1+r475-3  libnfs-4.0.0-4  libsidplayfp-2.0.2-1  libupnp-1.14.1-1
+              liburing-0.7-2  openal-1.21.0-1  wildmidi-0.4.3-3  yajl-2.1.0-4
+              zziplib-0.13.72-1
+
+Total Removed Size:  9.44 MiB
+
+:: Do you want to remove these packages? [Y/n]
+:: Running pre-transaction hooks...
+(1/1) Removing old entries from the info directory file...
+:: Processing package changes...
+( 1/17) removing zziplib                                  [###############################] 100%
+( 2/17) removing yajl                                     [###############################] 100%
+( 3/17) removing wildmidi                                 [###############################] 100%
+( 4/17) removing openal                                   [###############################] 100%
+( 5/17) removing liburing                                 [###############################] 100%
+( 6/17) removing libupnp                                  [###############################] 100%
+( 7/17) removing libsidplayfp                             [###############################] 100%
+( 8/17) removing libnfs                                   [###############################] 100%
+( 9/17) removing libmpcdec                                [###############################] 100%
+(10/17) removing libmms                                   [###############################] 100%
+(11/17) removing libmikmod                                [###############################] 100%
+(12/17) removing libmad                                   [###############################] 100%
+(13/17) removing libgme                                   [###############################] 100%
+(14/17) removing libao                                    [###############################] 100%
+(15/17) removing faad2                                    [###############################] 100%
+(16/17) removing chromaprint                              [###############################] 100%
+(17/17) removing audiofile                                [###############################] 100%
+[subhaditya@artixpad ~]$ sudo pacman -R cifs-utils smbclient
+checking dependencies...
+warning: dependency cycle detected:
+warning: smbclient will be removed after its cifs-utils dependency
+
+Packages (2) cifs-utils-6.12-1  smbclient-4.13.4-1
+
+Total Removed Size:  28.15 MiB
+
+:: Do you want to remove these packages? [Y/n]
+:: Processing package changes...
+(1/2) removing cifs-utils                                 [###############################] 100%
+(2/2) removing smbclient                                  [###############################] 100%
+[subhaditya@artixpad ~]$ sudo pacman -Rns $(pacman -Qtdq)
+checking dependencies...
+
+Packages (8) libinstpatch-1.1.6-1  lmdb-0.9.28-1  portaudio-1:19.6.0-7  talloc-2.3.2-1
+             tevent-1:0.10.2-3  fluidsynth-2.1.7-1  ldb-1:2.2.0-3  libbsd-0.10.0-2
+
+Total Removed Size:  4.20 MiB
+
+:: Do you want to remove these packages? [Y/n]
+:: Processing package changes...
+(1/8) removing libbsd                                     [###############################] 100%
+(2/8) removing ldb                                        [###############################] 100%
+(3/8) removing tevent                                     [###############################] 100%
+(4/8) removing talloc                                     [###############################] 100%
+(5/8) removing lmdb                                       [###############################] 100%
+(6/8) removing fluidsynth                                 [###############################] 100%
+(7/8) removing portaudio                                  [###############################] 100%
+(8/8) removing libinstpatch                               [###############################] 100%
+[subhaditya@artixpad ~]$
+[subhaditya@artixpad ~]$ # 28 installed, 28 removed.
+[subhaditya@artixpad ~]$

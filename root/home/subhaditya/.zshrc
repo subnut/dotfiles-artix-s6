@@ -2,7 +2,7 @@
 
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.zsh_history
-HISTSIZE=4000
+HISTSIZE=30000
 SAVEHIST=30000
 setopt autocd
 bindkey -e
@@ -12,7 +12,6 @@ bindkey -e
 zstyle ':completion:*' completer _complete _approximate _ignored
 zstyle ':completion:*' matcher-list '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}'
 zstyle ':completion:*' menu select
-# zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
 zstyle :compinstall filename '/home/subhaditya/.zshrc'
 
 autoload -Uz compinit
@@ -75,230 +74,225 @@ zinit light-mode for \
 ### End of Zinit's installer chunk ###############
 
 
-##### Prompt ####################################
-#setopt promptsubst
+#### Prompt ####################################
+setopt promptsubst
 
-#typeset -g MY_PROMPT_FIRST_PROMPT=1
-#typeset -g PROMPT_NEW_LINE_IS_INSERTED=0
+typeset -g MY_PROMPT_FIRST_PROMPT=1
+typeset -g PROMPT_NEW_LINE_IS_INSERTED=0
 
-#PROMPT=''
-#PROMPT_LEFT_SEP=$'\ue0b6'		# 
-#PROMPT_RIGHT_SEP=$'\ue0b4'		# 
-#PROMPT_PROMPT_SYMBOL=$'\ue0b0'	# 
+PROMPT=''
+PROMPT_LEFT_SEP=$'\ue0b6'		# 
+PROMPT_RIGHT_SEP=$'\ue0b4'		# 
+PROMPT_PROMPT_SYMBOL=$'\ue0b0'	# 
 
-##### Left prompt #############################
-#_left_prompt_elements=()
+#### Left prompt #############################
+_left_prompt_elements=()
 
-##### Curdir ########
-## Old format -
-##   PROMPT=$PROMPT'%F{99}${PROMPT_LEFT_SEP}%f%K{99} %F{232}%~%f %k'
-#typeset -A prompt_curdir
-#prompt_curdir[fg]=232
-#prompt_curdir[bg]=99
-#prompt_curdir[content]='%(!.%/.%~)'
-#_left_prompt_elements+=(prompt_curdir)
+#### Curdir ########
+# Old format -
+#   PROMPT=$PROMPT'%F{99}${PROMPT_LEFT_SEP}%f%K{99} %F{232}%~%f %k'
+typeset -A prompt_curdir
+prompt_curdir[fg]=232
+prompt_curdir[bg]=99
+prompt_curdir[content]='%(!.%/.%~)'
+_left_prompt_elements+=(prompt_curdir)
 
-##### ROOT #####
-#typeset -A prompt_root
-#prompt_root[fg]=1
-#prompt_root[bg]=16
-#prompt_root[content]='%B%4{ROOT%}%b'
-#prompt_root[prefix]='%(!.'
-#prompt_root[suffix]='.)'
-## _left_prompt_elements+=(prompt_root)
+#### ROOT #####
+typeset -A prompt_root
+prompt_root[fg]=1
+prompt_root[bg]=16
+prompt_root[content]='%B%4{ROOT%}%b'
+prompt_root[prefix]='%(!.'
+prompt_root[suffix]='.)'
+# _left_prompt_elements+=(prompt_root)
 
-## Kernel upgraded
-## TODO: upgrade to new format
-#if grep -qs '^ID=arch$\|^ID=artix$' /etc/os-release && test -e /lib/modules/`uname -r`; then
-#	PROMPT=$PROMPT'%F{99}${PROMPT_RIGHT_SEP}%f'
-#else
-#	PROMPT=$PROMPT'%K{1}%F{99}${PROMPT_RIGHT_SEP}%f%k'
-#	PROMPT=$PROMPT'%K{1}%F{0}%{ REBOOT%}%f %k%F{1}${PROMPT_RIGHT_SEP}%f%b'
-#fi
-#typeset -A prompt_kernel
-#prompt_kernel[fg]=0
-#prompt_kernel[bg]=1
-#prompt_kernel[content]='%6{ REBOOT%}'
-#prompt_kernel[prefix]='$(if test -e /lib/modules/`uname -r`; then; echo -n "'
-#prompt_kernel[suffix]='";fi)'
-#_left_prompt_elements+=(prompt_kernel)
+# Kernel upgraded
+typeset -A prompt_kernel
+prompt_kernel[fg]=0
+prompt_kernel[bg]=1
+prompt_kernel[content]='%6{REBOOT%}'
+prompt_kernel[prefix]='$(if test -e /lib/modules/`uname -r`; then :; else; echo -n "'
+prompt_kernel[suffix]='";fi)'
+_left_prompt_elements+=(prompt_kernel)
 
 
-##### Git prompt #############################
-#autoload -Uz vcs_info
-#vcs_info
-#add-zsh-hook precmd vcs_info
-#local git_formats="%b %c %u:%.7i"
-#zstyle ':vcs_info:*' disable bzr cdv cvs darcs fossil hg mtn p4 svk svn tla
-#zstyle ':vcs_info:git*' enable git
-#zstyle ':vcs_info:git*' disable svn
-#zstyle ':vcs_info:git*' check-for-changes true
-#zstyle ':vcs_info:git*' get-revision true
-#zstyle ':vcs_info:git*' stagedstr "+"
-#zstyle ':vcs_info:git*' unstagedstr "!"
-#zstyle ':vcs_info:git*' formats "$git_formats"
-#zstyle ':vcs_info:git*' actionformats "$git_formats %a"
+#### Git prompt #############################
+autoload -Uz vcs_info
+vcs_info
+add-zsh-hook precmd vcs_info
+local git_formats="%b %c %u:%.7i"
+zstyle ':vcs_info:*' disable bzr cdv cvs darcs fossil hg mtn p4 svk svn tla
+zstyle ':vcs_info:git*' enable git
+zstyle ':vcs_info:git*' disable svn
+zstyle ':vcs_info:git*' check-for-changes true
+zstyle ':vcs_info:git*' get-revision true
+zstyle ':vcs_info:git*' stagedstr "+"
+zstyle ':vcs_info:git*' unstagedstr "!"
+zstyle ':vcs_info:git*' formats "$git_formats"
+zstyle ':vcs_info:git*' actionformats "$git_formats %a"
 
-#typeset -A git_prompt
-#git_prompt[fg]=0
-#git_prompt[bg]=2
-#git_prompt[content]='${vcs_info_msg_0_}'
-#git_prompt[prefix]='$(if [[ -n $vcs_info_msg_0_ ]] &> /dev/null; then; echo -n "'
-#git_prompt[suffix]='";fi)'
-#_left_prompt_elements+=(git_prompt)
+typeset -A git_prompt
+git_prompt[fg]=0
+git_prompt[bg]=2
+git_prompt[content]='${vcs_info_msg_0_}'
+git_prompt[prefix]='$(if [[ -n $vcs_info_msg_0_ ]] &> /dev/null; then; echo -n "'
+git_prompt[suffix]='";fi)'
+_left_prompt_elements+=(git_prompt)
 
-##### Vi mode prompt #######################
-#typeset -A vi_mode_prompt
-#vi_mode_prompt[fg]=16
-#vi_mode_prompt[bg]=10
-#vi_mode_prompt[content]='$PROMPT_VI_MODE'
-#vi_mode_prompt[prefix]='$(if [[ -n $PROMPT_VI_MODE ]]; then; echo -n "'
-#vi_mode_prompt[suffix]='";fi)'
-#typeset -g PROMPT_VI_MODE
-#_zle_keymap_select () { typeset -g PROMPT_VI_MODE=${${KEYMAP/vicmd/'NORMAL'}/(main|viins)/} && zle && zle reset-prompt }
-#zle -N zle-keymap-select _zle_keymap_select
-#add-zsh-hook precmd _zle_keymap_select
-#_left_prompt_elements+=(vi_mode_prompt)
-
-#() {
-#	PROMPT=''
-#	local LAST_BGCOLOR=''
-#	local element
-#	for element in $_left_prompt_elements
-#	do
-#		local sep
-#		local segment
-#		bgcolor=${${(P)element}[bg]}
-#		fgcolor=${${(P)element}[fg]}
-#		content=${${(P)element}[content]}
-#		prefix=${${(P)element}[prefix]}
-#		suffix=${${(P)element}[suffix]}
-#		# Simply do the bolding,underlining,etc in the 'content' field itself
-#		# shall take less space
-#		#	if [[ -n ${${(P)element}[bold]]} ]]; then
-#		#		content="%B$content%b"
-#		#	fi
-#		if [[ -z $LAST_BGCOLOR ]]; then
-#			sep=$PROMPT_LEFT_SEP
-#			segment=$segment"%F{$bgcolor}"
-#		else
-#			sep=$PROMPT_RIGHT_SEP
-#			segment=$segment"%K{$bgcolor}"
-#		fi
-#		segment=$segment$sep
-#		segment=$segment"%F{$bgcolor}%K{$fgcolor}"
-#		segment=$segment"%S $content %s"
-#		segment=$prefix$segment$suffix
-#		PROMPT=$PROMPT$segment
-#		LAST_BGCOLOR=$bgcolor
-#		unset sep
-#		unset bgcolor fgcolor content
-#		unset segment
-#	done
-#	PROMPT=$PROMPT"%k$PROMPT_RIGHT_SEP%f"
-#	unset LAST_BGCOLOR
-#}
+#### Vi mode prompt #######################
+typeset -A vi_mode_prompt
+vi_mode_prompt[fg]=16
+vi_mode_prompt[bg]=10
+vi_mode_prompt[content]='$PROMPT_VI_MODE'
+vi_mode_prompt[prefix]='$(if [[ -n $PROMPT_VI_MODE ]]; then; echo -n "'
+vi_mode_prompt[suffix]='";fi)'
+typeset -g PROMPT_VI_MODE
+_zle_keymap_select () { typeset -g PROMPT_VI_MODE=${${KEYMAP/vicmd/'NORMAL'}/(main|viins)/} && zle && zle reset-prompt }
+zle -N zle-keymap-select _zle_keymap_select
+add-zsh-hook precmd _zle_keymap_select
+_left_prompt_elements+=(vi_mode_prompt)
 
 
-##newline
-#PROMPT=$PROMPT$'\n'
+## Build the prompt
+() { # {{{
+	PROMPT=''
+	local LAST_BGCOLOR=''
+	local element
+	for element in $_left_prompt_elements
+	do
+		local sep
+		local segment
+		bgcolor=${${(P)element}[bg]}
+		fgcolor=${${(P)element}[fg]}
+		content=${${(P)element}[content]}
+		prefix=${${(P)element}[prefix]}
+		suffix=${${(P)element}[suffix]}
+		# Simply do the bolding,underlining,etc in the 'content' field itself
+		# shall take less space
+		#	if [[ -n ${${(P)element}[bold]]} ]]; then
+		#		content="%B$content%b"
+		#	fi
+		if [[ -z $LAST_BGCOLOR ]]; then
+			sep=$PROMPT_LEFT_SEP
+			segment=$segment"%F{$bgcolor}"
+		else
+			sep=$PROMPT_RIGHT_SEP
+			segment=$segment"%K{$bgcolor}"
+		fi
+		segment=${segment}${sep}
+		segment=${segment}"%F{$bgcolor}%K{$fgcolor}"
+		segment=${segment}"%S $content %s"
+		segment=${prefix}${segment}${suffix}
+		PROMPT=${PROMPT}${segment}
+		LAST_BGCOLOR=$bgcolor
+		unset sep
+		unset bgcolor fgcolor content
+		unset segment
+	done
+	PROMPT=$PROMPT"%k$PROMPT_RIGHT_SEP%f"
+	unset LAST_BGCOLOR
+} # }}}
 
-##ROOT
-## Style 1 - (same background)
-##	PROMPT=$PROMPT'%(!.%B%F{%(?.16.1)}${PROMPT_LEFT_SEP}%K{%(?.1.220)}%B%S ROOT%b%s%K{%(?.16.1)}${PROMPT_RIGHT_SEP}.)'
-## Style 2 - (opposite background)
-#	PROMPT=$PROMPT'%(!.%B%F{%(?.1.16)}${PROMPT_LEFT_SEP}%K{%(?.16.1)}%B%S ROOT %b%s%K{%(?.16.1)}${PROMPT_RIGHT_SEP}.)'
 
-##prompt
-#PROMPT=$PROMPT'%F{%(?.16.1)}%(!..${PROMPT_LEFT_SEP})%K{%(?.10.220)}%S %(?.✔.✘) %s%k${PROMPT_PROMPT_SYMBOL}%f '
-## PROMPT=$PROMPT'%k%F{%(?.16.1)}${PROMPT_LEFT_SEP}%f%K{%(?.16.1)}%(!.%B%F{1}%6{ ROOT %}%f%b.) %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}${PROMPT_PROMPT_SYMBOL}%f '
+## newline
+PROMPT=$PROMPT$'\n'
 
-##### Right prompt ########################################
-#_left_prompt_elements=()
+## ROOT
+# Style 1 - (same background)
+#	PROMPT=$PROMPT'%(!.%B%F{%(?.16.1)}${PROMPT_LEFT_SEP}%K{%(?.1.220)}%B%S ROOT%b%s%K{%(?.16.1)}${PROMPT_RIGHT_SEP}.)'
+# Style 2 - (opposite background)
+	PROMPT=$PROMPT'%(!.%B%F{%(?.1.16)}${PROMPT_LEFT_SEP}%K{%(?.16.1)}%B%S ROOT %b%s%K{%(?.16.1)}${PROMPT_RIGHT_SEP}.)'
 
-#typeset -Ag _exitcode_to_signal
-#for exitcode in $(seq 1 255)
-#do
-#	if [[ $exitcode -gt 128 ]]; then
-#		_exitcode_to_signal[$exitcode]="$(kill -l $(($exitcode - 128)))"
-#	else
-#		_exitcode_to_signal[$exitcode]=$exitcode
-#	fi
-#done
+#prompt
+PROMPT=$PROMPT'%F{%(?.16.1)}%(!..${PROMPT_LEFT_SEP})%K{%(?.10.220)}%S %(?.✔.✘) %s%k${PROMPT_PROMPT_SYMBOL}%f '
+# PROMPT=$PROMPT'%k%F{%(?.16.1)}${PROMPT_LEFT_SEP}%f%K{%(?.16.1)}%(!.%B%F{1}%6{ ROOT %}%f%b.) %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}${PROMPT_PROMPT_SYMBOL}%f '
 
-##exitcode if not 0
-#RPROMPT='%B%(?..%F{1}${PROMPT_LEFT_SEP}%f%K{1} %F{220}${_exitcode_to_signal[$?]}%f %k%F{1}${PROMPT_RIGHT_SEP}%f)%b'
+#### Right prompt ########################################
+_left_prompt_elements=()
+
+typeset -Ag _exitcode_to_signal
+for exitcode in $(seq 1 255)
+do
+	if [[ $exitcode -gt 128 ]]; then
+		_exitcode_to_signal[$exitcode]="$(kill -l $(($exitcode - 128)))"
+	else
+		_exitcode_to_signal[$exitcode]=$exitcode
+	fi
+done
+
+#exitcode if not 0
+RPROMPT='%B%(?..%F{1}${PROMPT_LEFT_SEP}%f%K{1} %F{220}${_exitcode_to_signal[$?]}%f %k%F{1}${PROMPT_RIGHT_SEP}%f)%b'
 
 
-##### Transient prompt ####################################
+#### Transient prompt ####################################
 
-#function _my_transient_prompt_trigger { # {{{
+function _my_transient_prompt_trigger { # {{{
 
-#	# If last exit-code 0, green(2) else red(1)
-#	typeset -g TRANSIENT_PROMPT='%F{%(?.2.1)}❯%f '
+	# If last exit-code 0, green(2) else red(1)
+	typeset -g TRANSIENT_PROMPT='%F{%(?.2.1)}❯%f '
 
-#	# Right-side prompt for transient prompt
-#	# typeset -g TRANSIENT_RPROMPT='%?'
+	# Right-side prompt for transient prompt
+	# typeset -g TRANSIENT_RPROMPT='%?'
 
-#	typeset -g _my_transient_prompt_saved_PROMPT=$PROMPT
-#	typeset -g _my_transient_prompt_saved_RPROMPT=$RPROMPT
-#	PROMPT=$TRANSIENT_PROMPT
-#	RPROMPT=$TRANSIENT_RPROMPT
-#	zle reset-prompt
-#	zle accept-line
-#} # }}}
-#function _my_transient_prompt_reset { # {{{
-#	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
-#	then
-#		clear
-#		PROMPT_NEW_LINE_IS_INSERTED=0
-#		unset MY_PROMPT_FIRST_PROMPT
-#		return
-#	fi
-#	if [[ -n $_my_transient_prompt_saved_PROMPT && $PROMPT == $TRANSIENT_PROMPT ]]
-#	then
-#		PROMPT=$_my_transient_prompt_saved_PROMPT
-#		RPROMPT=$_my_transient_prompt_saved_RPROMPT
-#	fi
-#	unset _my_transient_prompt_saved_PROMPT
-#	unset _my_transient_prompt_saved_RPROMPT
-#	unset TRANSIENT_PROMPT
-#	unset TRANSIENT_RPROMPT
-#	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 0 ]]
-#	then
-#		# Add a newline before prompt
-#		PROMPT=$'\n'$PROMPT
-#		PROMPT_NEW_LINE_IS_INSERTED=1
-#	fi
-#	zle && zle reset-prompt
-#} # }}}
-#function _my_transient_prompt_remove_newline_screen_cleared { # {{{
-#	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 1 ]]
-#	then
-#		# Remove a newline before prompt
-#		PROMPT=${PROMPT/$'\n'/''}
-#		PROMPT_NEW_LINE_IS_INSERTED=0
-#	fi
-#	zle && zle clear-screen
-#} # }}}
-#add-zsh-hook precmd _my_transient_prompt_reset
+	typeset -g _my_transient_prompt_saved_PROMPT=$PROMPT
+	typeset -g _my_transient_prompt_saved_RPROMPT=$RPROMPT
+	PROMPT=$TRANSIENT_PROMPT
+	RPROMPT=$TRANSIENT_RPROMPT
+	zle reset-prompt
+	zle accept-line
+} # }}}
+function _my_transient_prompt_reset { # {{{
+	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
+	then
+		clear
+		PROMPT_NEW_LINE_IS_INSERTED=0
+		unset MY_PROMPT_FIRST_PROMPT
+		return
+	fi
+	if [[ -n $_my_transient_prompt_saved_PROMPT && $PROMPT == $TRANSIENT_PROMPT ]]
+	then
+		PROMPT=$_my_transient_prompt_saved_PROMPT
+		RPROMPT=$_my_transient_prompt_saved_RPROMPT
+	fi
+	unset _my_transient_prompt_saved_PROMPT
+	unset _my_transient_prompt_saved_RPROMPT
+	unset TRANSIENT_PROMPT
+	unset TRANSIENT_RPROMPT
+	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 0 ]]
+	then
+		# Add a newline before prompt
+		PROMPT=$'\n'$PROMPT
+		PROMPT_NEW_LINE_IS_INSERTED=1
+	fi
+	zle && zle reset-prompt
+} # }}}
+function _my_transient_prompt_remove_newline_screen_cleared { # {{{
+	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 1 ]]
+	then
+		# Remove a newline before prompt
+		PROMPT=${PROMPT/$'\n'/''}
+		PROMPT_NEW_LINE_IS_INSERTED=0
+	fi
+	zle && zle clear-screen
+} # }}}
+add-zsh-hook precmd _my_transient_prompt_reset
 
-#zle -N _my_transient_prompt_trigger _my_transient_prompt_trigger
-#bindkey -r '^M'
-#bindkey '^M' _my_transient_prompt_trigger
+zle -N _my_transient_prompt_trigger _my_transient_prompt_trigger
+bindkey -r '^M'
+bindkey '^M' _my_transient_prompt_trigger
 
-#zle -N _my_transient_prompt_remove_newline_screen_cleared _my_transient_prompt_remove_newline_screen_cleared
-#bindkey -r '^L'
-#bindkey '^L' _my_transient_prompt_remove_newline_screen_cleared
+zle -N _my_transient_prompt_remove_newline_screen_cleared _my_transient_prompt_remove_newline_screen_cleared
+bindkey -r '^L'
+bindkey '^L' _my_transient_prompt_remove_newline_screen_cleared
 
-##### End of prompt ######################################
+#### End of prompt ######################################
 
 
 #### Plugins ##############################
 # use `zinit load` instead of `zinit light` to see how the plugin is being loaded
 zinit light zdharma/fast-syntax-highlighting
 zinit light mfaerevaag/wd
-	zinit ice depth=1; zinit light romkatv/powerlevel10k; source ~/.p10k.zsh
+# zinit ice depth=1; zinit light romkatv/powerlevel10k; source ~/.p10k.zsh
 zinit ice as'z' pick'z.sh'
 zinit light rupa/z
 zinit ice wait lucid atload'_zsh_autosuggest_start'
@@ -319,7 +313,7 @@ local plugin
 local omz_plugins_that_are_only_a_script=(sudo fancy-ctrl-z zsh_reload)
 for plugin in $omz_plugins_that_are_only_a_script
 do
-	zinit snippet OMZ::plugins/$plugin/$plugin.plugin.zsh
+	zinit snippet OMZ::plugins/${plugin}/${plugin}.plugin.zsh
 done
 }
 
@@ -394,19 +388,6 @@ if ! [[ -z $MY_NVIM_BG ]] && [[ $KITTY_WINDOW_ID -eq 1 ]] && [[ $SHLVL -eq 3 ]];
 	echo 'if [[ $MY_NVIM_BG == "light" ]];then export MY_NVIM_BG="dark"; alias colorls="colorls"; export BAT_THEME="gruvbox (Dark) (Hard)"; fi' > ~/.config/kitty/custom_zsh_source
 fi
 
-# get_theme () #{{{
-#		if my_variable_for_color=$(kitty @ get-colors)
-#		then
-#			if [[ $( echo $my_variable_for_color | grep color0 | cut -d'#' -f2) = '000000' ]]
-#			then
-#				export MY_NVIM_BG='light'
-#				echo 'if [[ $MY_NVIM_BG == "dark" ]];then export MY_NVIM_BG="light"; fi' > ~/.config/kitty/custom_zsh_source
-#			else
-#				export MY_NVIM_BG='dark'
-#				echo > ~/.config/kitty/custom_zsh_source
-#			fi
-#		fi
-# #}}}
 get_theme () { source ~/.config/kitty/custom_zsh_source }
 if ! [[ -z $MY_NVIM_BG ]]; then source ~/.config/kitty/custom_zsh_source; fi
 
@@ -417,14 +398,14 @@ toggle_theme () { # {{{
 		kitty @ set-colors -a -c ~/.config/kitty/gruvbox_light_hard.conf
 		alias colorls="colorls --light"
 		export BAT_THEME="gruvbox (Light) (Hard)"
-		echo 'if [[ $MY_NVIM_BG == "dark" ]];then export MY_NVIM_BG="light"; alias colorls="colorls --light"; export BAT_THEME="gruvbox (Light) (Hard)"; fi' > ~/.config/kitty/custom_zsh_source
-		alias alsamixer='alsamixer -g'
+		alias alsamixer="alsamixer -g"
+		echo 'if [[ $MY_NVIM_BG == "dark" ]];then export MY_NVIM_BG="light"; alias colorls="colorls --light"; export BAT_THEME="gruvbox (Light) (Hard)"; alias alsamixer="alsamixer -g"; fi' > ~/.config/kitty/custom_zsh_source
 	else if [[ $MY_NVIM_BG == 'light' ]]
 	then export MY_NVIM_BG='dark'
 		kitty @ set-colors -a -c ~/.config/kitty/gruvbox_dark_hard.conf
 		alias colorls="colorls"
 		export BAT_THEME="gruvbox (Dark) (Hard)"
-		echo 'if [[ $MY_NVIM_BG == "light" ]];then export MY_NVIM_BG="dark"; alias colorls="colorls"; export BAT_THEME="gruvbox (Dark) (Hard)"; fi' > ~/.config/kitty/custom_zsh_source
+		echo 'if [[ $MY_NVIM_BG == "light" ]];then export MY_NVIM_BG="dark"; alias colorls="colorls"; export BAT_THEME="gruvbox (Dark) (Hard)"; unalias alsamixer; fi' > ~/.config/kitty/custom_zsh_source
 		unalias alsamixer
 	fi
 	fi
@@ -461,8 +442,9 @@ alias g=git
 alias ga='git add'
 alias gaa='git add --all'
 alias gaav='git add --all --verbose'
-alias gdh='git diff HEAD'
-alias gdh1='git diff HEAD~1 HEAD'
+alias gd='git diff --patience'
+alias gdh='gd HEAD'
+alias gdh1='gd HEAD~1 HEAD'
 alias gc='git commit -v'
 alias gca='git commit -v -a'
 alias gp='git push'
@@ -527,6 +509,7 @@ alias bspwmrc="nvim ~/.config/bspwm/bspwmrc"
 alias sxhkdrc="nvim ~/.config/sxhkd/sxhkdrc"
 alias zshrc="nvim ~/.zshrc"
 
+alias ra=ranger
 alias wifi="nmcli dev wifi list"
 alias shrug="echo -n '¯\_(ツ)_/¯' | clipcopy"
 # alias copy=clipcopy
@@ -651,7 +634,8 @@ _udisksctl_completion() { # {{{
 }
 # }}}
 complete -o nospace -F _udisksctl_completion udisksctl
-media_control() {
+
+media_control() {# {{{
 	local input
 	while true
 	do
@@ -660,57 +644,20 @@ media_control() {
 		printf "> "
 		read -k 1 input
 		case "$input" in
-			q)
-				clear
-				return;;
-			p|\ )
-				playerctl -a play-pause;;
-			P)
-				playerctl previous ;;
-			n)
-				playerctl next;;
-			s)
-				playerctl stop;;
-			0)
-				playerctl position 0;;
-			,)
-				playerctl position 5-;;
-			\.)
-				playerctl position 5+;;
-			+|=)
-				amixer set Master 5%+ &>/dev/null;;
-				# playerctl volume 0.05+;;
-			-)
-				amixer set Master 5%- &>/dev/null;;
-				# playerctl volume 0.05-;;
+			(q) clear; return;;
+			(p|\ ) playerctl -a play-pause;;
+			(P) playerctl previous ;;
+			(n) playerctl next;;
+			(s) playerctl stop;;
+			(0) playerctl position 0;;
+			(,) playerctl position 5-;;
+			(\.) playerctl position 5+;;
+			(+|=) amixer set Master 5%+ &>/dev/null;;
+			(-) amixer set Master 5%- &>/dev/null;;
 			esac
 		done
-}
+} # }}}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-if [ $(tty) = '/dev/tty1' ]; then; sx; fi
+# echo 'tiramisu -j | python tiramisu_json_stdout_handler.py'
+if [ $(tty) = '/dev/tty1' ]; then; sx; fi	# Keep at the end

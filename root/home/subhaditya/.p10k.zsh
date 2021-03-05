@@ -100,7 +100,7 @@
     todo                    # todo items (https://github.com/todotxt/todo.txt-cli)
     # time                    # current time
     # goenv                   # go environment (https://github.com/syndbg/goenv)
-    # ranger                  # ranger shell (https://github.com/ranger/ranger)
+    ranger                  # ranger shell (https://github.com/ranger/ranger)
     # nnn                     # nnn shell (https://github.com/jarun/nnn)
     # go_version            # go version (https://golang.org)
     # midnight_commander    # midnight commander shell (https://midnight-commander.org/)
