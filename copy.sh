@@ -18,6 +18,7 @@ cp ~/.config/fontconfig		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/qt5ct		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/polybar		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/ranger		-t	./root/home/subhaditya/.config		-rv
+cp ~/.config/picom		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/mpv		-t	./root/home/subhaditya/.config		-rv
 cp ~/.local/bin				./root/home/subhaditya/.local/		-rv
 cp ~/.zshrc			-t	./root/home/subhaditya/
