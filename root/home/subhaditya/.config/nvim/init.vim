@@ -56,27 +56,28 @@ set helpheight=0    " Help window height is same as all other windows
 set ignorecase      " Ignore uppercase and lowercase
 set smartcase       " If search contains UPPERCASE letter, then set "noignorecase"
 set mouse=ar
-set clipboard+=unnamedplus
+set clipboard=unnamedplus
 set cursorline
 set undofile                    " keep undo history at &undodir
 set notimeout                   " do not timeout mappings
-" set noexpandtab               " DO NOT replace tabs with spaces
-" set tabstop=4                 " No. of spaces that <TAB> stands for
-" set shiftwidth=0              " i.e. tabstop value will be used for auto-indenting
 " au BufWinEnter *.py %retab!   " Replace all tabs with spaces when entering a python file
 " set foldmethod=marker
-" set nowrap
 set showbreak=¬\                " The backslash is used to escape the space after it
 set autoread
 set autowrite
-set number relativenumber
+set number
+set relativenumber
 set signcolumn=yes
+setg nowrap
+setg noexpandtab                " DO NOT replace tabs with spaces
+setg tabstop=4                  " No. of spaces that <TAB> stands for
+setg shiftwidth=0               " i.e. tabstop value will be used for auto-indenting
 
-nnoremap <silent> <C-n>     :set number! relativenumber!<CR>
-nnoremap <silent> <C-A-n>   :set relativenumber!<CR>
-nnoremap <silent> gB        :bprev<CR>
-nnoremap <silent> gb        :bnext<CR>
-nnoremap <silent> <C-l>     :set list!<CR>
+nnoremap <C-n>     <cmd>set number! relativenumber!<CR>
+nnoremap <C-A-n>   <cmd>set relativenumber!<CR>
+nnoremap gB        <cmd>bprev<CR>
+nnoremap gb        <cmd>bnext<CR>
+nnoremap <C-l>     <cmd>set list!<CR>
 au User AirlineAfterInit ++once nnoremap <silent> <c-v> <cmd>set virtualedit=all<CR><c-v><cmd>au User AirlineModeChanged ++once set virtualedit=<CR>
 " nnoremap <silent> <C-g>     :Goyo<CR>
 
@@ -294,7 +295,7 @@ endif
 if $TERM =~# 'kitty'
 let g:_nvim_ghost_supports_focus = 1    " We already know it supports focus
 let g:kitty_fancy_cursor = 0            " Somewhat successful 'inverse' cursor color in kitty
-func! s:kitty_term_custom() " {{{1
+fun! s:kitty_term_custom() " {{{1
     let g:kitty_fancy_cursor = get(g:, 'kitty_fancy_cursor', 0)
     if $TERM =~# 'kitty'
         if synIDattr(synIDtrans(hlID('Cursor')), 'reverse') " {{{2
@@ -343,7 +344,7 @@ au colorscheme_overrides ColorScheme gruvbox-material silent! exec 'hi CursorLin
 " set colorscheme
 " -----------
 " colorscheme gruvbox-material
-fun My_bg_setter()
+fun! My_bg_setter()
     let &background = get(environ(),'MY_NVIM_BG','dark')
     colorscheme gruvbox-material
     let g:lightline.colorscheme = 'gruvbox_material'
@@ -381,7 +382,7 @@ endif
 
 " Get the higlight group of the character under cursor
 " ----------------------------------------------------
-fun GetHiGroup()
+fun! GetHiGroup()
     return synIDattr(synID(line('.'), col('.'), 1), 'name')
 endfun
 command! GetHiGroup echo GetHiGroup()
@@ -448,14 +449,22 @@ tnoremap <leader><Esc> <C-\><C-n>
 
 " Battery saver mode
 " ------------------
-function! MyOnBattery() " {{{1
+fun! MyOnBattery() " {{{1
     if has('macunix')
         return match(system('pmset -g batt'), "Now drawing from 'Battery Power'") != -1
     elseif has('unix')
-        return readfile('/sys/class/power_supply/AC/online') == ['0']
+        return
+				\(
+					\filereadable('/sys/class/power_supply/AC/online') &&
+					\(readfile('/sys/class/power_supply/AC/online') == ['0'])
+				\) ||
+				\(
+					\(system('uname') =~ 'OpenBSD') &&
+					\(system('apm | grep') == '1')
+				\)
     endif
     return 0
-endfunction
+endfun
     " }}}
 if MyOnBattery()
     let g:ncm2#complete_delay = 1000
@@ -511,12 +520,12 @@ set gdefault        " Substitute all occurences on a line (i.e. reverse the work
 
 " MarkdownPreview
 " ---------------
-function MarkdownBrowserOtter(url)    " {{{1
+fun! MarkdownBrowserOtter(url)    " {{{1
     silent! execute '!otter-browser' shellescape('--new-window') string(a:url) | redraw!
-endfunction
-function MarkdownBrowserQute(url)   " {{{1
+endfun
+fun! MarkdownBrowserQute(url)   " {{{1
     silent! execute '!qutebrowser' shellescape('--target') 'window' string(a:url) '&' | redraw!
-endfunction " }}}
+endfun " }}}
 let g:mkdp_browserfunc='MarkdownBrowserOtter'
 let g:mkdp_auto_close = 0
 
@@ -579,7 +588,7 @@ let g:my_airline_sep = '|'
 let g:my_airline_sep_raw = '%#__accent_bold#'.g:my_airline_sep.'%#__restore__#'
 let g:my_airline_customcurpos_enabled = 0
 let g:my_airline_customcurpos_short = 0
-function! s:airline_custom()
+fun! s:airline_custom()
 fun! MyAirlineSeparatorSpacerFunc() " {{{2
     return g:airline_symbols.space . g:my_airline_sep .g:airline_symbols.space
 endfun
@@ -793,7 +802,7 @@ if !exists('s:known_links')
     let s:known_links = {}
 endif
 
-function! s:Find_links() " {{{2
+fun! s:Find_links() " {{{2
     " Find and remember links between highlighting groups.
     redir => listing
     try
@@ -811,9 +820,9 @@ function! s:Find_links() " {{{2
             let s:known_links[fromgroup] = togroup
         endif
     endfor
-endfunction
+endfun
 
-function! s:Restore_links() " {{{2
+fun! s:Restore_links() " {{{2
     " Restore broken links between highlighting groups.
     redir => listing
     try
@@ -835,13 +844,13 @@ function! s:Restore_links() " {{{2
             endif
         endif
     endfor
-endfunction " }}}
+endfun " }}}
 
-function! s:AccurateColorscheme(colo_name)
+fun! s:AccurateColorscheme(colo_name)
     call <SID>Find_links()
     exec 'colorscheme ' a:colo_name
     call <SID>Restore_links()
-endfunction
+endfun
 
 command! -nargs=1 -complete=color MyColorscheme call <SID>AccurateColorscheme(<q-args>)
 " --------------------------------------------------------------------------------------------------------------    " }}}
@@ -881,7 +890,7 @@ let g:Illuminate_insert_mode_highlight = 0  " Highlight in Insert mode too
 
 " Trying to implement my own finding function
 " -------------------------------------------
-function! FindAll()
+fun! FindAll()
     call inputsave()
     let p = input('Enter pattern: ')
     call inputrestore()
@@ -890,7 +899,7 @@ function! FindAll()
     else " use location list
         silent execute 'lvimgrep "'.p.'" '.expand('%:p').' |lopen'
     endif
-endfunction
+endfun
 
 " Automatically close if QuickFix is the only window
 " -------------------------------------------------
@@ -915,7 +924,7 @@ nmap <leader>d <Plug>(doge-generate)
 
 " My SudoWrite
 " -----------
-func! MySudoRootWriter()
+fun! MySudoRootWriter()
     if len(expand('%')) == 0
         echohl ErrorMsg
         echom 'No file name!'
@@ -957,12 +966,12 @@ let g:lsp_text_edit_enabled = 0
 let g:lsp_virtual_text_prefix = ''
 let g:lsp_document_highlight_delay = 200
 let g:lsp_fold_enabled = 0
-function! s:on_lsp_buffer_enabled() abort
+fun! s:on_lsp_buffer_enabled() abort
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <buffer> <leader>r <plug>(lsp-rename)
     nmap <buffer> K <plug>(lsp-hover)
     let g:Illuminate_ftblacklist+=[&ft]
-endfunction
+endfun
 
 augroup lsp_install
     au!

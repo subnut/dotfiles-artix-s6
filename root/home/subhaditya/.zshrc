@@ -106,6 +106,7 @@ prompt_root[prefix]='%(!.'
 prompt_root[suffix]='.)'
 # _left_prompt_elements+=(prompt_root)
 
+if [[ `uname -s` = 'Linux' ]]; then
 # Kernel upgraded
 typeset -A prompt_kernel
 prompt_kernel[fg]=0
@@ -114,6 +115,7 @@ prompt_kernel[content]='%6{REBOOT%}'
 prompt_kernel[prefix]='$(if test -e /lib/modules/`uname -r`; then :; else; echo -n "'
 prompt_kernel[suffix]='";fi)'
 _left_prompt_elements+=(prompt_kernel)
+fi
 
 
 #### Git prompt #############################
@@ -244,7 +246,7 @@ function _my_transient_prompt_trigger { # {{{
 function _my_transient_prompt_reset { # {{{
 	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
 	then
-		clear
+		# clear
 		PROMPT_NEW_LINE_IS_INSERTED=0
 		unset MY_PROMPT_FIRST_PROMPT
 		return
