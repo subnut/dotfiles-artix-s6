@@ -11,11 +11,11 @@ autocmd BufReadPost *
     \ | endif
 augroup end " }}}
 " Use our specific python venv only {{{
-let g:python3_host_prog = '/home/subhaditya/.config/nvim/venv/bin/python'
+let g:python3_host_prog = '$HOME/.config/nvim/venv/bin/python'
 if len($VIRTUAL_ENV) == 0
-    let $PATH = '/home/subhaditya/.config/nvim/venv/bin:' . $PATH
+    let $PATH = '$HOME/.config/nvim/venv/bin:' . $PATH
 else
-    let $PATH = join(insert(split($PATH, ':'),'/home/subhaditya/.config/nvim/venv/bin',1),':')
+    let $PATH = join(insert(split($PATH, ':'),'$HOME/.config/nvim/venv/bin',1),':')
 endif " }}}
 " Save Undo history " {{{1
 " if has('persistent_undo')                                   " guard for distributions lacking the persistent_undo feature.
@@ -281,7 +281,7 @@ augroup end
 
 " Set GUI colors
 " --------------
-if ($TERM !~ 'linux\|screen') && has('termguicolors')
+if ($TERM !~ 'linux\|screen\|vt220') && has('termguicolors')
     set termguicolors
 endif
 syntax enable
@@ -319,11 +319,13 @@ augroup kitty_terminal customization
     autocmd!
     autocmd ColorScheme * call s:kitty_term_custom()
     " autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20
-    autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor
+    " autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor
+    autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor
 augroup end
 call s:kitty_term_custom()
 " set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20-Cursor/lCursor
-set guicursor=n-v-c-sm:block-Cursor/lCursor
+" set guicursor=n-v-c-sm:block-Cursor/lCursor
+set guicursor=n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor
 endif
 
 
@@ -460,7 +462,7 @@ fun! MyOnBattery() " {{{1
 				\) ||
 				\(
 					\(system('uname') =~ 'OpenBSD') &&
-					\(system('apm | grep') == '1')
+					\(system(['apm','-a']) != '1')
 				\)
     endif
     return 0

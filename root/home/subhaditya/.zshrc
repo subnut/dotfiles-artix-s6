@@ -12,7 +12,7 @@ bindkey -e
 zstyle ':completion:*' completer _complete _approximate _ignored
 zstyle ':completion:*' matcher-list '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}' '' '+m:{[:lower:][:upper:]}={[:upper:][:lower:]}'
 zstyle ':completion:*' menu select
-zstyle :compinstall filename '/home/subhaditya/.zshrc'
+zstyle :compinstall filename '$HOME/.zshrc'
 
 autoload -Uz compinit
 compinit
@@ -40,7 +40,7 @@ setopt histignorespace			# command prefixed by space are incognito
 setopt histignoredups			# ignore duplicate
 bindkey "^[" vi-cmd-mode		# vi-mode
 export PATH=/usr/games:$PATH	# Add Games to PATH
-export PATH=/home/subhaditya/.local/bin:$PATH
+export PATH=$HOME/.local/bin:$PATH
 export PATH=./:$PATH
 
 ## For qt5ct
@@ -331,7 +331,7 @@ unalias md
 # export PATH="$PYENV_ROOT/bin:$PATH"
 
 ## colorls
-# export PATH="$PATH:/home/subhaditya/.gem/ruby/2.7.0/bin/"
+# export PATH="$PATH:$HOME/.gem/ruby/2.7.0/bin/"
 # alias ls="colorls"
 
 # my_run_bat () { cat $1 | powershell.exe -Command "& {cmd.exe}" - }
