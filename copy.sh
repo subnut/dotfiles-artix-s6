@@ -22,6 +22,7 @@ cp ~/.config/picom		-t	./root/home/subhaditya/.config		-rv
 cp ~/.config/mpv		-t	./root/home/subhaditya/.config		-rv
 cp ~/.local/bin				./root/home/subhaditya/.local/		-rv
 cp ~/.zshrc			-t	./root/home/subhaditya/
+cp ~/.fzf.zsh			-t	./root/home/subhaditya/
 cp ~/.p10k.zsh			-t	./root/home/subhaditya/
 cp ~/.gitconfig			-t	./root/home/subhaditya/
 cp ~/.asoundrc			-t	./root/home/subhaditya/
