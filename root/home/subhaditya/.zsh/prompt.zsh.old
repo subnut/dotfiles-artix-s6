@@ -1,0 +1,214 @@
+##### Prompt ####################################
+#setopt promptsubst
+
+#typeset -g MY_PROMPT_FIRST_PROMPT=1
+#typeset -g PROMPT_NEW_LINE_IS_INSERTED=0
+
+#PROMPT=''
+#PROMPT_LEFT_SEP=$'\ue0b6'		# 
+#PROMPT_RIGHT_SEP=$'\ue0b4'		# 
+#PROMPT_PROMPT_SYMBOL=$'\ue0b0'	# 
+
+##### Left prompt #############################
+#_left_prompt_elements=()
+
+##### Curdir ########
+## Old format -
+##   PROMPT=$PROMPT'%F{99}${PROMPT_LEFT_SEP}%f%K{99} %F{232}%~%f %k'
+#typeset -A prompt_curdir
+#prompt_curdir[fg]=232
+#prompt_curdir[bg]=99
+#prompt_curdir[content]='%(!.%/.%~)'
+#_left_prompt_elements+=(prompt_curdir)
+
+##### ROOT #####
+#typeset -A prompt_root
+#prompt_root[fg]=1
+#prompt_root[bg]=16
+#prompt_root[content]='%B%4{ROOT%}%b'
+#prompt_root[prefix]='%(!.'
+#prompt_root[suffix]='.)'
+## _left_prompt_elements+=(prompt_root)
+
+#if [[ `uname -s` = 'Linux' ]]; then
+## Kernel upgraded
+#typeset -A prompt_kernel
+#prompt_kernel[fg]=0
+#prompt_kernel[bg]=1
+#prompt_kernel[content]='%6{REBOOT%}'
+#prompt_kernel[prefix]='$(if test -e /lib/modules/`uname -r`; then :; else; echo -n "'
+#prompt_kernel[suffix]='";fi)'
+#_left_prompt_elements+=(prompt_kernel)
+#fi
+
+
+##### Git prompt #############################
+#autoload -Uz vcs_info
+#vcs_info
+#add-zsh-hook precmd vcs_info
+#local git_formats="%b %c %u:%.7i"
+#zstyle ':vcs_info:*' disable bzr cdv cvs darcs fossil hg mtn p4 svk svn tla
+#zstyle ':vcs_info:git*' enable git
+#zstyle ':vcs_info:git*' disable svn
+#zstyle ':vcs_info:git*' check-for-changes true
+#zstyle ':vcs_info:git*' get-revision true
+#zstyle ':vcs_info:git*' stagedstr "+"
+#zstyle ':vcs_info:git*' unstagedstr "!"
+#zstyle ':vcs_info:git*' formats "$git_formats"
+#zstyle ':vcs_info:git*' actionformats "$git_formats %a"
+
+#typeset -A git_prompt
+#git_prompt[fg]=0
+#git_prompt[bg]=2
+#git_prompt[content]='${vcs_info_msg_0_}'
+#git_prompt[prefix]='$(if [[ -n $vcs_info_msg_0_ ]] &> /dev/null; then; echo -n "'
+#git_prompt[suffix]='";fi)'
+#_left_prompt_elements+=(git_prompt)
+
+##### Vi mode prompt #######################
+#typeset -A vi_mode_prompt
+#vi_mode_prompt[fg]=16
+#vi_mode_prompt[bg]=10
+#vi_mode_prompt[content]='$PROMPT_VI_MODE'
+#vi_mode_prompt[prefix]='$(if [[ -n $PROMPT_VI_MODE ]]; then; echo -n "'
+#vi_mode_prompt[suffix]='";fi)'
+#typeset -g PROMPT_VI_MODE
+#_zle_keymap_select () { typeset -g PROMPT_VI_MODE=${${KEYMAP/vicmd/'NORMAL'}/(main|viins)/} && zle && zle reset-prompt }
+#zle -N zle-keymap-select _zle_keymap_select
+#add-zsh-hook precmd _zle_keymap_select
+#_left_prompt_elements+=(vi_mode_prompt)
+
+
+### Build the prompt
+#() { # {{{
+#	PROMPT=''
+#	local LAST_BGCOLOR=''
+#	local element
+#	for element in $_left_prompt_elements
+#	do
+#		local sep
+#		local segment
+#		bgcolor=${${(P)element}[bg]}
+#		fgcolor=${${(P)element}[fg]}
+#		content=${${(P)element}[content]}
+#		prefix=${${(P)element}[prefix]}
+#		suffix=${${(P)element}[suffix]}
+#		# Simply do the bolding,underlining,etc in the 'content' field itself
+#		# shall take less space
+#		#	if [[ -n ${${(P)element}[bold]]} ]]; then
+#		#		content="%B$content%b"
+#		#	fi
+#		if [[ -z $LAST_BGCOLOR ]]; then
+#			sep=$PROMPT_LEFT_SEP
+#			segment=$segment"%F{$bgcolor}"
+#		else
+#			sep=$PROMPT_RIGHT_SEP
+#			segment=$segment"%K{$bgcolor}"
+#		fi
+#		segment=${segment}${sep}
+#		segment=${segment}"%F{$bgcolor}%K{$fgcolor}"
+#		segment=${segment}"%S $content %s"
+#		segment=${prefix}${segment}${suffix}
+#		PROMPT=${PROMPT}${segment}
+#		LAST_BGCOLOR=$bgcolor
+#		unset sep
+#		unset bgcolor fgcolor content
+#		unset segment
+#	done
+#	PROMPT=$PROMPT"%k$PROMPT_RIGHT_SEP%f"
+#	unset LAST_BGCOLOR
+#} # }}}
+
+
+### newline
+#PROMPT=$PROMPT$'\n'
+
+### ROOT
+## Style 1 - (same background)
+##	PROMPT=$PROMPT'%(!.%B%F{%(?.16.1)}${PROMPT_LEFT_SEP}%K{%(?.1.220)}%B%S ROOT%b%s%K{%(?.16.1)}${PROMPT_RIGHT_SEP}.)'
+## Style 2 - (opposite background)
+#	PROMPT=$PROMPT'%(!.%B%F{%(?.1.16)}${PROMPT_LEFT_SEP}%K{%(?.16.1)}%B%S ROOT %b%s%K{%(?.16.1)}${PROMPT_RIGHT_SEP}.)'
+
+##prompt
+#PROMPT=$PROMPT'%F{%(?.16.1)}%(!..${PROMPT_LEFT_SEP})%K{%(?.10.220)}%S %(?.✔.✘) %s%k${PROMPT_PROMPT_SYMBOL}%f '
+## PROMPT=$PROMPT'%k%F{%(?.16.1)}${PROMPT_LEFT_SEP}%f%K{%(?.16.1)}%(!.%B%F{1}%6{ ROOT %}%f%b.) %F{%(?.10.220)}%(?.✔.✘)%f %k%F{%(?.16.1)}${PROMPT_PROMPT_SYMBOL}%f '
+
+##### Right prompt ########################################
+#_left_prompt_elements=()
+
+#typeset -Ag _exitcode_to_signal
+#for exitcode in $(seq 1 255)
+#do
+#	if [[ $exitcode -gt 128 ]]; then
+#		_exitcode_to_signal[$exitcode]="$(kill -l $(($exitcode - 128)))"
+#	else
+#		_exitcode_to_signal[$exitcode]=$exitcode
+#	fi
+#done
+
+##exitcode if not 0
+#RPROMPT='%B%(?..%F{1}${PROMPT_LEFT_SEP}%f%K{1} %F{220}${_exitcode_to_signal[$?]}%f %k%F{1}${PROMPT_RIGHT_SEP}%f)%b'
+
+
+##### Transient prompt ####################################
+
+#function _my_transient_prompt_trigger { # {{{
+
+#	# If last exit-code 0, green(2) else red(1)
+#	typeset -g TRANSIENT_PROMPT='%F{%(?.2.1)}❯%f '
+
+#	# Right-side prompt for transient prompt
+#	# typeset -g TRANSIENT_RPROMPT='%?'
+
+#	typeset -g _my_transient_prompt_saved_PROMPT=$PROMPT
+#	typeset -g _my_transient_prompt_saved_RPROMPT=$RPROMPT
+#	PROMPT=$TRANSIENT_PROMPT
+#	RPROMPT=$TRANSIENT_RPROMPT
+#	zle reset-prompt
+#	zle accept-line
+#} # }}}
+#function _my_transient_prompt_reset { # {{{
+#	if [[ -v MY_PROMPT_FIRST_PROMPT ]]
+#	then
+#		# clear
+#		PROMPT_NEW_LINE_IS_INSERTED=0
+#		unset MY_PROMPT_FIRST_PROMPT
+#		return
+#	fi
+#	if [[ -n $_my_transient_prompt_saved_PROMPT && $PROMPT == $TRANSIENT_PROMPT ]]
+#	then
+#		PROMPT=$_my_transient_prompt_saved_PROMPT
+#		RPROMPT=$_my_transient_prompt_saved_RPROMPT
+#	fi
+#	unset _my_transient_prompt_saved_PROMPT
+#	unset _my_transient_prompt_saved_RPROMPT
+#	unset TRANSIENT_PROMPT
+#	unset TRANSIENT_RPROMPT
+#	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 0 ]]
+#	then
+#		# Add a newline before prompt
+#		PROMPT=$'\n'$PROMPT
+#		PROMPT_NEW_LINE_IS_INSERTED=1
+#	fi
+#	zle && zle reset-prompt
+#} # }}}
+#function _my_transient_prompt_remove_newline_screen_cleared { # {{{
+#	if [[ PROMPT_NEW_LINE_IS_INSERTED -eq 1 ]]
+#	then
+#		# Remove a newline before prompt
+#		PROMPT=${PROMPT/$'\n'/''}
+#		PROMPT_NEW_LINE_IS_INSERTED=0
+#	fi
+#	zle && zle clear-screen
+#} # }}}
+#add-zsh-hook precmd _my_transient_prompt_reset
+
+#zle -N _my_transient_prompt_trigger _my_transient_prompt_trigger
+#bindkey -r '^M'
+#bindkey '^M' _my_transient_prompt_trigger
+
+#zle -N _my_transient_prompt_remove_newline_screen_cleared _my_transient_prompt_remove_newline_screen_cleared
+#bindkey -r '^L'
+#bindkey '^L' _my_transient_prompt_remove_newline_screen_cleared
+
+##### End of prompt ######################################

@@ -1,0 +1,58 @@
+
+## For qt5ct
+export QT_QPA_PLATFORMTHEME=qt5ct
+
+# ## For polybar
+# export HWMON_PATH="/sys/class/hwmon/hwmon$(for i in /sys/class/hwmon/hwmon*/temp*_input;do echo \"$(<$(dirname $i)/name): $(cat ${i%_*}_label 2>/dev/null || echo $(basename ${i%_*})) $(readlink -f $i)\";done|grep Tdie |grep -o 'hwmon[1-9]' | grep -o '[1-9]')/temp2_input"
+# export WIFI_INTERFACE=$(ip link | sed 's/^.: \(.*\):.*/\1/g' | grep '^wl')
+
+
+## colorls
+# export PATH="$PATH:$HOME/.gem/ruby/2.7.0/bin/"
+# alias ls="colorls"
+
+#alias ydl=youtube-dl
+#my_calendar () { while true; do tput civis;clear; cal; sleep $(( 24*60*60 - `date +%H`*60*60 - `date +%M`*60 - `date +%S` )); done }
+#emojiinputtool () {
+#	while true; do
+#	codepoints="$(jome -f cp -p U)"
+#	if [ $? -ne 0 ]; then
+#		exit 1
+#	fi
+#	xdotool key --delay 20 $codepoints
+#	done
+#}
+
+
+
+# alias datausage=vnstat
+# vpn () { protonvpn $* && return true; echo "Running as root ..."; sudo protonvpn $*; timedatectl set-timezone Asia/Kolkata }
+
+# alias cameradisable="sudo chmod -r /dev/video*"
+# alias cameraenable="sudo chmod ug+r /dev/video*"
+# alias camerastatus="l /dev/video*"
+
+
+
+# alias telebit=~/telebit
+# telebit_share_cur_dir () { # {{{
+# 	trap 'echo; echo Stopping telebit; telebit disable' INT
+
+# 	echo "https://wicked-emu-8.telebit.io/" | clipcopy
+# 	if [[ -z $* ]]
+# 	then
+# 		telebit http ./.
+# 	else
+# 		telebit http $*
+# 	fi
+# 	telebit enable
+# 	while sleep 1; do echo -n ''; done
+# } # }}}
+# alias telebit_share=telebit_share_cur_dir
+
+
+
+
+
+## echo 'tiramisu -j | python tiramisu_json_stdout_handler.py'
+## if [ $(tty) = '/dev/tty1' ]; then; sx; fi	# Keep at the end
