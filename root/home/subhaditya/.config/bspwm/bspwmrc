@@ -5,7 +5,7 @@ bluetooth off
 xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Accel Speed' 0.001
 xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Tapping Enabled' 1
 xsetroot -cursor_name left_ptr &
-xset r rate 250 30
+xset r rate 300 20
 
 # Set CapsLock to LeftCtrl
 
@@ -91,30 +91,23 @@ bspc config merge_overlapping_monitors true
 bspc config ignore_ewmh_fullscreen true
 # bspc config pointer_follows_focus true
 
-bspc rule -a Gimp desktop='^8' state=floating follow=on
-bspc rule -a Chromium desktop='^2'
-bspc rule -a mplayer2 state=floating
-bspc rule -a Kupfer.py focus=on
-# bspc rule -a Screenkey manage=off
-
+# NOTE: use xprop to get these values
 bspc rule -a VirtualBoxVM state=floating
 bspc rule -a "VirtualBox Machine" state=tiled
 bspc rule -a jome state=floating
 bspc rule -a xdman-Main state=floating
-bspc rule -a my_zoom state=floating
-bspc rule -a Git-gui--askpass state=floating layer=above
-bspc rule -a Yad state=floating layer=above
-
-# NOTE: use xprop to get these values
-
+# bspc rule -a my_zoom state=floating
+# bspc rule -a Git-gui--askpass state=floating layer=above
+# bspc rule -a Yad state=floating layer=above
 bspc rule -a '*:*:Picture-in-Picture' state=floating layer=above sticky=on focus=off
 bspc rule -a '*:*:Picture-in-picture' state=floating layer=above sticky=on focus=off
 bspc rule -a Safeeyes state=floating layer=above fullscreen=off focus=off
 bspc rule -a Clipster layer=above
 bspc rule -a mpv state=pseudo_tiled
-bspc rule -a Pulseaudio-equalizer-gtk state=floating
+# bspc rule -a Pulseaudio-equalizer-gtk state=floating
 bspc rule -a GParted state=floating layer=above
 bspc rule -a feh state=floating layer=above focus=on
+bspc rule -a Zathura state=tiled
 
 killall xmousepasteblock
 sh -c "xmousepasteblock &> /dev/null &"
