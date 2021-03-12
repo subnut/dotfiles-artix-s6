@@ -1,5 +1,6 @@
 " vim: fdm=marker ts=4 nowrap
 scriptencoding utf-8
+" set nolpl
 
 " Open file at last cursor position " {{{1
 " ---------------------------------
@@ -27,6 +28,67 @@ endif " }}}
 "     let &undodir = target_path                              " point Vim to the defined undo directory
 "     set undofile                                            " finally, enable undo persistence
 " endif   " }}}
+" Workaround for correctly switching colorschemes   " {{{1
+" https://github.com/altercation/solarized/issues/102#issuecomment-275269574
+" https://github.com/altercation/solarized/issues/102#issuecomment-352329521
+" https://opensource.stackexchange.com/questions/2187/how-much-is-substantial-portion-in-mit-licence/2188#2188
+" -------------------------------------------------------------------------------------------------------------------------
+if !exists('s:known_links')
+    let s:known_links = {}
+endif
+
+fun! s:Find_links() " {{{2
+    " Find and remember links between highlighting groups.
+    redir => listing
+    try
+        silent highlight
+    finally
+        redir END
+    endtry
+    for line in split(listing, "\n")
+        let tokens = split(line)
+        " We're looking for lines like "String xxx links to Constant" in the
+        " output of the :highlight command.
+        if len(tokens) ==# 5 && tokens[1] ==# 'xxx' && tokens[2] ==# 'links' && tokens[3] ==# 'to'
+            let fromgroup = tokens[0]
+            let togroup = tokens[4]
+            let s:known_links[fromgroup] = togroup
+        endif
+    endfor
+endfun
+
+fun! s:Restore_links() " {{{2
+    " Restore broken links between highlighting groups.
+    redir => listing
+    try
+        silent highlight
+    finally
+        redir END
+    endtry
+    let num_restored = 0
+    for line in split(listing, "\n")
+        let tokens = split(line)
+        " We're looking for lines like "String xxx cleared" in the
+        " output of the :highlight command.
+        if len(tokens) ==# 3 && tokens[1] ==# 'xxx' && tokens[2] ==# 'cleared'
+            let fromgroup = tokens[0]
+            let togroup = get(s:known_links, fromgroup, '')
+            if !empty(togroup)
+                execute 'hi link' fromgroup togroup
+                let num_restored += 1
+            endif
+        endif
+    endfor
+endfun " }}}
+
+fun! s:AccurateColorscheme(colo_name)
+    call <SID>Find_links()
+    exec 'colorscheme ' a:colo_name
+    call <SID>Restore_links()
+endfun
+
+command! -nargs=1 -complete=color MyColorscheme call <SID>AccurateColorscheme(<q-args>)
+" --------------------------------------------------------------------------------------------------------------    " }}}
 
 augroup colorscheme_overrides
     au!
@@ -71,14 +133,23 @@ set signcolumn=yes
 setg nowrap
 setg noexpandtab                " DO NOT replace tabs with spaces
 setg tabstop=4                  " No. of spaces that <TAB> stands for
-setg shiftwidth=0               " i.e. tabstop value will be used for auto-indenting
+setg shiftwidth=0               " i.e. tabstop value used for auto-indenting
+
+" differences from vim
+" set guicursor=n-v-c:block,o:hor50,i-ci:hor15,r-cr:hor30,sm:block   "vim
+set  sidescroll=0
+setg fileencoding=utf-8
+setg formatoptions+=j
+setg formatoptions+=r
+setg formatoptions+=o
+setg formatoptions+=l
+setg complete+=i
 
 nnoremap <C-n>     <cmd>set number! relativenumber!<CR>
 nnoremap <C-A-n>   <cmd>set relativenumber!<CR>
 nnoremap gB        <cmd>bprev<CR>
 nnoremap gb        <cmd>bnext<CR>
 nnoremap <C-l>     <cmd>set list!<CR>
-au User AirlineAfterInit ++once nnoremap <silent> <c-v> <cmd>set virtualedit=all<CR><c-v><cmd>au User AirlineModeChanged ++once set virtualedit=<CR>
 " nnoremap <silent> <C-g>     :Goyo<CR>
 
 " NOTE: These are pretty darn useful.
@@ -107,6 +178,8 @@ nnoremap <silent><expr> <CR> (v:count ? 'G' : '<CR>')
 " buffer-switching
 nnoremap <leader>b :ls<CR>:b<Space>
 
+" exit Insert mode in terminal
+tnoremap <leader><Esc> <C-\><C-n>
 
 " Plugins{{{1
 " ---------
@@ -168,11 +241,10 @@ Plug 'sainnhe/edge', {'on': 'color edge'}
 
 
 " File explorer
-Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':python3 -m chadtree deps', 'on': 'CHADopen'}
+Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':python3 -m chadtree deps'}
 " Plug 'scrooloose/nerdtree', {'on' : ['NERDTree', 'NERDTreeToggle']}
 " Plug 'Xuyuanp/nerdtree-git-plugin', {'on' : ['NERDTree', 'NERDTreeToggle']}
 " Plug 'ryanoasis/vim-devicons', {'on' : ['NERDTree', 'NERDTreeToggle', 'CHADopen']}
-" let g:webdevicons_enable_airline_statusline = 0
 
 
 " Markdown
@@ -185,10 +257,9 @@ Plug 'junegunn/fzf.vim', {'on': []}
 
 " Git
 Plug 'junegunn/gv.vim', {'on': 'GV'}        " Commit browser
-Plug 'tpope/vim-fugitive', {'on': []}       " Needed by GV, optional for airline-branch extension
+Plug 'tpope/vim-fugitive', {'on': []}       " Needed by GV
 
 " Statusline
-" Plug 'vim-airline/vim-airline', { 'on': [] }
 " Plug 'itchyny/lightline.vim'
 let g:lightline = {}
 
@@ -205,17 +276,17 @@ Plug 'Yggdroot/indentLine', {'on': 'IndentLinesToggle'}
 " -----------------------------------
 Plug 'tpope/vim-surround'
 Plug 'airblade/vim-rooter'                          " Change root dir
-" Plug 'Shougo/echodoc.vim'                           " Echo function usage
 Plug 'machakann/vim-highlightedyank'
+let g:highlightedyank_highlight_duration = 3000
 Plug 'tpope/vim-repeat'
 Plug 'Konfekt/FastFold'                             " Better folding
-Plug 'sheerun/vim-polyglot'                         " Polyglot => one who knows many languages
+" Plug 'sheerun/vim-polyglot'                         " Polyglot => one who knows many languages
 Plug 'norcalli/nvim-colorizer.lua'                  " :ColorizerAttachToBuffer
 Plug 'romainl/vim-cool'                             " Remove search highlight automatically
 Plug 'sgur/vim-editorconfig'
 Plug 'subnut/visualstar.vim'
 Plug 'unblevable/quick-scope', {'on': []}
-Plug 'justinmk/vim-sneak', {'on': []}                           " s<char><char> (z<char><char> for operator-pending mode)
+Plug 'justinmk/vim-sneak', {'on': []}               " s<char><char> (z<char><char> for operator-pending mode)
 Plug 'mox-mox/vim-localsearch'
 
 
@@ -258,7 +329,6 @@ augroup delayed_plug_load
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('fzf.vim')")})
     au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-fugitive')")})
     au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-gitgutter')|doau gitgutter CursorHold")})
-    " au BufEnter *     ++once call timer_start(1000, {id->execute("call plug#load('vim-airline')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-ShowTrailingWhitespace')")})
     au BufEnter *     ++once call timer_start(1000, {id->execute("call plug#load('vim-abolish')")})
     au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('quick-scope')")})
@@ -324,7 +394,6 @@ augroup kitty_terminal customization
 augroup end
 call s:kitty_term_custom()
 " set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20-Cursor/lCursor
-" set guicursor=n-v-c-sm:block-Cursor/lCursor
 set guicursor=n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor
 endif
 
@@ -345,7 +414,6 @@ au colorscheme_overrides ColorScheme gruvbox-material silent! exec 'hi CursorLin
 
 " set colorscheme
 " -----------
-" colorscheme gruvbox-material
 fun! My_bg_setter()
     let &background = get(environ(),'MY_NVIM_BG','dark')
     colorscheme gruvbox-material
@@ -355,19 +423,16 @@ if &termguicolors
     call My_bg_setter()
 endif
 
-
 " Goyo customization {{{1
 " " ------------------
 " " let g:goyo_width=100
 " " let g:goyo_height=20
 " let g:goyo_width='70%'
 " fun! s:goyo_enter()
-"   set eventignore+=FocusGained
 "   let s:saved_signcolumn_state = &l:scl
 "   set scl=no
 " endfun
 " fun! s:goyo_leave()
-"     set eventignore-=FocusGained
 "     if exists('s:saved_signcolumn_state')
 "         let &l:scl = s:saved_signcolumn_state
 "         unlet s:saved_signcolumn_state
@@ -381,7 +446,6 @@ endif
 " augroup end
 " " }}}1
 
-
 " Get the higlight group of the character under cursor
 " ----------------------------------------------------
 fun! GetHiGroup()
@@ -391,26 +455,28 @@ command! GetHiGroup echo GetHiGroup()
 
 " Colorcolumn toggler
 " ------------------
-fun! ColorColumnToggle(local)
+fun! ColorColumnToggle(local) "{{{
     if a:local
-        if &l:colorcolumn == 0
+        if &l:colorcolumn == ''
             let &l:colorcolumn = '+'.join(range(1,100),',+')
         else
-            let &l:colorcolumn = 0
+            let &l:colorcolumn = ''
         endif
     else
-        if &colorcolumn == 0
+        if &colorcolumn == ''
             let &colorcolumn = '+'.join(range(1,100),',+')
         else
-            let &colorcolumn = 0
+            let &colorcolumn = ''
         endif
     endif
-endfun
-command! ColorColumnToggle      call ColorColumnToggle(0)
-command! ColorColumnToggleLocal call ColorColumnToggle(1)
+endfun "}}}
+command! ColorColumnToggle       call ColorColumnToggle(1)
+command! ColorColumnToggleGlobal call ColorColumnToggle(0)
 aug MyCustomColorColumn
     au!
-    au BufEnter * if &ft == 'gitcommit' | let &l:colorcolumn = '+'.join(range(1,100),',+') | endif
+    au BufEnter * if &ft =~ 'gitcommit\|vim'
+                \| let &l:colorcolumn = '+'.join(range(1,100),',+')
+                \| endif
 aug END
 
 
@@ -421,32 +487,27 @@ aug END
 "
 "       *   "<" --> "<>" with cursor in between < and >
 "       *   check that the previous map does not interfere if I typed "<>"
-"       *   "`" --> "``" with cursor in between
-"       *   "```" mapping. ref: https://github.com/SidOfc/mkdx#insert-fenced-code-block
 "       *   If <CR> inside tag at beginning, "/", else if <CR> inside tag at end, directly goto next line
 
 augroup my_autoclose_au
     au!
-    au BufEnter,FileType * if index(['markdown','html'], &ft) >= 0 | execute("inoremap <silent><buffer><expr> < ((col('.') >= col('$') - 1) ? '<><C-o>i' : '<><C-o>h')") | e            letndif
-    au BufEnter,FileType * if index(['markdown','html'], &ft) >= 0 | execute("imap <silent><buffer> <> <>") | endif
-    " au BufEnter,FileType * if &ft ==# 'markdown' | execute("inoremap <silent><buffer><expr> ` ((col('.') >= col('$') - 1) ? '``<C-o>i' : '``<C-o>h')") | endif
-    " au BufEnter,FileType * if &ft ==# 'markdown' | execute("inoremap <buffer><silent> ``` ```<Enter>```<C-o>k<C-o>A") | endif
-    au BufEnter,FileType * if &ft ==# 'html' | execute("imap <buffer><silent><expr> <CR> ((getline('.')[col('.') - 2] == '<') ? '/' : ((getline('.')[col('.') - 1] == '>') ? '<C-o>A<CR>' : '<CR>'))") | endif
-    au BufEnter,FileType * if &ft ==# 'markdown' | execute("imap <buffer><silent><expr> <CR> ((getline('.')[col('.') - 2] == '<') ? '/' : ((getline('.')[col('.') - 1] == '>') ? '<C-o>A<CR>' : ( pumvisible() ? '<c-y><cr>'  : '<CR>')))") | endif
+    au BufEnter,FileType * if &l:ft =~ 'markdown\|html'
+                \| execute("inoremap <buffer><expr> < ((col('.') >= col('$') - 1) ? '<><C-o>i' : '<><C-o>h')")
+                \| execute("imap <buffer> <> <>")
+                \| execute("imap <buffer><expr> <CR> ((getline('.')[col('.') - 2] == '<') ? '/' : ((getline('.')[col('.') - 1] == '>') ? '<C-o>A<CR>' : ( pumvisible() ? '<c-y><cr>'  : '<CR>')))")
+                \| endif
 augroup end
 
 " Change previewheight on terminal resize
-if !exists('g:my_auto_preview_window_height_percentage') | let g:my_auto_preview_window_height_percentage = 30 | endif
-execute('set pvh=' . &lines*g:my_auto_preview_window_height_percentage/100 )
+let g:my_auto_preview_window_height_percentage = 30
+let &pvh = &lines * g:my_auto_preview_window_height_percentage / 100
 augroup my_auto_previewheight
     au!
-    au VimResized * execute('set pvh=' . &lines*g:my_auto_preview_window_height_percentage/100 )
+    au VimResized * let &pvh = &lines * g:my_auto_preview_window_height_percentage / 100
 augroup end
 
 " Built-in terminal emulator
 " -------------------------
-"  <leader><Esc> to exit Insert mode in terminal
-tnoremap <leader><Esc> <C-\><C-n>
 
 
 " Battery saver mode
@@ -484,18 +545,9 @@ endfun  " }}}
 call SetupCommandAlias('W','w')
 call SetupCommandAlias('Q','q')
 call SetupCommandAlias('Qa','qa')
-call SetupCommandAlias('darkmode','set bg=dark')
-call SetupCommandAlias('lightmode','set bg=light')
-call SetupCommandAlias('fzf','FZF!')
-call SetupCommandAlias('FZF!!','FZF')
 call SetupCommandAlias('H','History')
 call SetupCommandAlias('Y','YankAll')
-call SetupCommandAlias('notes','NV!')
-call SetupCommandAlias('NV!!','NV')
-call SetupCommandAlias('~','cd ~')
-call SetupCommandAlias('python','python3')
 call SetupCommandAlias('colo','MyColorscheme')
-" call SetupCommandAlias("so","source ~/.config/nvim/init.vim")
 
 
 " NERDTree File explorer
@@ -518,7 +570,7 @@ augroup end " }}}
 " Live substitution (syntax: :%s/from/to)
 " -----------------
 set inccommand=split
-set gdefault        " Substitute all occurences on a line (i.e. reverse the work of the /g global switch)
+set gdefault        " reverse the work of the /g global switch
 
 " MarkdownPreview
 " ---------------
@@ -545,8 +597,6 @@ endif
 if &lines < 15 | let g:fzf_layout = { 'down': '~40%' } | else | let g:fzf_layout = {'window': {'width': 0.9, 'height': 0.8}} | endif
 augroup AutoFZFLayout
     au!
-    " au VimResized * if &lines < 15 | let g:fzf_layout = { 'down': '~40%' } | else | execute(exists('g:fzf_layout') ? 'unlet g:fzf_layout' : '') | endif
-    " au VimEnter * ++once if &lines < 15 | let g:fzf_layout = { 'down': '~40%' } | else | execute(exists('g:fzf_layout') ? 'unlet g:fzf_layout' : '') | endif
     au VimResized * if &lines < 15 | let g:fzf_layout = { 'down': '~40%' } | else | let g:fzf_layout = {'window': {'width': 0.9, 'height': 0.8}} | endif
 augroup end
 
@@ -556,139 +606,7 @@ augroup end
 let g:rooter_change_directory_for_non_project_files = 'current'
 let g:rooter_silent_chdir = 1
 let g:rooter_resolve_links = 1
-let g:rooter_cd_cmd= 'lcd'  " change directory for the current window only
-
-" Highlighted yank
-" -----------------
-let g:highlightedyank_highlight_duration = 3000
-" Configs       {{{1
-" let g:highlightedyank_highlight_duration = 1000       " Assign a number of time in milliseconds.
-" let g:highlightedyank_highlight_duration = -1         " A negative number makes the highlight persistent.
-" When a new text is yanked or user starts editing, the old highlighting shall be removed
-"
-" If the highlight is not visible for some reason, you can redefine the HighlightedyankRegion highlight group like:
-" highlight HighlightedyankRegion cterm=reverse gui=reverse
-" Note that the line should be located AFTER the :colorscheme command execution in your vimrc.  }}}
-
-" vim-airline
-" -----------
-" set noshowmode {{{1
-if !exists('g:airline_symbols')
-    let g:airline_symbols = {}
-endif
-" let g:airline#extensions#tabline#enabled = 1
-" let g:airline_symbols.space = "\ua0"
-let g:airline_symbols.readonly = '[RO]'
-let g:airline_symbols.whitespace = ' '
-let g:airline_symbols.notexists = ' ?'
-let g:airline#extensions#hunks#non_zero_only = 1
-let g:airline#extensions#localsearch#inverted = 1
-let g:airline#parts#ffenc#skip_expected_string = 'utf-8[unix]'
-" let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#alt_sep = 1
-let g:my_airline_sep = '|'
-let g:my_airline_sep_raw = '%#__accent_bold#'.g:my_airline_sep.'%#__restore__#'
-let g:my_airline_customcurpos_enabled = 0
-let g:my_airline_customcurpos_short = 0
-fun! s:airline_custom()
-fun! MyAirlineSeparatorSpacerFunc() " {{{2
-    return g:airline_symbols.space . g:my_airline_sep .g:airline_symbols.space
-endfun
-fun! MyAirlineSeparatorWrapper(name,side)   " {{{2
-    if empty(airline#parts#get(a:name))
-        return ''
-    endif
-    let side = toupper(a:side[0])
-    let part_name = 'MySep' . a:name . side
-    let condition = get(airline#parts#get(a:name),'condition','')
-    if !empty(airline#parts#get(part_name))
-        return airline#section#create([part_name])
-    endif
-    call airline#parts#define_function(part_name,'MyAirlineSeparatorSpacerFunc')
-    call airline#parts#define_accent(part_name,'bold')
-    if !empty(condition)
-        call airline#parts#define_condition(part_name,condition)
-    endif
-    if side ==# 'R'
-        return airline#section#create([a:name,part_name])
-    endif
-    if side ==# 'L'
-        return airline#section#create([part_name, a:name])
-    endif
-endfun  " }}}
-fun! Airline_bufferline_overrides() "{{{2
-    " hi bufferline_selected gui=NONE
-    if exists('$NVIM_AIRLINE_MODE_NONBOLD') | execute('hi bufferline_selected gui=NONE') | endif
-endfun
-call Airline_bufferline_overrides()
-fun! AirlineRemoveModeBold()    " {{{2
-    let initial_value = airline#section#create_left(['mode'])
-    call airline#parts#define_accent('mode', 'none')
-    if len(split(g:airline_section_a,initial_value)) == 1
-    let g:airline_section_a = airline#section#create_left(['mode']) . split(g:airline_section_a, initial_value)[0]
-    else
-        let g:airline_section_a = join(split(g:airline_section_a,initial_value),airline#section#create_left(['mode']))
-        " See https://learnvimscriptthehardway.stevelosh.com/chapters/27.html#joining
-    endif
-endfun
-if exists('$NVIM_AIRLINE_MODE_NONBOLD') | call AirlineRemoveModeBold() | endif
-fun! Airline_bufferline_overrides() "{{{2
-    " hi bufferline_selected gui=NONE
-    if exists('$NVIM_AIRLINE_MODE_NONBOLD') | execute('hi bufferline_selected gui=NONE') | endif
-endfun
-call Airline_bufferline_overrides()
-fun! CustomAirlineCursorPos()   " {{{2
-    let g:my_airline_customcurpos_short = get(g:,'my_airline_customcurpos_short', 0)
-    if airline#util#winwidth() > 79 || !g:my_airline_customcurpos_short
-    return line('.') . ':' . col('.')
-    else
-    return ':' . col('.')
-    endif
-endfun
-let g:my_airline_customcurpos_enabled = get(g:,'my_airline_customcurpos_enabled',0)
-call airline#parts#define_function('CustomCurPos', 'CustomAirlineCursorPos')
-call airline#parts#define_condition('CustomCurPos', 'g:my_airline_customcurpos_enabled')
-" call airline#parts#define_condition('CustomCurPos', 'mode() =~? "v" || mode() ==# "\<C-V>"')  " }}}
-" g:airline_section_x   " {{{2
-let g:airline_section_x = airline#section#create_right(['bookmark', 'tagbar', 'vista', 'gutentags', 'omnisharp', 'grepper'])
-" i.e. defaults with 'filetype' removed
-" g:airline_section_y   {{{2
-" let g:airline_section_y = '%{airline#util#wrap(airline#parts#filetype(),0)}%#__accent_bold#%{len(airline#util#prepend(airline#parts#ffenc(),0)) && len(airline#util#wrap(airline#parts#filetype(),0)) ? "  | " : ""}%#__restore__#%{trim(airline#util#prepend(airline#parts#ffenc(),0))}'
-let g:airline_section_y = "%{airline#util#wrap(airline#parts#filetype(),0)}%#__accent_bold#%{len(airline#util#prepend(airline#parts#ffenc(),0)) && len(airline#util#wrap(airline#parts#filetype(),0)) ? ' ' : ''}%#__restore__#%{trim(airline#util#prepend(airline#parts#ffenc(),0))}"
-" g:airline_section_z   {{{2
-" let g:airline_section_z = airline#section#create(['windowswap', 'obsession']) . '%p%% %#__accent_bold#|%#__restore__# %L' . airline#section#create(['CustomCurPos'])
-let g:airline_section_z = airline#section#create(['windowswap', 'obsession']) . '%p%% ' .g:my_airline_sep_raw.' %L' . MyAirlineSeparatorWrapper('CustomCurPos','l')
-" i.e. default  minus  [ '%p%%'.spc, 'linenr', 'maxlinenr', ':%v' ]
-" g:airline_section_warning     {{{2
-" let g:airline_section_warning = airline#section#create(['ycm_warning_count',  'syntastic-warn', 'neomake_warning_count', 'ale_warning_count', 'lsp_warning_count', 'nvimlsp_warning_count', 'languageclient_warning_count', 'coc_warning_count']) . trim(airline#extensions#whitespace#check())
-" let g:airline_section_warning = join(split(g:airline_section_warning, airline#section#create(['whitespace']))) . trim(airline#extensions#whitespace#check())
-" ie default minus 'whitespace', with trimmed whitespace at the end
-" }}}
-call lightline#disable()
-AirlineRefresh
-let &statusline = &l:statusline
-endfun
-augroup airline_customization
-    au!
-    au User AirlineAfterInit ++once call s:airline_custom()
-augroup end
-nnoremap <silent> <leader>; :call CustomAirlineCursorPosToggler()<CR>
-nnoremap <silent> <leader>: :call CustomAirlineCursorPosLengthToggler()<CR>
-fun! CustomAirlineCursorPosToggler()    " {{{2
-    let g:my_airline_customcurpos_enabled += 1
-    let g:my_airline_customcurpos_enabled %= 2
-    if !g:my_airline_customcurpos_enabled
-        let g:my_airline_customcurpos_short = 0
-    endif
-endfun  " }}}
-fun! CustomAirlineCursorPosLengthToggler()  " {{{2
-    let g:my_airline_customcurpos_short+= 1
-    let g:my_airline_customcurpos_short%= 2
-    if !g:my_airline_customcurpos_enabled
-        let g:my_airline_customcurpos_enabled = 1
-    endif
-endfun  " }}}2
-"}}}1
+let g:rooter_cd_cmd = 'lcd'  " change directory for the current window only
 
 " lightline.vim
 " -------------
@@ -705,29 +623,12 @@ set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 " set list
 
 
-" Deoplete  "{{{
-" --------
-"let g:deoplete#enable_at_startup = 1
-"au InsertEnter * ++once call timer_start(0, {id->execute("call deoplete#custom#option('sources',{ 'python': ['jedi'] })")} )
-"au InsertEnter * ++once call timer_start(0, {id->execute("call deoplete#enable()")} )
-"call timer_start(0, {id->execute("call deoplete#custom#option({
-"           \ 'auto_complete_delay': 100,
-"           \ 'sources': { 'python': ['jedi']},
-"           \ 'ignore_sources': {'_': ['around']},
-"           \ })")})
-"   }}}
-
 " Floating preview
 " ----------------
 set completeopt-=preview
 let g:float_preview#docked = 1
 let g:float_preview#max_width = 100
 
-" Show function parmeters
-" -----------------------
-let g:echodoc#enable_at_startup = 1
-let g:echodoc#type = 'echo'
-let g:echodoc#events = ['CompleteDone', 'TextChangedI', 'TextChangedP']
 
 " Do not show -- MATCH X OF Y -- in completion
 " ---------------------------------------------
@@ -736,14 +637,13 @@ if has('patch-7.4.314')
 endif
 
 
-" Navigate through suggestions using TAB and Arrows
+" Navigate through suggestions using TAB, not Arrows
 " ----------------------------------------
 inoremap <silent><expr> <tab>   pumvisible() ? "\<c-n>"         : "\<tab>"
 inoremap <silent><expr> <s-tab> pumvisible() ? "\<c-p>"         : "\<s-tab>"
 inoremap <silent><expr> <up>    pumvisible() ? "<c-e><up>"      : "<up>"
 inoremap <silent><expr> <down>  pumvisible() ? "<c-e><down>"    : "<down>"
-" inoremap <expr><Down>         pumvisible() ? "\<C-n>"         : "\<Down>"
-" inoremap <expr><Up>           pumvisible() ? "\<C-p>"         : "\<Up>"
+
 
 " NCM2
 " ----
@@ -753,7 +653,9 @@ inoremap <silent><expr> <down>  pumvisible() ? "<c-e><down>"    : "<down>"
 " enable ncm2 for all buffers
     augroup enable_ncm2
         au!
-        autocmd BufEnter * if &l:ft =~ 'python\|vim' | call ncm2#enable_for_buffer() | endif
+        autocmd BufEnter * if &l:ft =~ 'python\|vim'
+                    \| call ncm2#enable_for_buffer()
+                    \| endif
     augroup end
 " IMPORTANT: :help Ncm2PopupOpen for more information
     set completeopt=noinsert,menuone,noselect
@@ -795,120 +697,7 @@ call localsearch#Enable() " Turn on by default
 command! LocalSearch call localsearch#Toggle()
 
 
-" Workaround for correctly switching colorschemes   " {{{1
-" https://github.com/altercation/solarized/issues/102#issuecomment-275269574
-" https://github.com/altercation/solarized/issues/102#issuecomment-352329521
-" https://opensource.stackexchange.com/questions/2187/how-much-is-substantial-portion-in-mit-licence/2188#2188
-" -------------------------------------------------------------------------------------------------------------------------
-if !exists('s:known_links')
-    let s:known_links = {}
-endif
 
-fun! s:Find_links() " {{{2
-    " Find and remember links between highlighting groups.
-    redir => listing
-    try
-        silent highlight
-    finally
-        redir END
-    endtry
-    for line in split(listing, "\n")
-        let tokens = split(line)
-        " We're looking for lines like "String xxx links to Constant" in the
-        " output of the :highlight command.
-        if len(tokens) ==# 5 && tokens[1] ==# 'xxx' && tokens[2] ==# 'links' && tokens[3] ==# 'to'
-            let fromgroup = tokens[0]
-            let togroup = tokens[4]
-            let s:known_links[fromgroup] = togroup
-        endif
-    endfor
-endfun
-
-fun! s:Restore_links() " {{{2
-    " Restore broken links between highlighting groups.
-    redir => listing
-    try
-        silent highlight
-    finally
-        redir END
-    endtry
-    let num_restored = 0
-    for line in split(listing, "\n")
-        let tokens = split(line)
-        " We're looking for lines like "String xxx cleared" in the
-        " output of the :highlight command.
-        if len(tokens) ==# 3 && tokens[1] ==# 'xxx' && tokens[2] ==# 'cleared'
-            let fromgroup = tokens[0]
-            let togroup = get(s:known_links, fromgroup, '')
-            if !empty(togroup)
-                execute 'hi link' fromgroup togroup
-                let num_restored += 1
-            endif
-        endif
-    endfor
-endfun " }}}
-
-fun! s:AccurateColorscheme(colo_name)
-    call <SID>Find_links()
-    exec 'colorscheme ' a:colo_name
-    call <SID>Restore_links()
-endfun
-
-command! -nargs=1 -complete=color MyColorscheme call <SID>AccurateColorscheme(<q-args>)
-" --------------------------------------------------------------------------------------------------------------    " }}}
-
-" vim-iawriter
-" ------------
-" let g:iawriter_no_nospell = 0
-" augroup Iawriter_autocmds
-"   au!
-"   au User IawriterPostPostEnter if !g:iawriter_no_nospell | set nospell | endif
-"   au User IawriterPostLeave if &filetype ==# 'markdown' | set spell | endif
-" augroup end
-let g:iawriter_force_defaults = 1
-
-" vim-illuminate {{{1
-" --------------
-augroup illuminate
-    au!
-    au ColorScheme * exec 'hi illuminatedWord  guibg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'gui')
-    au ColorScheme * silent! exec 'hi illuminatedWord  ctermbg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'cterm')
-    " au ColorScheme * exec 'hi illuminatedWord  gui=bold'
-augroup end
-silent! exec 'hi illuminatedWord  guibg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'gui')
-silent! exec 'hi illuminatedWord  ctermbg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'cterm')
-" exec 'hi illuminatedWord  gui=bold'
-let g:Illuminate_ftHighlightGroups = {
-            \ '*:blacklist': ['Comment', 'String']
-            \ }
-if !exists('g:Illuminate_ftblacklist')
-    let g:Illuminate_ftblacklist = []
-endif
-let g:Illuminate_ftblacklist += ['nerdtree', 'CHADTree', 'markdown', 'help', 'vim-plug', '', 'log']
-let g:Illuminate_delay = 250                " Time in milliseconds (default 250)
-let g:Illuminate_highlightUnderCursor = 1   " Highlight the word under cursor (default: 1)
-let g:Illuminate_insert_mode_highlight = 0  " Highlight in Insert mode too
-"}}}1
-
-" Trying to implement my own finding function
-" -------------------------------------------
-fun! FindAll()
-    call inputsave()
-    let p = input('Enter pattern: ')
-    call inputrestore()
-    if get(g:,'my_findall_use_quickfix', 0)
-        silent execute 'vimgrep "'.p.'" '.expand('%:p').' |copen'
-    else " use location list
-        silent execute 'lvimgrep "'.p.'" '.expand('%:p').' |lopen'
-    endif
-endfun
-
-" Automatically close if QuickFix is the only window
-" -------------------------------------------------
-aug QFClose
-    au!
-    au WinEnter * if winnr('$') == 1 && &buftype == "quickfix"|q|endif
-aug END
 
 " ShowTrailingWhitespace
 " ----------------------
@@ -920,7 +709,6 @@ command! -bar ShowTrailingWhitespaceBufferReset call ShowTrailingWhitespace#Rese
 
 " vim-doge
 " --------
-" let g:doge_doc_standard_python = 'google'
 let g:doge_parsers=['python']
 nmap <leader>d <Plug>(doge-generate)
 
@@ -961,8 +749,6 @@ com! SudoWrite call MySudoRootWriter()
 
 " vim-lsp
 " -------
-let g:Illuminate_ftblacklist += ['.lsp-hover']
-
 let g:lsp_insert_text_enabled = 0
 let g:lsp_text_edit_enabled = 0
 let g:lsp_virtual_text_prefix = ''
@@ -972,55 +758,12 @@ fun! s:on_lsp_buffer_enabled() abort
     nmap <buffer> gd <plug>(lsp-definition)
     nmap <buffer> <leader>r <plug>(lsp-rename)
     nmap <buffer> K <plug>(lsp-hover)
-    let g:Illuminate_ftblacklist+=[&ft]
 endfun
-
 augroup lsp_install
     au!
     " call s:on_lsp_buffer_enabled only for languages that has the server registered.
     autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
 augroup END
-
-
-" Python
-
-" if executable('pyls')
-"   " pip install python-language-server
-"   augroup vim_lsp_pyls
-"   au!
-"   au User lsp_setup call lsp#register_server({
-"       \ 'name': 'pyls',
-"       \ 'cmd': {server_info->['pyls']},
-"       \ 'allowlist': ['python'],
-"       \ 'config': {'configurationSources': ['flake8']},
-"       \ 'workspace_config': {'pyls': {'configurationSources': ['flake8'] }}
-"       \ })
-"   augroup end
-" endif
-
-" if executable('jedi-language-server')
-"   " pip install jedi-language-server
-"   augroup vim_lsp_jedi_ls
-"   au!
-"   au User lsp_setup call lsp#register_server({
-"       \ 'name': 'jedi-ls',
-"       \ 'cmd': {server_info->['jedi-language-server']},
-"       \ 'allowlist': ['python'],
-"       \ 'config': {"markupKindPreferred": "plaintext"},
-"       \ })
-"   augroup end
-" endif
-
-let g:Illuminate_ftblacklist += ['python']
-" let g:lsp_settings = {
-" \   'pyls': {
-" \     'workspace_config': {
-" \       'pyls': {
-" \         'configurationSources': ['flake8']
-" \       }
-" \     }
-" \   },
-" \}
 
 
 " vim-sneak
@@ -1035,51 +778,23 @@ augroup SneakOmapOverride
     au BufWinEnter * ++once call SneakOmapOverride()
 augroup end
 
-" vim-dadbod
-" ----------
-" First create user in MariaDB -
-"   create user 'dadbod-user'@'localhost';
-"   revoke all on *.* from 'dadbod-user'@'localhost';
-"   grant usage,select on *.* to 'dadbod-user'@'localhost';
-"
-" Then define "g:db"
-"   let g:db = 'mysql://dadbod-user@localhost/database'
-" Set completefunc
-"   set completefunc=vim_dadbod_completion#omni
-" Now, you can trigger completions (of tables and columns only)
-" by pressing <C-x><C-u>
-
-" Not ready yet, was just testing, but was unsuccessful
-"    au User Ncm2Plugin call ncm2#register_source({
-"           \ 'name' : 'dadbod-omifunc',
-"           \ 'priority': 9,
-"           \ 'subscope_enable': 1,
-"           \ 'scope': ['sql'],
-"           \ 'mark': '',
-"           \ 'word_pattern': '\w\ ',
-"           \ 'complete_pattern': '',
-"           \ 'on_complete': ['ncm2#on_complete#delay', 180,
-"                   \'ncm2#on_complete#omni', 'vim_dadbod_completion#omni'],
-"           \ })
-
-
 " treesitter
 " ----------
-if has("nvim-0.5")
-lua << EOF
-require'nvim-treesitter.configs'.setup {
-    ensure_installed = "python",    -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-    highlight = {
-        enable = true,              -- false will disable the whole extension
-    },
-}
-EOF
-endif
+" if has("nvim-0.5")
+" lua << EOF
+" require'nvim-treesitter.configs'.setup {
+"     ensure_installed = "python",    -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+"     highlight = {
+"         enable = true,              -- false will disable the whole extension
+"     },
+" }
+" EOF
+" endif
 
 " quick-scope
 " -----------
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-fun! MyQuickScopeColorSetter()
+fun! MyQuickScopeColorSetter() "{{{
     au ColorScheme ++once * call MyQuickScopeColorSetter()
 
     hi clear QuickScopePrimary
@@ -1102,7 +817,7 @@ fun! MyQuickScopeColorSetter()
     " exec 'hi QuickScopeSecondary guibg=' . synIDattr(synIDtrans(hlID('Normal')), 'fg', 'gui') . ' guibg=' . synIDattr(synIDtrans(hlID('Normal')), 'bg', 'gui') . ' gui=bold'
     " hi QuickScopeSecondary guifg=bg
     " hi QuickScopeSecondary gui=bold
-endfun
+endfun "}}}
 call MyQuickScopeColorSetter()
 
 " vim-gitgutter
@@ -1122,7 +837,7 @@ let g:nvim_ghost_disabled = 1
 let g:nvim_ghost_logging_enabled = 1
 aug nvim_ghost_user_autocommands
     au!
-    au User www.reddit.com set filetype=markdown
+    au User www.reddit.com setl filetype=markdown
 aug END
 
 " visualstar.vim
