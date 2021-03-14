@@ -1,3 +1,13 @@
+! The following colors have been taken from
+! man 7 urxvt, line number 356
+!
+! A quicker way to reach it is -
+!   man 7 urxvt
+! And then, in less, search for Xdefaults -
+!   /Xdefaults↵
+!
+! You should reach it.
+
 URxvt.color0:   #000000
 URxvt.color1:   #A80000
 URxvt.color2:   #00A800
