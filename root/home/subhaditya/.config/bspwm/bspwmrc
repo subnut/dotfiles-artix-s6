@@ -7,47 +7,21 @@ xinput set-prop 'SynPS/2 Synaptics TouchPad' 'libinput Tapping Enabled' 1
 xsetroot -cursor_name left_ptr &
 xset r rate 300 20
 
-# Set CapsLock to LeftCtrl
+xmodmap -e "add Lock = XF86Favorites " && \
+xmodmap -e "remove Lock = Caps_Lock" && \
+xmodmap -e "remove control = Control_L" && \
+xmodmap -e "keysym Caps_Lock = Control_L" && \
+xmodmap -e "add control = Control_L" && \
+killall xcape && \
+xcape -t 300 -e "Control_L=XF86Favorites"
 
-#Set XF86Favorites (Fn+F12 on E495) to CapsLock
-xmodmap -e "keysym XF86Favorites = Caps_Lock"
-#xmodmap -e "remove Lock = Caps_Lock"
-#xmodmap -e "keysym Caps_Lock = Control_L"
-#xmodmap -e "remove Lock = Caps_Lock"
-#xmodmap -e "remove control = Control_L"
-#xmodmap -e "keysym Caps_Lock = Control_L"
-#xmodmap -e "keysym XF86Favorites = Caps_Lock"
-#xmodmap -e "add Lock = Caps_Lock"
-#xmodmap -e "add control = Control_L"
-
-# spare_modifier="Hyper_L"
-# xmodmap -e "remove Lock = Caps_Lock"
-# xmodmap -e "keysym Caps_Lock = $spare_modifier"
-# xmodmap -e "remove mod4 = $spare_modifier"
-# # Hyper_L is mod4 by default
-# xmodmap -e "add control = $spare_modifier"
-# xmodmap -e "keycode any = Caps_Lock"
-# xmodmap -e "add Lock = Caps_Lock"
-# killall xcape
-# xcape -t 150 -e "$spare_modifier=Caps_Lock"
-# # NOTE: DO NOT PUT SPACES AROUND THE EQUAL SIGN
-
-# sh -c ' \
-# xmodmap -e "remove Lock = Caps_Lock"; \
-# xmodmap -e "remove control = Control_L"; \
-# xmodmap -e "keysym Caps_Lock = Control_L"; \
-# xmodmap -e "keysym Print = Caps_Lock"; \
-# xmodmap -e "keysym F13 = Print"; \
-# xmodmap -e "add Lock = Caps_Lock"; \
-# xmodmap -e "add control = Control_L"; \
-# ' &
 
 killall -q sxhkd
 sh -c "sxhkd &> /dev/null &"
 
-killall -q /usr/lib/gsd-xsettings
-/usr/lib/gsd-xsettings &> /dev/null &
-disown
+# killall -q /usr/lib/gsd-xsettings
+# /usr/lib/gsd-xsettings &> /dev/null &
+# disown
 
 if ! [[ `bspc query --desktops --names` =~ "Desktop" ]]
 then
@@ -71,8 +45,6 @@ fi
 kill $(pgrep --full "this is a comment for my borderer")
 zsh -c "while read -r my_auto_something; do if [[ \$my_auto_something =~ 'T@' ]];then bspc config border_width 10;else bspc config border_width 0;fi ;done < <(bspc subscribe); # this is a comment for my borderer" &
 disown
-
-#else bspc monitor -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII; fi
 
 bspc config border_width         0
 bspc config window_gap          20
@@ -114,8 +86,6 @@ sh -c "xmousepasteblock &> /dev/null &"
 
 killall clipster
 sh -c "clipster -d &> /dev/null &"
-# killall clipit
-# clipit -d &> /dev/null &
 
 
 # safeeyes -e &> /dev/null &
@@ -126,13 +96,14 @@ feh --bg-fill light.png  &
 
 killall -q polybar
 zsh -c "if ! [[ $(bspc config top_padding) -eq $((`bspc config bottom_padding` + 35)) ]]; then bspc config top_padding $((`bspc config bottom_padding` + 35)); fi &"
-# polybar mybar &
 zsh <<< "polybar --list-monitors | cut -d':' -f1 | while IFS= read -r MONITOR; do if ! [[ \$MONITOR == \$(polybar --list-monitors | grep primary | cut -d':' -f1) ]]; then MONITOR=\$MONITOR polybar secondary_restack &> /dev/null &; else polybar mybar_restack &> /dev/null &; fi; done &"
 
 # zsh <<< 'if [[ $(bluetooth | cut -d"=" -f2 | cut -d" " -f2) =~ on ]] ; then notify-send.sh -u critical "Bluetooth is ON" -i bluetooth -t 0 -a Bluetooth $(if [[ -a bluetooth-on-notification.id ]] ; then echo -n "-r "; cat bluetooth-on-notification.id ; fi) -p > bluetooth-on-notification.id; fi'
 
 if pidof acpid; then true; else zsh <<< "kitty sh -c 'echo \"Starting acpid ...\"; sudo acpid' &"; fi &
 if [[ -r /dev/video0 || -r /dev/video1 ]]; then zsh <<< "kitty sh -c 'echo \"Disabling camera ...\"; sudo chmod -r /dev/video*' &"; fi &
+
+pgrep urxvtd >/dev/null || urxvtd -q -f -o
 
 killall -q picom
 picom --experimental-backends &> /dev/null &

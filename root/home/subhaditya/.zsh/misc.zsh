@@ -26,12 +26,18 @@ alias la='ls -la'
 export EDITOR=nvim
 export DIFFPROG="nvim -d"
 alias n=nvim
+if [[ $TERM =~ 'rxvt-unicode' ]]; then
+	export EDITOR=vim
+	export DIFFPROG=vimdiff
+	alias n=vim
+fi
 alias nvimvenv="source ~/.config/nvim/venv/bin/activate"
 alias nvimdiff="nvim -d"
-alias init.vim="nvim ~/.config/nvim/init.vim"
-alias bspwmrc="nvim ~/.config/bspwm/bspwmrc"
-alias sxhkdrc="nvim ~/.config/sxhkd/sxhkdrc"
-alias zshrc="nvim ~/.zshrc"
+alias vimrc="$EDITOR ~/.vimrc"
+alias init.vim="$EDITOR ~/.config/nvim/init.vim"
+alias bspwmrc="$EDITOR ~/.config/bspwm/bspwmrc"
+alias sxhkdrc="$EDITOR ~/.config/sxhkd/sxhkdrc"
+alias zshrc="$EDITOR ~/.zshrc"
 
 alias ra=ranger
 alias wifi="nmcli dev wifi list"

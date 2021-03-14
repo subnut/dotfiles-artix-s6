@@ -4,7 +4,8 @@
 
 # terminal emulator
 super + Return
-	kitty &> /dev/null
+	urxvtc
+	# kitty &> /dev/null
 super + shift + Return
 	bspc config -d focused window_gap 0; \
 	kitty --single-instance --config .config/kitty/kittyIDE.conf --detach --class="kittyIDE"  &> /dev/null
