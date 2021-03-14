@@ -12,8 +12,8 @@ alias gca='git commit -v -a'
 alias gp='git push'
 alias gpf='git push --force-with-lease'
 alias gpull='git pull'
-gcm () { git commit    -m "$*" }
-gcma() { git commit -a -m "$*" }
+gcm () { DISPLAY= git commit    -m "$*" }
+gcma() { DISPLAY= git commit -a -m "$*" }
 alias gst='git status'
 alias gsw='git switch'
 
