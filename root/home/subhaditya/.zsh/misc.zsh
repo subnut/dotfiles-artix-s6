@@ -30,6 +30,7 @@ if [[ $TERM =~ 'rxvt-unicode' ]]; then
 	export EDITOR=vim
 	export DIFFPROG=vimdiff
 	alias n=vim
+	export BAT_THEME=ansi
 fi
 alias nvimvenv="source ~/.config/nvim/venv/bin/activate"
 alias nvimdiff="nvim -d"
