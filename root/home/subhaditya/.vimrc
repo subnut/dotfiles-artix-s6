@@ -11,7 +11,7 @@ set helpheight=0
 set undofile
 set smarttab
 set updatetime=1000
-set notimeout
+set timeoutlen=1500
 set mouse=
 setg nowrap
 setg fileformat=unix
@@ -117,13 +117,10 @@ vmap <Plug>(My-Comment-Toggler) <ESC>'<<Plug>(My-Comment-Toggler)'>
 
 fun! MyCommentorOpFunc(...) "{{{
     if getline(line("'[")) =~ ('\V' .  printf(&l:cms,'\.\*'))
-        let l:map = "\<Plug>(My-Un-Commenter)"
+        execute "normal '[V']\<Plug>(My-Un-Commenter)"
     else
-        let l:map = "\<Plug>(My-Commenter)"
+        execute "normal '[V']\<Plug>(My-Commenter)"
     endif
-    for line in range(line("'["), line("']"))
-        execute 'normal ' . line . 'GV' . l:map
-    endfor
     let &opfunc = get(g:,'MyCommentor_saved_opfunc','')
     silent! unlet g:MyCommentor_saved_opfunc
 endfun "}}}
