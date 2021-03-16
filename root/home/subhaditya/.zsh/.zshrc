@@ -1,5 +1,8 @@
 # vim: fdm=marker nowrap sw=0 ts=4
 
+if which stty > /dev/null; then
+	stty -echo
+fi
 # Lines configured by zsh-newuser-install
 HISTFILE=~/.zsh_history
 HISTSIZE=30000

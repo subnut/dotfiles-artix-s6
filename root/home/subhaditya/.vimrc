@@ -11,7 +11,7 @@ set helpheight=0
 set undofile
 set smarttab
 set updatetime=1000
-set timeoutlen=1500
+set timeoutlen=3500
 set mouse=
 setg nowrap
 setg fileformat=unix
@@ -171,7 +171,6 @@ Plug 'airblade/vim-gitgutter', {'on': []}   " Git diff
     hi GitGutterAdd     ctermfg=2
     hi GitGutterChange  ctermfg=3
     hi GitGutterDelete  ctermfg=1
-
 call plug#end() "}}}
 endif
 

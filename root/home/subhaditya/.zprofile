@@ -6,4 +6,6 @@ export HWMON_PATH="/sys/class/hwmon/hwmon$(for i in /sys/class/hwmon/hwmon*/temp
 export WIFI_INTERFACE=$(ip link | sed 's/^.: \(.*\):.*/\1/g' | grep '^wl')
 
 ## Start X
-sx
+if [ $(tty) = '/dev/tty1' ]; then
+	sx
+fi
