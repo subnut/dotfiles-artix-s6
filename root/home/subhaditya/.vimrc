@@ -12,10 +12,15 @@ set undofile
 set smarttab
 set updatetime=1000
 set timeoutlen=3500
-set mouse=
+set title
 setg nowrap
 setg fileformat=unix
 
+set mouse=n
+map <MiddleMouse>   <Nop>
+map <2-MiddleMouse> <Nop>
+map <3-MiddleMouse> <Nop>
+map <4-MiddleMouse> <Nop>
 
 hi SignColumn ctermbg=none
 aug MyClearSignColumn
