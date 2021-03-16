@@ -1,0 +1,6 @@
+# set font "monospace normal 22"
+# set font "'Recursive Sans Casual Static' normal 24"
+set font "'Recursive Sn Csl St Lt' bold 24"
+set open-first-page true
+
+# vim: ft=conf
