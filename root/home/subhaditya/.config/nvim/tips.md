@@ -1,3 +1,10 @@
+Ternary operator's god!
+----------------------
+`valueIfTrue ?? valueIfFalse` is the same as `valueiftrue ? valueiftrue : valueiffalse`
+```vim
+:h falsy-operator
+```
+
 Vim variable scopes
 -------------------
 ```vim
