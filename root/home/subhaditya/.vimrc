@@ -136,6 +136,9 @@ vmap <Plug>(MyCommentor) <ESC>'<<Plug>(MyCommentor)'>
 "}}}
 
 "}}}
+" Delete surrounding (ds) {{{
+nnoremap <silent><expr> ds 'di' . nr2char(getchar()) . 'vhp'
+" }}}
 
 
 if !empty(glob('~/.vim/autoload/plug.vim'))
@@ -147,7 +150,7 @@ aug END
 call plug#begin('~/.config/nvim/plugged')
 Plug 'subnut/visualstar.vim'
     au delayed_plug_load BufEnter * ++once
-                \ call timer_start(0, {id->plug#load('visualstar.vim')})
+                \ call timer_start(0, {->plug#load('visualstar.vim')})
     xmap <leader>* <Plug>(VisualstarSearchReplace)
     nmap <leader>* <Plug>(VisualstarSearchReplace)
 
@@ -164,7 +167,7 @@ Plug 'simnalamburt/vim-mundo', {'on': 'MundoToggle'}
     nnoremap <leader>m <cmd>MundoToggle<cr>
 
 Plug 'airblade/vim-gitgutter', {'on': []}   " Git diff
-    au delayed_plug_load BufEnter * ++once call timer_start(0, {id->execute("
+    au delayed_plug_load BufEnter * ++once call timer_start(0, {->execute("
                 \call plug#load('vim-gitgutter')
                 \|doau gitgutter CursorHold")})
     let g:gitgutter_map_keys = 0
@@ -176,6 +179,16 @@ Plug 'airblade/vim-gitgutter', {'on': []}   " Git diff
     hi GitGutterAdd     ctermfg=2
     hi GitGutterChange  ctermfg=3
     hi GitGutterDelete  ctermfg=1
+
+Plug 'psf/black', { 'branch': 'stable', 'on': [] }          " Auto-formatter
+    au delayed_plug_load BufEnter * ++once
+                \ call timer_start(100, {->plug#load('black')})
+    aug Black
+        au!
+        au BufWritePre * exe (&l:ft == 'python' ? 'Black' : '')
+    aug END
+
+" Plug 'kalekundert/vim-coiled-snake', { 'for': 'python' }    " Python folding
 call plug#end() "}}}
 endif
 

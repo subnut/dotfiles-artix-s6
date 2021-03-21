@@ -60,6 +60,7 @@ zinit snippet ~/.zsh/key_mappings.zsh
 zinit snippet ~/.zsh/git.zsh
 zinit snippet ~/.zsh/misc.zsh
 zinit snippet ~/.zsh/arch_pacman.zsh
+zinit snippet ~/.zsh/udisksctl_and_usb.zsh
 if [[ $TERM =~ 'kitty' ]]; then
 	zinit snippet ~/.zsh/kitty.zsh
 	zinit snippet ~/.zsh/kitty_kittyIDE.zsh

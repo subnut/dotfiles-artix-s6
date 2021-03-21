@@ -10,6 +10,6 @@ set window-title-basename true
 set statusbar-home-tilde true
 set incremental-search true
 set scrollbar-bg rgba(0,0,0,0)
-set guioptions sv
+set guioptions vh
 
 # vim: ft=conf
