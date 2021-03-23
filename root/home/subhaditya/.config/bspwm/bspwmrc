@@ -46,12 +46,12 @@ kill $(pgrep --full "this is a comment for my borderer")
 zsh -c "while read -r my_auto_something; do if [[ \$my_auto_something =~ 'T@' ]];then bspc config border_width 10;else bspc config border_width 0;fi ;done < <(bspc subscribe); # this is a comment for my borderer" &
 disown
 
-bspc config border_width         0
+bspc config border_width        0
 bspc config window_gap          20
-
-bspc config split_ratio          0.50
-bspc config borderless_monocle   true
-bspc config gapless_monocle      true
+bspc config split_ratio         0.50
+bspc config borderless_monocle  true
+bspc config gapless_monocle     true
+bspc config initial_polarity	first_child
 
 bspc config normal_border_color '#000000'
 bspc config focused_border_color '#ff0000'
