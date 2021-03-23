@@ -31,6 +31,7 @@ cp ~/.p10k.zsh			-t	./root/home/subhaditya/
 cp ~/.gitconfig			-t	./root/home/subhaditya/
 cp ~/.asoundrc			-t	./root/home/subhaditya/
 cp ~/.alsaequal.bin		-t	./root/home/subhaditya/
+cp ~/.alsaequal.bin.saved	-t	./root/home/subhaditya/
 cp ~/.Xdefaults			-t	./root/home/subhaditya/
 cp ~/.vimrc			-t	./root/home/subhaditya/
 
