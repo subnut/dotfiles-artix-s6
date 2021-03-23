@@ -10,7 +10,7 @@ usb() { # {{{
 	PATH=$PATH_SAVED
 	for _ in $(lsblk -P -o PATH,RM,TYPE | grep 'RM="1"' | grep 'TYPE="disk"' | cut -d' ' -f1)
 	do
-		eval $(lsblk -P -o PATH,RM,TYPE | grep 'RM="1"' | grep 'TYPE="disk"' | cut -d' ' -f1)
+		eval $_
 		$lsblk $PATH -t -o NAME,SIZE,TYPE,LABEL,MOUNTPOINT
 		PATH=$PATH_SAVED
 	done

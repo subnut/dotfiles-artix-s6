@@ -73,7 +73,6 @@ fi
 # zinit ice as'z' pick'z.sh'; zinit light rupa/z
 # zinit ice depth=1; zinit light romkatv/powerlevel10k; source ~/.p10k.zsh
 
-
 zinit ice wait lucid atload'_zsh_autosuggest_start'; zinit light zsh-users/zsh-autosuggestions
 zinit wait lucid for \
 	atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
@@ -81,6 +80,9 @@ zinit wait lucid for \
 	atload"!_zsh_autosuggest_start" \
 		light-mode zsh-users/zsh-autosuggestions
 
+[ $TERM = 'rxvt-unicode-256colors' ] && \
+	ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=7,bold"
+	# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
 
 ### ohmyzsh plugins
 zinit wait lucid for \

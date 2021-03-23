@@ -105,6 +105,6 @@ if [[ -r /dev/video0 || -r /dev/video1 ]]; then zsh <<< "kitty sh -c 'echo \"Dis
 
 pgrep urxvtd >/dev/null || urxvtd -q -f -o
 
-killall -q picom
-picom --experimental-backends &> /dev/null &
+# killall -q picom
+# picom --experimental-backends &> /dev/null &
 disown
