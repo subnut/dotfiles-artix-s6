@@ -80,7 +80,7 @@ zinit wait lucid for \
 	atload"!_zsh_autosuggest_start" \
 		light-mode zsh-users/zsh-autosuggestions
 
-[ $TERM = 'rxvt-unicode-256colors' ] && \
+[ $TERM = 'rxvt-unicode-256color' ] && \
 	ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=7,bold"
 	# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
 

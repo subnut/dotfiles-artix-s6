@@ -189,7 +189,7 @@ Plug 'psf/black', { 'branch': 'stable', 'on': [] }          " Auto-formatter
     aug END
 
 " Plug 'kalekundert/vim-coiled-snake', { 'for': 'python' }    " Python folding
-Plug 'sainnhe/gruvbox-material'
+" Plug 'sainnhe/gruvbox-material'
 call plug#end() "}}}
 endif
 
