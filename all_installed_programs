@@ -29,15 +29,19 @@ font-victor-mono
 gifcast
 git
 gnome-calculator
+gnome-font-viewer
 gparted
 grub
 gst-plugins-good
+gucharmap
+gxmessage
 herbe-git
 htop
 iw-git
 iwd
 iwd-s6
 kitty
+lemonbar-clicks-git
 librewolf-bin
 light
 links
@@ -47,6 +51,7 @@ lsof
 lxappearance-gtk3
 maim
 man-db
+man-pages
 mingetty
 mosh
 mpv
@@ -69,7 +74,6 @@ pv
 python
 python-pip
 qt5ct
-qtox
 ranger
 redshift
 refind
@@ -84,6 +88,7 @@ spotify-adblock-git
 sx
 sxhkd-git
 tcc
+tint2
 tiramisu-git
 tlp-s6
 tmux

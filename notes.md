@@ -8,3 +8,12 @@ Install `udisks2` from the repo. Use `udiskctl` cli.
 
 # Chroot (`artix-chroot`)
 Install `artools-base` from repo
+
+# Font-regarding
+### How to check which fonts have a certain glyph?  
+(Mostly needed when kitty shows character, but urxvt doesn't)
+- Install `gucharmap`
+In `gucharmap`, in _Find_, paste the glyph you need.  
+When you successfully find the needed glyph -
+- Right-click-and-hold on the desired glyph. The font used to render it will be shown in the popup (see at the last line of the popup)
+
