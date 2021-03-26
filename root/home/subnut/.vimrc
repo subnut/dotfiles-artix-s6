@@ -92,12 +92,12 @@ vmap <Plug>(My-Commenter) <ESC><cmd>silent! call MyCommenterHelper()<CR>
 
 fun! MyUnCommenterHelper() "{{{
     if &l:cms =~ '\v^.*\%s$'
-        let l:cms = printf(&l:cms, '\v {,1}(.*)')
+        let l:cms = '\v^\s{-}\V' . printf(&l:cms, '\v {,1}(.*)')
         for line in range(line("'<"), line("'>"))
             call setline(line, substitute(getline(line), l:cms , '\1', ''))
         endfor
     elseif &l:cms =~ '\v^.*\%s.*$'
-        let @/ = '\V'.escape(printf(&l:cms,'\v {,1}(.{-}) {,1}\V'),'/')
+        let @/ = '\v^\s{-}\V'.escape(printf(&l:cms,'\v {,1}(.{-}) {,1}\V'),'/')
         execute 'normal! ' . ":'<,'>" . 's//\1/g' . "\<CR>"
     endif
 endfun! "}}}
@@ -106,7 +106,7 @@ vmap <Plug>(My-Un-Commenter) <ESC><cmd>silent! call MyUnCommenterHelper()<CR>
 
 fun! MyCommentTogglerOpFunc(...) "{{{
     for line in range(line("'["), line("']"))
-        if getline(line) =~ ('\V' .  printf(&l:cms,'\.\*'))
+        if getline(line) =~ ('\v^\s{-}\V' .  printf(&l:cms,'\.\*'))
             execute 'normal ' . line . "GV\<Plug>(My-Un-Commenter)"
         else
             execute 'normal ' . line . "GV\<Plug>(My-Commenter)"
@@ -121,7 +121,7 @@ nmap <Plug>(My-Comment-Toggler)
 vmap <Plug>(My-Comment-Toggler) <ESC>'<<Plug>(My-Comment-Toggler)'>
 
 fun! MyCommentorOpFunc(...) "{{{
-    if getline(line("'[")) =~ ('\V' .  printf(&l:cms,'\.\*'))
+    if getline(line("'[")) =~ ('\v^\s{-}\V' .  printf(&l:cms,'\.\*'))
         execute "normal '[V']\<Plug>(My-Un-Commenter)"
     else
         execute "normal '[V']\<Plug>(My-Commenter)"
@@ -189,6 +189,8 @@ Plug 'psf/black', { 'branch': 'stable', 'on': [] }          " Auto-formatter
     aug END
 
 " Plug 'kalekundert/vim-coiled-snake', { 'for': 'python' }    " Python folding
+Plug 'kalekundert/vim-coiled-snake', { 'on': [] }    " Python folding
+com! CoiledSnake call plug#load('vim-coiled-snake')
 " Plug 'sainnhe/gruvbox-material'
 call plug#end() "}}}
 endif
