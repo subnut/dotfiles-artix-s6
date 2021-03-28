@@ -35,4 +35,7 @@ URxvt.skipBuiltinGlyphs: true
 URxvt.font:  xft:Recursive Mn Csl St:pixelsize=32.5, \
              xft:MesloLGS NF:style=Regular
 
+*.font:  Recursive Sn Csl St:pixelsize=32.5
+
+
 ! vim:et:ts=4:cms=!%s

@@ -461,4 +461,4 @@ super + Home
 	bspc query -N --node .focused.!window &> /dev/null && bspc node -E
 
 
-# vim: ft=sxhkdrc
+# vim: ft=sxhkdrc cms=#%s

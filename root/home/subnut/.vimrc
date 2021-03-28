@@ -29,12 +29,28 @@ aug MyClearSignColumn
 aug END
 
 
+" Delete surrounding (ds) {{{
+nnoremap <silent><expr> ds 'di' . nr2char(getchar()) . 'vhp'
+" }}}
+" Ranger integration {{{
+if exists('$RANGER_LEVEL')
+    nmap q <cmd>q<CR>
+endif "}}}
 " GetHiGroup - Get higlight group of the character under cursor {{{
 fun! GetHiGroup()
     return synIDattr(synID(line('.'), col('.'), 1), 'name')
 endfun
 command! GetHiGroup echo GetHiGroup()
 "}}}
+" Show Trailing Spaces {{{
+hi link TrailingSpace Error
+let w:trailing_whitespace = matchadd('TrailingSpace', '\s\+$')
+aug TrailingSpace
+    au!
+    au ColorScheme * hi link TrailingSpace Error
+    au WinNew * let w:trailing_space = matchadd('TrailingSpace', '\s\+$')
+aug END
+" }}}
 " Colorcolumn customizations {{{
 command! ColorColumnToggle       call ColorColumnToggle(1)
 command! ColorColumnToggleGlobal call ColorColumnToggle(0)
@@ -58,11 +74,8 @@ aug MyCustomColorColumn
     au BufEnter * if &ft =~ 'gitcommit\|vim'
                 \| let &l:colorcolumn = '+'.join(range(1,100),',+')
                 \| endif
-aug END "}}}
-" Ranger integration {{{
-if exists('$RANGER_LEVEL')
-    nmap q <cmd>q<CR>
-endif "}}}
+aug END
+" }}}
 " My Commentor {{{
 map gc <Plug>(MyCommentor)
 map gcc gcl
@@ -134,11 +147,7 @@ nmap <Plug>(MyCommentor)
             \<cmd>setl opfunc=MyCommentorOpFunc<CR>g@
 vmap <Plug>(MyCommentor) <ESC>'<<Plug>(MyCommentor)'>
 "}}}
-
 "}}}
-" Delete surrounding (ds) {{{
-nnoremap <silent><expr> ds 'di' . nr2char(getchar()) . 'vhp'
-" }}}
 
 
 if !empty(glob('~/.vim/autoload/plug.vim'))

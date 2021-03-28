@@ -38,7 +38,7 @@ $(
 else
   for MONITOR in $(bspc query -M --names)
   do
-    bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXI
+    bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII
   done
 fi
 
