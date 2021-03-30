@@ -8,7 +8,8 @@ super + Return
 	# kitty &> /dev/null
 super + shift + Return
 	bspc config -d focused window_gap 0; \
-	kitty --single-instance --config .config/kitty/kittyIDE.conf --detach --class="kittyIDE"  &> /dev/null
+	alacritty
+	# kitty --single-instance --config .config/kitty/kittyIDE.conf --detach --class="kittyIDE"  &> /dev/null
 
 super + {alt,ctrl + shift} + Return
 	bspc rule -a "kitty _no_blur_" -o \

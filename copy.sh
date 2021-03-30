@@ -13,6 +13,7 @@ cp ~/.config/nvim/autoload	-t	./root/home/subnut/.config/nvim	-rv
 cp ~/.config/nvim/ftplugin	-t	./root/home/subnut/.config/nvim	-rv
 cp ~/.config/sx			-t	./root/home/subnut/.config		-rv
 cp ~/.config/kitty		-t	./root/home/subnut/.config		-rv
+cp ~/.config/alacritty		-t	./root/home/subnut/.config		-rv
 cp ~/.config/bspwm		-t	./root/home/subnut/.config		-rv
 cp ~/.config/sxhkd		-t	./root/home/subnut/.config		-rv
 cp ~/.config/fontconfig		-t	./root/home/subnut/.config		-rv
