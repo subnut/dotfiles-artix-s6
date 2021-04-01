@@ -1,4 +1,4 @@
-" vim: fdm=marker ts=4 nowrap
+" vim: fdm=marker ts=4 nowrap sw=0 sts=0
 scriptencoding utf-8
 " set nolpl
 
@@ -138,6 +138,7 @@ setg shiftwidth=0               " i.e. tabstop value used for auto-indenting
 " differences from vim
 " set guicursor=n-v-c:block,o:hor50,i-ci:hor15,r-cr:hor30,sm:block   "vim
 set  sidescroll=0
+set  scrolloff=5
 setg fileencoding=utf-8
 setg formatoptions+=j
 setg formatoptions+=r
@@ -281,7 +282,6 @@ let g:highlightedyank_highlight_duration = 3000
 Plug 'tpope/vim-repeat'
 Plug 'Konfekt/FastFold'                             " Better folding
 " Plug 'sheerun/vim-polyglot'                         " Polyglot => one who knows many languages
-Plug 'norcalli/nvim-colorizer.lua'                  " :ColorizerAttachToBuffer
 Plug 'romainl/vim-cool'                             " Remove search highlight automatically
 Plug 'sgur/vim-editorconfig'
 Plug 'subnut/visualstar.vim'
@@ -302,7 +302,6 @@ Plug 'AndrewRadev/bufferize.vim'
 Plug 'AndrewRadev/inline_edit.vim', {'on': 'InlineEdit'}
 Plug 'mtth/scratch.vim', {'on': ['Scratch', 'ScratchInsert', 'ScratchPreview', 'ScratchSelection']}
 
-" Plug 'tpope/vim-abolish', {'on': []}                " (c)oe(rc)e to case-change
 Plug 'tpope/vim-commentary'                         " gc<motion> = toggle comment
 Plug 'airblade/vim-gitgutter', {'on': []}           " Git diff
 Plug 'vim-syntastic/syntastic'
@@ -355,53 +354,11 @@ if ($TERM !~ 'linux\|screen\|vt220') && has('termguicolors')
     set termguicolors
 endif
 syntax enable
-if &termguicolors
-    silent! lua require'colorizer'.setup{''}
-endif
-
-
-" kitty-terminal-specific configuration
-" -------------------------------------
-if $TERM =~# 'kitty'
-let g:_nvim_ghost_supports_focus = 1    " We already know it supports focus
-let g:kitty_fancy_cursor = 0            " Somewhat successful 'inverse' cursor color in kitty
-fun! s:kitty_term_custom() " {{{1
-    let g:kitty_fancy_cursor = get(g:, 'kitty_fancy_cursor', 0)
-    if $TERM =~# 'kitty'
-        if synIDattr(synIDtrans(hlID('Cursor')), 'reverse') " {{{2
-            hi Cursor gui=NONE
-            if !g:kitty_fancy_cursor    " {{{3
-                hi Cursor guifg=bg guibg=fg
-                augroup kitty_term_custom
-                    au!
-                augroup end
-            else
-                hi Cursor guifg=bg
-                augroup kitty_term_custom
-                    au!
-                    au CursorMoved * execute('hi Cursor guibg='. (len(synIDattr(synIDtrans(hlID(synIDattr(synID(line("."), col("."), 1), 'name'))), "fg")) ? synIDattr(synIDtrans(hlID(synIDattr(synID(line("."), col("."), 1), 'name'))), "fg") : 'fg'))
-                augroup end
-            endif   " }}}
-        endif
-    endif   " }}}
-endfun  " }}}
-augroup kitty_terminal customization
-    autocmd!
-    autocmd ColorScheme * call s:kitty_term_custom()
-    " autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20
-    " autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor/lCursor
-    autocmd ColorScheme * set guicursor=n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor
-augroup end
-call s:kitty_term_custom()
-" set guicursor=n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20-Cursor/lCursor
-set guicursor=n-v-c-sm:block-Cursor,i-ci-ve:ver25-Cursor,r-cr-o:hor20-Cursor
-endif
 
 
 " gruvbox-material
 " ----------------
 " let g:gruvbox_material_enable_italic = 1  " Italic is disabled for Recursive Mono
-let g:gruvbox_material_transparent_background = exists('$MY_NVIM_BG') ? 0 : 1
 let g:gruvbox_material_better_performance = 1
 let g:gruvbox_material_sign_column_background = 'none'
 let g:gruvbox_material_background = 'hard'
@@ -415,7 +372,7 @@ au colorscheme_overrides ColorScheme gruvbox-material silent! exec 'hi CursorLin
 " set colorscheme
 " -----------
 fun! My_bg_setter()
-    let &background = get(environ(),'MY_NVIM_BG','dark')
+    let &background = 'light'
     colorscheme gruvbox-material
     let g:lightline.colorscheme = 'gruvbox_material'
 endfun
@@ -486,16 +443,14 @@ aug END
 " Automatically close in markdown and html
 "
 "       *   "<" --> "<>" with cursor in between < and >
-"       *   check that the previous map does not interfere if I typed "<>"
 "       *   If <CR> inside tag at beginning, "/", else if <CR> inside tag at end, directly goto next line
 
 augroup my_autoclose_au
     au!
     au BufEnter,FileType * if &l:ft =~ 'markdown\|html'
-                \| execute("inoremap <buffer><expr> < ((col('.') >= col('$') - 1) ? '<><C-o>i' : '<><C-o>h')")
-                \| execute("imap <buffer> <> <>")
-                \| execute("imap <buffer><expr> <CR> ((getline('.')[col('.') - 2] == '<') ? '/' : ((getline('.')[col('.') - 1] == '>') ? '<C-o>A<CR>' : ( pumvisible() ? '<c-y><cr>'  : '<CR>')))")
-                \| endif
+                \|execute('inoremap <buffer> < <><Left>')
+                \|execute("imap <buffer><expr> <CR> ((getline('.')[col('.') - 2] == '<') ? '/' : ((getline('.')[col('.') - 1] == '>') ? '<C-o>A<CR>' : ( pumvisible() ? '<c-y><cr>'  : '<CR>')))")
+                \|endif
 augroup end
 
 " Change previewheight on terminal resize
@@ -505,9 +460,6 @@ augroup my_auto_previewheight
     au!
     au VimResized * let &pvh = &lines * g:my_auto_preview_window_height_percentage / 100
 augroup end
-
-" Built-in terminal emulator
-" -------------------------
 
 
 " Battery saver mode
@@ -662,17 +614,6 @@ inoremap <silent><expr> <down>  pumvisible() ? "<c-e><down>"    : "<down>"
 " Disable syntax hint after completion in python
     let g:ncm2_jedi#call_sig_hint = 0
 
-" My custom ncm2
-" --------------
-" set completeopt+=menu
-" set completeopt-=menuone
-" func! MyNCM2ForceTrigger()
-"   set cot+=menuone
-"   call ncm2#manual_trigger()
-"   au CompleteDone * ++once set cot-=menuone
-" endfun
-" inoremap <silent> <c-p> <cmd>call MyNCM2ForceTrigger()<CR>
-
 
 " Gabrielana markdown
 " -------------------
@@ -712,41 +653,6 @@ command! -bar ShowTrailingWhitespaceBufferReset call ShowTrailingWhitespace#Rese
 let g:doge_parsers=['python']
 nmap <leader>d <Plug>(doge-generate)
 
-" My SudoWrite
-" -----------
-fun! MySudoRootWriter()
-    if len(expand('%')) == 0
-        echohl ErrorMsg
-        echom 'No file name!'
-        echohl None
-        return
-    endif
-    if !&modified | return | endif
-    let l:password = inputsecret('Enter password: ')
-    echo
-    redraw!
-    silent! execute('!echo "' . l:password . '" | sudo -S -v')
-    if v:shell_error != 0
-        echohl ErrorMsg
-        echom 'Wrong password'
-        echohl None
-        return
-    endif
-    let l:buftype = &buftype
-    set buftype=acwrite
-    let l:autoread = &autoread
-    set noautoread
-    execute('silent! w !echo "' . l:password . '\n$(cat -)" | sudo -S tee > /dev/null %')
-    execute('set buftype=' . l:buftype)
-    if l:autoread | set autoread | endif
-    set nomodified
-    " e!
-    echo
-    redraw!
-endfun
-com! SudoWrite call MySudoRootWriter()
-
-
 " vim-lsp
 " -------
 let g:lsp_insert_text_enabled = 0
@@ -769,63 +675,34 @@ augroup END
 " vim-sneak
 " ---------
 fun! SneakOmapOverride()
-    for mapping in getcompletion('ounmap z.','cmdline')
+    for mapping in getcompletion('ounmap z','cmdline')
         execute('ounmap ' . mapping)
     endfor
     omap <silent> z <Plug>Sneak_s
 endfun
 augroup SneakOmapOverride
+	au!
     au BufWinEnter * ++once call SneakOmapOverride()
 augroup end
-
-" treesitter
-" ----------
-" if has("nvim-0.5")
-" lua << EOF
-" require'nvim-treesitter.configs'.setup {
-"     ensure_installed = "python",    -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-"     highlight = {
-"         enable = true,              -- false will disable the whole extension
-"     },
-" }
-" EOF
-" endif
 
 " quick-scope
 " -----------
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-fun! MyQuickScopeColorSetter() "{{{
-    au ColorScheme ++once * call MyQuickScopeColorSetter()
-
-    hi clear QuickScopePrimary
-    hi QuickScopePrimary gui=reverse
-    hi clear QuickScopeSecondary
-    exec 'hi QuickScopeSecondary guibg=' . synIDattr(synIDtrans(hlID('Comment')), 'fg', 'gui')
-    hi QuickScopeSecondary guifg=bg
-
-    " v2
-    " --
-    " hi QuickScopeSecondary guibg=bg guifg=fg gui=bold
-    " exec 'hi QuickScopePrimary guibg=' . synIDattr(synIDtrans(hlID('Comment')), 'fg', 'gui')
-    " hi QuickScopePrimary guifg=bg
-
-    " v1
-    " --
-    " hi QuickScopeSecondary guifg=fg guibg=bg
-    " hi QuickScopeSecondary guifg=bg guibg=fg
-    " exec 'hi QuickScopeSecondary guibg=' . synIDattr(synIDtrans(hlID('Comment')), 'fg', 'gui')
-    " exec 'hi QuickScopeSecondary guibg=' . synIDattr(synIDtrans(hlID('Normal')), 'fg', 'gui') . ' guibg=' . synIDattr(synIDtrans(hlID('Normal')), 'bg', 'gui') . ' gui=bold'
-    " hi QuickScopeSecondary guifg=bg
-    " hi QuickScopeSecondary gui=bold
-endfun "}}}
-call MyQuickScopeColorSetter()
+let g:qs_second_highlight = 0
+hi clear QuickScopePrimary
+hi QuickScopePrimary gui=reverse
+aug QuickScope
+	au!
+	au ColorScheme * hi clear QuickScopePrimary
+				\| hi QuickScopePrimary gui=reverse
+aug END
 
 " vim-gitgutter
 " -------------
 set updatetime=1000
 let g:gitgutter_map_keys = 0
 nmap <leader>gp <Plug>(GitGutterPreviewHunk)
-nmap <leader>gs <Plug>(GitGutterStageHunk)
+nmap <leader>gd <Plug>(GitGutterPreviewHunk)
 nmap <leader>ga <Plug>(GitGutterStageHunk)
 nmap [g <Plug>(GitGutterPrevHunk)
 nmap ]g <Plug>(GitGutterNextHunk)

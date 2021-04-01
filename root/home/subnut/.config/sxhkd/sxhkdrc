@@ -7,8 +7,8 @@ super + Return
 	urxvtc
 	# kitty &> /dev/null
 super + shift + Return
-	bspc config -d focused window_gap 0; \
-	alacritty
+	~/.local/bin/st
+	# bspc config -d focused window_gap 0; \
 	# kitty --single-instance --config .config/kitty/kittyIDE.conf --detach --class="kittyIDE"  &> /dev/null
 
 super + {alt,ctrl + shift} + Return

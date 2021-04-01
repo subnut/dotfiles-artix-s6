@@ -94,9 +94,9 @@ sh -c "$(which safeeyes) -e &> /dev/null &"
 #if [[ $((10#$(date +'%H'))) -gt 5 && $((10#$(date +'%H'))) -lt 18 ]] ; then feh --bg-fill light.png; else feh --bg-fill dark.png; fi
 feh --bg-fill light.png  &
 
-killall -q polybar
-zsh -c "if ! [[ $(bspc config top_padding) -eq $((`bspc config bottom_padding` + 35)) ]]; then bspc config top_padding $((`bspc config bottom_padding` + 35)); fi &"
-zsh <<< "polybar --list-monitors | cut -d':' -f1 | while IFS= read -r MONITOR; do if ! [[ \$MONITOR == \$(polybar --list-monitors | grep primary | cut -d':' -f1) ]]; then MONITOR=\$MONITOR polybar secondary_restack &> /dev/null &; else polybar mybar_restack &> /dev/null &; fi; done &"
+# killall -q polybar
+# zsh -c "if ! [[ $(bspc config top_padding) -eq $((`bspc config bottom_padding` + 35)) ]]; then bspc config top_padding $((`bspc config bottom_padding` + 35)); fi &"
+# zsh <<< "polybar --list-monitors | cut -d':' -f1 | while IFS= read -r MONITOR; do if ! [[ \$MONITOR == \$(polybar --list-monitors | grep primary | cut -d':' -f1) ]]; then MONITOR=\$MONITOR polybar secondary_restack &> /dev/null &; else polybar mybar_restack &> /dev/null &; fi; done &"
 
 # zsh <<< 'if [[ $(bluetooth | cut -d"=" -f2 | cut -d" " -f2) =~ on ]] ; then notify-send.sh -u critical "Bluetooth is ON" -i bluetooth -t 0 -a Bluetooth $(if [[ -a bluetooth-on-notification.id ]] ; then echo -n "-r "; cat bluetooth-on-notification.id ; fi) -p > bluetooth-on-notification.id; fi'
 

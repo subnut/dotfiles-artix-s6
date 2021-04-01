@@ -22,6 +22,8 @@ map <2-MiddleMouse> <Nop>
 map <3-MiddleMouse> <Nop>
 map <4-MiddleMouse> <Nop>
 
+nnoremap <leader>b :ls<CR>:b<Space>
+
 hi SignColumn ctermbg=none
 aug MyClearSignColumn
     au!
@@ -43,11 +45,12 @@ endfun
 command! GetHiGroup echo GetHiGroup()
 "}}}
 " Show Trailing Spaces {{{
-hi link TrailingSpace Error
+hi TrailingSpace term=standout ctermfg=red ctermbg=red guifg=red guibg=red
 let w:trailing_whitespace = matchadd('TrailingSpace', '\s\+$')
 aug TrailingSpace
     au!
-    au ColorScheme * hi link TrailingSpace Error
+    au ColorScheme * hi TrailingSpace
+                \ term=standout ctermfg=red ctermbg=red guifg=red guibg=red
     au WinNew * let w:trailing_space = matchadd('TrailingSpace', '\s\+$')
 aug END
 " }}}
@@ -197,12 +200,34 @@ Plug 'psf/black', { 'branch': 'stable', 'on': [] }          " Auto-formatter
         au BufWritePre * exe (&l:ft == 'python' ? 'Black' : '')
     aug END
 
-" Plug 'kalekundert/vim-coiled-snake', { 'for': 'python' }    " Python folding
-Plug 'kalekundert/vim-coiled-snake', { 'on': [] }    " Python folding
-com! CoiledSnake call plug#load('vim-coiled-snake')
-" Plug 'sainnhe/gruvbox-material'
+Plug 'sainnhe/gruvbox-material'
+    let g:gruvbox_material_better_performance = 1
+    let g:gruvbox_material_sign_column_background = 'none'
+    let g:gruvbox_material_background = 'hard'
+    let g:gruvbox_material_palette = 'mix'
+    aug gruvbox_material_overrides
+        au!
+        au ColorScheme gruvbox-material hi CurrentWord
+                    \ term=underline cterm=underline gui=underline
+    aug END
 call plug#end() "}}}
 endif
 
 
-" vim:et:ts=4:sw=4:fdm=marker
+if $TERM =~ 'alacritty\|st-256color' "{{{
+    if $TERM =~ 'st-256color'
+        ":h xterm-true-color
+        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    elseif $TERM =~ 'alacritty'
+        ":h xterm-true-color
+        let &t_8f = "\<Esc>[38:2:%lu:%lu:%lum"
+        let &t_8b = "\<Esc>[48:2:%lu:%lu:%lum"
+    endif
+    set termguicolors
+    colorscheme gruvbox-material
+endif
+"}}}
+
+
+" vim:et:ts=4:sts=0:sw=0:fdm=marker
