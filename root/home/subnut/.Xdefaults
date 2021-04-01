@@ -1,3 +1,25 @@
+*.font:  Recursive Sn Csl St:pixelsize=32.5
+
+! Xft.dpi: 96
+Xcursor.theme: capitaine-cursors-light
+Xcursor.size: 64
+
+
+!!!!! URxvT !!!!!!!!!!!!!!!!!!!!!!!!!!
+!-------------------------------------
+
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.iso14755: true
+URxvt.iso14755_52: false
+
+URxvt.intensityStyles: false
+URxvt.skipBuiltinGlyphs: true
+
+URxvt.font:  xft:Recursive Mn Csl St:pixelsize=32.5, \
+             xft:MesloLGS NF:style=Regular
+
+
 ! The following colors have been taken from
 ! man 7 urxvt, line number 356
 !
@@ -28,14 +50,5 @@ URxvt.color12:  #0000FF
 URxvt.color13:  #FF00FF
 URxvt.color14:  #00FFFF
 URxvt.color15:  #FFFFFF
-
-URxvt.intensityStyles: false
-URxvt.skipBuiltinGlyphs: true
-
-URxvt.font:  xft:Recursive Mn Csl St:pixelsize=32.5, \
-             xft:MesloLGS NF:style=Regular
-
-*.font:  Recursive Sn Csl St:pixelsize=32.5
-
 
 ! vim:et:ts=4:cms=!%s
