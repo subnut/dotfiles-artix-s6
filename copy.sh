@@ -23,6 +23,7 @@ cp ~/.config/ranger		-t	./root/home/subnut/.config		-rv
 cp ~/.config/picom		-t	./root/home/subnut/.config		-rv
 cp ~/.config/mpv		-t	./root/home/subnut/.config		-rv
 cp ~/.config/zathura		-t	./root/home/subnut/.config		-rv
+cp ~/.config/xsettingsd		-t	./root/home/subnut/.config		-rv
 cp ~/.local/bin				./root/home/subnut/.local/		-rv
 cp ~/.zsh			-t	./root/home/subnut/			-rv
 cp ~/.zshrc			-t	./root/home/subnut/
