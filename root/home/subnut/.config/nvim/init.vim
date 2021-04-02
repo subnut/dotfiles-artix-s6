@@ -109,7 +109,6 @@ augroup END
 " Custom settings
 " ---------------
 " set colorcolumn=+1
-" let &colorcolumn = exists('$MY_NVIM_BG') ? '+'.join(range(1,100),',+') : ''
 " set tildeop         " use ~<motion> to change case of characters over <motion>
 set splitright      " default split direction
 set splitbelow      " default split direction
@@ -207,15 +206,19 @@ Plug 'ncm2/ncm2-vim' | Plug 'Shougo/neco-vim'
 Plug 'subnut/ncm2-github-emoji', { 'do': 'python install.py' }
 " -----------------------------------------------------------------------
 
-" " LSP
-" " ------------------------------------------------------------------------
-" Plug 'prabirshrestha/vim-lsp'
-" Plug 'mattn/vim-lsp-settings'
+" LSP
+" ------------------------------------------------------------------------
+" Enable from command line using
+" 	nvim --cmd 'let g:enable_lsp = 1'  ...
+if get(g:,'enable_lsp', 0)
+	Plug 'prabirshrestha/vim-lsp'
+	Plug 'mattn/vim-lsp-settings'
 
-" " Integration with ncm2
-" Plug 'ncm2/ncm2-vim-lsp'
-" let g:ncm2_vim_lsp_blocklist = ['vim-language-server']
-" " ------------------------------------------------------------------------
+	" Integration with ncm2
+	Plug 'ncm2/ncm2-vim-lsp'
+	let g:ncm2_vim_lsp_blocklist = ['vim-language-server']
+endif
+" ------------------------------------------------------------------------
 
 " Neovim nightly
 " --------------
@@ -258,7 +261,7 @@ Plug 'junegunn/fzf.vim', {'on': []}
 
 " Git
 Plug 'junegunn/gv.vim', {'on': 'GV'}        " Commit browser
-Plug 'tpope/vim-fugitive', {'on': []}       " Needed by GV
+Plug 'tpope/vim-fugitive', {'on': 'GV'}       " Needed by GV
 
 " Statusline
 " Plug 'itchyny/lightline.vim'
@@ -322,16 +325,15 @@ Plug 'kkoomen/vim-doge', {'do':{->doge#install()}, 'on': ['<Plug>(doge-generate)
 call plug#end()
 augroup delayed_plug_load
     au!
-    au BufEnter *     ++once call timer_start(10, {id->execute("call plug#load('nvim-ghost.nvim')")})
-    au BufEnter *     ++once call timer_start(800, {id->execute("call plug#load('vim-sneak')")})
-    au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('fzf')")})
-    au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('fzf.vim')")})
-    au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-fugitive')")})
-    au BufEnter *     ++once call timer_start(0, {id->execute("call plug#load('vim-gitgutter')|doau gitgutter CursorHold")})
-    au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('vim-ShowTrailingWhitespace')")})
-    au BufEnter *     ++once call timer_start(1000, {id->execute("call plug#load('vim-abolish')")})
-    au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('quick-scope')")})
-    au BufEnter *     ++once call timer_start(100, {id->execute("call plug#load('black')")})
+    au BufEnter *     ++once call timer_start(10, {->plug#load('nvim-ghost.nvim')})
+    au BufEnter *     ++once call timer_start(800, {->plug#load('vim-sneak')})
+	au BufEnter *     ++once call timer_start(800, {->plug#load('vim-fugitive')})
+    au BufEnter *     ++once call timer_start(100, {->plug#load('fzf')})
+    au BufEnter *     ++once call timer_start(100, {->plug#load('fzf.vim')})
+    au BufEnter *     ++once call timer_start(0, {->execute("call plug#load('vim-gitgutter')|doau gitgutter CursorHold")})
+	au BufEnter *     ++once call timer_start(100, {->plug#load('vim-ShowTrailingWhitespace')})
+    au BufEnter *     ++once call timer_start(100, {->plug#load('quick-scope')})
+    au BufEnter *     ++once call timer_start(100, {->plug#load('black')})
 
     " because all of the above plugins were not fortunate enough to receive a
     " VimEnter event, so we shall trigger one ourselves
@@ -365,14 +367,19 @@ let g:gruvbox_material_background = 'hard'
 let g:gruvbox_material_palette = 'mix'
 " let g:gruvbox_material_diagnostic_line_highlight = 1
 au colorscheme_overrides ColorScheme gruvbox-material hi CurrentWord gui=underline cterm=underline
-au colorscheme_overrides ColorScheme gruvbox-material if get(g:,'gruvbox_material_transparent_background',0) | hi clear Cursorline | endif
-au colorscheme_overrides ColorScheme gruvbox-material silent! exec 'hi CursorLineNr guibg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'gui')
-au colorscheme_overrides ColorScheme gruvbox-material silent! exec 'hi CursorLineNr ctermbg=' . synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'cterm')
+			\|if get(g:,'gruvbox_material_transparent_background',0)
+				\| hi clear Cursorline
+			\|endif
+			\|silent! exec 'hi CursorLineNr'
+			\.' guibg='
+				\.synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'gui')
+			\.' ctermbg='
+				\.synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'cterm')
 
 " set colorscheme
 " -----------
 fun! My_bg_setter()
-    let &background = 'light'
+    let &background = get(environ(),'MY_NVIM_BG','light')
     colorscheme gruvbox-material
     let g:lightline.colorscheme = 'gruvbox_material'
 endfun

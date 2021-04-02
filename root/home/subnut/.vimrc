@@ -97,33 +97,46 @@ map gct <Plug>(My-Comment-Toggler)
 
 " Implementation {{{
 fun! MyCommenterHelper() "{{{
+    " if comments like #python
     if &l:cms =~ '\v^.*\%s$'
-        execute "normal! '<\<C-V>".line("'>").'GI'
+        " - Goto start of last selection
+        " - Restart last selection
+        " - Switch to Visual-Block mode
+        " - Insert the cms at the front of each line
+        " The printf is added to input an extra space between the cms and the
+        " commented text, just to look nice.
+        execute 'normal! `<gv' . "\<C-V>" . 'I'
                     \. printf(&l:cms, &l:cms =~'\V\s%s' ? '' : ' ')
+
+    " if comments like /* CSS */
     elseif &l:cms =~ '\v^.*\%s.*$'
-        let l:cms = printf(&l:cms,
+        " First compute the cms, with nice-to-look spaces added between
+        " comment characters and commented text
+        let l:cms = '\1' . printf(&l:cms,
                     \(&l:cms =~ '\V\s%s' ? '' : ' ')
-                    \. '%s'
+                    \. '\2'
                     \. (&l:cms =~ '\V%s\s' ? '' : ' '))
-        echom l:cms
+        " Then do the actual commenting, line-by-line
         for line in range(line("'<"), line("'>"))
-            call setline(line, printf(l:cms, getline(line)))
+            call setline(line, substitute(
+                            \getline(line), '\v^(\s*)(.{-})$', l:cms, ''
+                            \)
+                        \)
         endfor
     endif
 endfun! "}}}
 nmap <Plug>(My-Commenter) V<Plug>(My-Commenter)
 vmap <Plug>(My-Commenter) <ESC><cmd>silent! call MyCommenterHelper()<CR>
-
 fun! MyUnCommenterHelper() "{{{
+    let l:saved = @/
+    let @/ = '\v^(\s{-})\V'
     if &l:cms =~ '\v^.*\%s$'
-        let l:cms = '\v^\s{-}\V' . printf(&l:cms, '\v {,1}(.*)')
-        for line in range(line("'<"), line("'>"))
-            call setline(line, substitute(getline(line), l:cms , '\1', ''))
-        endfor
+        let @/ .= escape(printf(&l:cms, '\v {,1}(.*)'), '/')
     elseif &l:cms =~ '\v^.*\%s.*$'
-        let @/ = '\v^\s{-}\V'.escape(printf(&l:cms,'\v {,1}(.{-}) {,1}\V'),'/')
-        execute 'normal! ' . ":'<,'>" . 's//\1/g' . "\<CR>"
+        let @/ .= escape(printf(&l:cms,'\v {,1}(.{-}) {,1}\V'),'/')
     endif
+    execute 'normal! ' . ":'<,'>" . 's//\1\2/g' . "\<CR>"
+    let @/ = l:saved
 endfun! "}}}
 nmap <Plug>(My-Un-Commenter) V<Plug>(My-Un-Commenter)
 vmap <Plug>(My-Un-Commenter) <ESC><cmd>silent! call MyUnCommenterHelper()<CR>
