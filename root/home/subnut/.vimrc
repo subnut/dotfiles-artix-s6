@@ -45,14 +45,22 @@ endfun
 command! GetHiGroup echo GetHiGroup()
 "}}}
 " Show Trailing Spaces {{{
-hi TrailingSpace term=standout ctermfg=red ctermbg=red guifg=red guibg=red
-let w:trailing_whitespace = matchadd('TrailingSpace', '\s\+$')
-aug TrailingSpace
+hi TrailingWhitespace term=standout ctermfg=red ctermbg=red guifg=red guibg=red
+let w:trailing_whitespace = matchadd('TrailingWhitespace', '\s\+$')
+aug TrailingWhitespace
     au!
-    au ColorScheme * hi TrailingSpace
+    au ColorScheme * hi TrailingWhitespace
                 \ term=standout ctermfg=red ctermbg=red guifg=red guibg=red
-    au WinNew * let w:trailing_space = matchadd('TrailingSpace', '\s\+$')
+    au WinNew * let w:trailing_space = matchadd('TrailingWhitespace', '\s\+$')
 aug END
+com! TrailingWhitespace
+            \ if w:trailing_whitespace
+                \|call matchdelete(w:trailing_whitespace)
+                \|let w:trailing_whitespace = 0
+            \|else
+                \|let w:trailing_whitespace =
+                    \matchadd('TrailingWhitespace', '\s\+$')
+            \|endif
 " }}}
 " Colorcolumn customizations {{{
 command! ColorColumnToggle       call ColorColumnToggle(1)
