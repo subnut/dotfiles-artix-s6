@@ -34,8 +34,10 @@ if [[ $TERM =~ 'rxvt-unicode' ]]; then
 fi
 alias nvimvenv="source ~/.config/nvim/venv/bin/activate"
 alias nvimdiff="nvim -d"
-alias vimrc="$EDITOR ~/.vimrc"
-alias init.vim="$EDITOR ~/.config/nvim/init.vim"
+alias nlsp="nvim --cmd 'let g:enable_lsp = 1'"
+
+alias vimrc="vim ~/.vimrc"
+alias init.vim="nvim ~/.config/nvim/init.vim"
 alias bspwmrc="$EDITOR ~/.config/bspwm/bspwmrc"
 alias sxhkdrc="$EDITOR ~/.config/sxhkd/sxhkdrc"
 alias zshrc="$EDITOR ~/.zshrc"
@@ -45,7 +47,7 @@ alias wifi="nmcli dev wifi list"
 alias shrug="echo -n '¯\_(ツ)_/¯' | clipcopy"
 # alias copy=clipcopy
 # alias picom_restart="killall picom; sleep 0.5 && sh -c 'picom &'"
-alias lock="i3lock -c 00000040 -k --pass-media-keys --pass-screen-keys	--radius 180 --ring-width 20 --linecolor 00000000 --ringcolor=ffffff --keyhlcolor=000000 --insidecolor=ffffff --indicator --ringwrongcolor ff2134  --separatorcolor 00000000 --ringvercolor 008cf7 --insidevercolor 008cf7 --insidewrongcolor ff2134 --pass-power-keys --refresh-rate=0.5 --bshlcolor=ff2134 --datestr='%A, %d %b %Y' --redraw-thread &> /dev/null"
+# alias lock="i3lock -c 00000040 -k --pass-media-keys --pass-screen-keys	--radius 180 --ring-width 20 --linecolor 00000000 --ringcolor=ffffff --keyhlcolor=000000 --insidecolor=ffffff --indicator --ringwrongcolor ff2134  --separatorcolor 00000000 --ringvercolor 008cf7 --insidevercolor 008cf7 --insidewrongcolor ff2134 --pass-power-keys --refresh-rate=0.5 --bshlcolor=ff2134 --datestr='%A, %d %b %Y' --redraw-thread &> /dev/null"
 
 
 bspwm_delete_monitor() { #{{{
