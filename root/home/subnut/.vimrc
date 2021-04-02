@@ -30,6 +30,11 @@ aug MyClearSignColumn
     au ColorScheme * hi SignColumn ctermbg=none
 aug END
 
+aug ManPlugin
+    au!
+    au BufWinEnter *.c ++once runtime ftplugin/man.vim
+    au BufWinEnter *.c setl kp=:Man
+aug END
 
 " Delete surrounding (ds) {{{
 nnoremap <silent><expr> ds 'di' . nr2char(getchar()) . 'vhp'
