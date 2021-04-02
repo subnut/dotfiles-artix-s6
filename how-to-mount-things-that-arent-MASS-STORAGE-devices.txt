@@ -1,0 +1,15 @@
+MTP devices (e.g. Android phones on File Transfer mode) -
+    - use aur/simple-mtpfs
+          https://github.com/phatina/simple-mtpfs
+    - NOTE: Don't use sudo while mounting.
+          Simply run as the normal user.
+    - NOTE: Use a mountpoint that is writable by the current user
+          i.e. That automatically eliminates /mnt
+          it's probably somewhere under your $HOME
+
+ISOs
+    - use community/fuseiso
+
+
+# Most of the entries above are gonna end up using FUSE, innit?
+vim:et:ts=4:sts=0:sw=0:
