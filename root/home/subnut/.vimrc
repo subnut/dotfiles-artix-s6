@@ -15,6 +15,8 @@ set timeoutlen=3500
 set title
 setg nowrap
 setg fileformat=unix
+set listchars=eol:$,tab:>-
+nnoremap <C-l> <cmd>set list!<CR>
 
 set mouse=n
 map <MiddleMouse>   <Nop>
@@ -34,6 +36,7 @@ aug ManPlugin
     au!
     au BufWinEnter *.c ++once runtime ftplugin/man.vim
     au BufWinEnter *.c setl kp=:Man
+    au BufWinEnter *.~ setl kp=:Man
 aug END
 
 " Delete surrounding (ds) {{{
@@ -56,7 +59,8 @@ aug TrailingWhitespace
     au!
     au ColorScheme * hi TrailingWhitespace
                 \ term=standout ctermfg=red ctermbg=red guifg=red guibg=red
-    au WinNew * let w:trailing_space = matchadd('TrailingWhitespace', '\s\+$')
+    au WinNew * let w:trailing_whitespace
+                \ = matchadd('TrailingWhitespace', '\s\+$')
 aug END
 com! TrailingWhitespace
             \ if w:trailing_whitespace

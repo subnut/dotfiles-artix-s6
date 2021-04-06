@@ -243,14 +243,6 @@ Plug 'sainnhe/gruvbox-material'
 Plug 'sainnhe/sonokai', {'on': 'color sonokai'}
 Plug 'sainnhe/edge', {'on': 'color edge'}
 
-
-" File explorer
-Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':python3 -m chadtree deps'}
-" Plug 'scrooloose/nerdtree', {'on' : ['NERDTree', 'NERDTreeToggle']}
-" Plug 'Xuyuanp/nerdtree-git-plugin', {'on' : ['NERDTree', 'NERDTreeToggle']}
-" Plug 'ryanoasis/vim-devicons', {'on' : ['NERDTree', 'NERDTreeToggle', 'CHADopen']}
-
-
 " Markdown
 " Plug 'gabrielelana/vim-markdown', { 'for': 'markdown' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug'], 'on': 'MarkdownPreview'}
@@ -313,7 +305,6 @@ let g:undotree_WindowLayout = 2
 let g:undotree_SetFocusWhenToggle = 1
 Plug 'simnalamburt/vim-mundo', {'on': 'MundoToggle'}
 let g:mundo_preview_bottom = 1
-Plug 'inkarkat/vim-ShowTrailingWhitespace', {'on': []}          " Trailing whitespace
 Plug 'subnut/nvim-ghost.nvim', {'on': [], 'do': ':call nvim_ghost#installer#install()', 'branch': 'devel'}
 
 " Vanity
@@ -331,7 +322,6 @@ augroup delayed_plug_load
     au BufEnter *     ++once call timer_start(100, {->plug#load('fzf')})
     au BufEnter *     ++once call timer_start(100, {->plug#load('fzf.vim')})
     au BufEnter *     ++once call timer_start(0, {->execute("call plug#load('vim-gitgutter')|doau gitgutter CursorHold")})
-	au BufEnter *     ++once call timer_start(100, {->plug#load('vim-ShowTrailingWhitespace')})
     au BufEnter *     ++once call timer_start(100, {->plug#load('quick-scope')})
     au BufEnter *     ++once call timer_start(100, {->plug#load('black')})
 
@@ -562,7 +552,7 @@ augroup end
 
 " Vim rooter
 " ----------
-let g:rooter_change_directory_for_non_project_files = 'current'
+" let g:rooter_change_directory_for_non_project_files = 'current'
 let g:rooter_silent_chdir = 1
 let g:rooter_resolve_links = 1
 let g:rooter_cd_cmd = 'lcd'  " change directory for the current window only
@@ -588,20 +578,11 @@ set completeopt-=preview
 let g:float_preview#docked = 1
 let g:float_preview#max_width = 100
 
-
 " Do not show -- MATCH X OF Y -- in completion
 " ---------------------------------------------
-if has('patch-7.4.314')
+" if has('patch-7.4.314')
     " set shortmess+=c
-endif
-
-
-" Navigate through suggestions using TAB, not Arrows
-" ----------------------------------------
-inoremap <silent><expr> <tab>   pumvisible() ? "\<c-n>"         : "\<tab>"
-inoremap <silent><expr> <s-tab> pumvisible() ? "\<c-p>"         : "\<s-tab>"
-inoremap <silent><expr> <up>    pumvisible() ? "<c-e><up>"      : "<up>"
-inoremap <silent><expr> <down>  pumvisible() ? "<c-e><down>"    : "<down>"
+" endif
 
 
 " NCM2
@@ -645,15 +626,25 @@ call localsearch#Enable() " Turn on by default
 command! LocalSearch call localsearch#Toggle()
 
 
-
-
 " ShowTrailingWhitespace
 " ----------------------
-command! -bar ShowTrailingWhitespaceOn          call ShowTrailingWhitespace#Set(1,1)
-command! -bar ShowTrailingWhitespaceOff         call ShowTrailingWhitespace#Set(0,1)
-command! -bar ShowTrailingWhitespaceBufferOn    call ShowTrailingWhitespace#Set(1,0)
-command! -bar ShowTrailingWhitespaceBufferOff   call ShowTrailingWhitespace#Set(0,0)
-command! -bar ShowTrailingWhitespaceBufferReset call ShowTrailingWhitespace#Reset()
+hi TrailingWhitespace term=standout ctermfg=red ctermbg=red guifg=red guibg=red
+let w:trailing_whitespace = matchadd('TrailingWhitespace', '\s\+$')
+aug TrailingWhitespace
+    au!
+    au ColorScheme * hi TrailingWhitespace
+                \ term=standout ctermfg=red ctermbg=red guifg=red guibg=red
+    au WinNew * let w:trailing_whitespace
+                \ = matchadd('TrailingWhitespace', '\s\+$')
+aug END
+com! TrailingWhitespace
+            \ if w:trailing_whitespace
+                \|call matchdelete(w:trailing_whitespace)
+                \|let w:trailing_whitespace = 0
+            \|else
+                \|let w:trailing_whitespace =
+                    \matchadd('TrailingWhitespace', '\s\+$')
+            \|endif
 
 " vim-doge
 " --------
