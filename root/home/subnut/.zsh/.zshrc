@@ -1,5 +1,5 @@
 # vim: fdm=marker nowrap sw=0 ts=4
-
+# NOTE: for any kind of unknown term, see `man 1 zshall`
 if which stty > /dev/null; then
 	stty -echo
 fi
@@ -21,6 +21,8 @@ compinit
 # End of lines added by compinstall
 
 ## Config
+setopt AUTOPUSHD
+setopt CORRECT					# [nyae]? (Also see $SPROMPT)
 setopt EXTENDED_HISTORY			# add timestamp to .zsh_history
 setopt HIST_IGNORE_DUPS			# ignore duplicate
 setopt HIST_IGNORE_SPACE		# command prefixed by space are incognito
@@ -73,33 +75,26 @@ fi
 # zinit ice as'z' pick'z.sh'; zinit light rupa/z
 # zinit ice depth=1; zinit light romkatv/powerlevel10k; source ~/.p10k.zsh
 
-zinit ice wait lucid atload'_zsh_autosuggest_start'; zinit light zsh-users/zsh-autosuggestions
 zinit wait lucid for \
 	atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
 		light-mode zdharma/fast-syntax-highlighting \
-	atload"!_zsh_autosuggest_start" \
-		light-mode zsh-users/zsh-autosuggestions
+	# atload"!_zsh_autosuggest_start" \
+	# 	light-mode zsh-users/zsh-autosuggestions
 
 [ $TERM = 'rxvt-unicode-256color' ] && \
-	ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=7,bold"
+	ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=7,bold,underline"
 	# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
 
 ### ohmyzsh plugins
 zinit wait lucid for \
-	OMZ::lib/clipboard.zsh
-zinit snippet OMZ::plugins/zsh_reload/zsh_reload.plugin.zsh
-zinit snippet OMZ::lib/key-bindings.zsh
-zinit snippet OMZ::lib/termsupport.zsh
-
-## Both are same -
-##     zinit snippet OMZ::plugins/git/git.plugin.zsh
-##     zinit snippet 'https://github.com/ohmyzsh/ohmyzsh/raw/master/plugins/git/git.plugin.zsh'
-
-# zinit snippet OMZ::plugins/sudo/sudo.plugin.zsh
+	OMZ::lib/clipboard.zsh \
+	OMZ::plugins/zsh_reload/zsh_reload.plugin.zsh \
+	OMZ::lib/key-bindings.zsh \
+	OMZ::lib/termsupport.zsh \
+	OMZ::plugins/sudo/sudo.plugin.zsh
 
 ##### End of plugins ##########################
 
 
 ## fzf Fuzzy Finder
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-

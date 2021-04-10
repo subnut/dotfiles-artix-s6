@@ -283,6 +283,7 @@ Plug 'subnut/visualstar.vim'
 Plug 'unblevable/quick-scope', {'on': []}
 Plug 'justinmk/vim-sneak', {'on': []}               " s<char><char> (z<char><char> for operator-pending mode)
 Plug 'mox-mox/vim-localsearch'
+Plug 'junegunn/vim-peekaboo'
 
 
 " Misc

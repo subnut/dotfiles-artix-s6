@@ -34,9 +34,9 @@ aug END
 
 aug ManPlugin
     au!
-    au BufWinEnter *.c ++once runtime ftplugin/man.vim
-    au BufWinEnter *.c setl kp=:Man
     au BufWinEnter *.~ setl kp=:Man
+    au BufWinEnter *.c,*.h ++once runtime ftplugin/man.vim
+    au BufWinEnter *.c,*.h setl kp=:Man
 aug END
 
 " Delete surrounding (ds) {{{
