@@ -1,9 +1,10 @@
+# packages from repo
+# ------------------
 acpi_call
 acpid
 acpid-s6
 alacritty
 alsa-utils
-alsaequal
 artools-base
 avahi
 base
@@ -12,8 +13,10 @@ bspwm
 busybox
 capitaine-cursors
 checkbashisms
-clipster
+clang
 cmus
+colordiff
+cups
 dash
 dbus-broker
 dmenu
@@ -23,12 +26,9 @@ elogind-s6
 eog
 evince
 falkon
-fbv
 fd
 feh
 flameshot
-font-victor-mono
-gifcast
 git
 gnome-calculator
 gnome-font-viewer
@@ -37,14 +37,11 @@ grub
 gst-plugins-good
 gucharmap
 gxmessage
-herbe-git
 htop
-iw-git
 iwd
 iwd-s6
 kitty
-lemonbar-clicks-git
-librewolf-bin
+libmtp
 light
 links
 linux
@@ -54,7 +51,6 @@ lxappearance-gtk3
 maim
 man-db
 man-pages
-mingetty
 mosh
 mpv
 musl
@@ -65,6 +61,7 @@ networkmanager
 networkmanager-s6
 noto-fonts
 ntfs-3g
+openbsd-netcat
 openssh
 otter-browser-nowebengine
 patch
@@ -85,37 +82,96 @@ rxvt-unicode
 s6
 screenkey
 slock
-spotify
-spotify-adblock-git
 sx
-sxhkd-git
+sxhkd
 tcc
-tiramisu-git
 tlp-s6
 tmux
-toybox
 tpacpi-bat
-tree
-ttf-ibm-plex
 ttf-inconsolata
 ttf-joypixels
-ttf-recursive
-udisks2
 unrar
+unzip
 vim
+wget
 xcape
 xclip
 xcursor-premium
 xdotool
-xmousepasteblock-git
 xorg-xev
 xorg-xinput
 xorg-xmodmap
+xorg-xrdb
 xorg-xset
 xorg-xsetroot
 xsettingsd
-yay-bin
 zathura-pdf-mupdf
 zathura-ps
 zsh
+
+
+# packages from AUR
+# ------------------
+
+# https://web.archive.org/web/20161105202833/http://thedigitalmachine.net/alsaequal.html
+alsaequal
+
+# https://github.com/mrichar1/clipster
+clipster
+
+# https://github.com/Jack12816/colorpicker
+colorpicker
+
+# https://rubjo.github.io/victor-mono
+font-victor-mono
+
+# https://github.com/wfleming/gifcast
+gifcast
+
+# https://github.com/dudik/herbe
+herbe-git
+
+# https://wireless.wiki.kernel.org/en/users/Documentation/iw
+iw-git
+
+# https://github.com/ph111p/bar
+lemonbar-clicks-git
+
+# https://librewolf-community.gitlab.io/
+librewolf-bin
+
+# http://sourceforge.net/projects/mingetty
+mingetty
+
+# https://github.com/phatina/simple-mtpfs/
+simple-mtpfs
+
+# https://www.spotify.com
+spotify
+
+# https://github.com/abba23/spotify-adblock-linux
+spotify-adblock-git
+
+# https://github.com/Sweets/tiramisu
+tiramisu-git
+
+# https://landley.net/toybox
+toybox
+
+# https://github.com/arrowtype/recursive
+ttf-recursive
+
+# https://github.com/martinring/clide/tree/master/doc/fonts
+ttf-windows
+
+# https://github.com/milaq/XMousePasteBlock
+xmousepasteblock-git
+
+# https://github.com/baskerville/xtitle
+xtitle-git
+
+# https://github.com/Jguer/yay
+yay-bin
+
+# https://tomscii.sig7.se/zutty
 zutty-git

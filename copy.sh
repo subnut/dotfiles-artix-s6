@@ -37,6 +37,19 @@ cp ~/.alsaequal.bin.saved	-t	./root/home/subnut/
 cp ~/.Xdefaults			-t	./root/home/subnut/
 cp ~/.vimrc			-t	./root/home/subnut/
 
-pacman -Qe | cut -d' ' -f1 > ./all_installed_programs
+echo '# packages from repo'	>	./all_installed_programs
+echo '# ------------------'	>>	./all_installed_programs
+pacman -Qenq			>>	./all_installed_programs
+echo				>>	./all_installed_programs
+echo				>>	./all_installed_programs
+echo '# packages from AUR'	>>	./all_installed_programs
+echo '# ------------------'	>>	./all_installed_programs
+
+for package in $(pacman -Qemq); do
+	echo						>>	./all_installed_programs
+	echo -n "#"					>>	./all_installed_programs
+	pacman -Qi $package | grep URL | cut -d : -f 2-	>>	./all_installed_programs
+	echo "$package"					>>	./all_installed_programs
+done
 
 # vim: noet ts=8 sts=8
