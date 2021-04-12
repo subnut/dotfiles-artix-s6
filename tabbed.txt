@@ -1,0 +1,7 @@
+# urxvt(c)
+	tabbed -c urxvt -embed
+	tabbed -c -r 2 urxvt -embed id
+
+# surf
+	tabbed -c surf -e
+	tabbed -c -r 2 surf -e id

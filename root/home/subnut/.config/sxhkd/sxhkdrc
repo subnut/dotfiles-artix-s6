@@ -38,8 +38,8 @@ super + Escape
 	killall sxhkd && exec sxhkd &> /dev/null
 
 # run some custom programs
-super + ctrl + Return ; {s,d,f,g}
-	{librewolf,falkon,otter-browser --new-window,firefox} &> /dev/null
+super + ctrl + Return ; {a,s,d,f,g}
+	{librewolf,falkon,otter-browser --new-window,tabbed -c -r 2 surf -e pid -s -z 1.8 duck.com,firefox} &> /dev/null
 
 # exclude rounded corners current window
 super + {Delete,shift + BackSpace}
