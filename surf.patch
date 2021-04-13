@@ -1,3 +1,53 @@
+diff --git a/config.def.h b/config.def.h
+index be168ab..f41ee26 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -25,19 +25,19 @@ static Parameter defconfig[ParameterLast] = {
+ 	[AccessWebcam]        =       { { .i = 0 },     },
+ 	[Certificate]         =       { { .i = 0 },     },
+ 	[CaretBrowsing]       =       { { .i = 0 },     },
+-	[CookiePolicies]      =       { { .v = "@Aa" }, },
++	[CookiePolicies]      =       { { .v = "a@A" }, },
+ 	[DefaultCharset]      =       { { .v = "UTF-8" }, },
+ 	[DiskCache]           =       { { .i = 1 },     },
+ 	[DNSPrefetch]         =       { { .i = 0 },     },
+ 	[Ephemeral]           =       { { .i = 0 },     },
+ 	[FileURLsCrossAccess] =       { { .i = 0 },     },
+-	[FontSize]            =       { { .i = 12 },    },
++	[FontSize]            =       { { .i = 18 },    },
+ 	[FrameFlattening]     =       { { .i = 0 },     },
+ 	[Geolocation]         =       { { .i = 0 },     },
+ 	[HideBackground]      =       { { .i = 0 },     },
+ 	[Inspector]           =       { { .i = 0 },     },
+ 	[Java]                =       { { .i = 1 },     },
+-	[JavaScript]          =       { { .i = 1 },     },
++	[JavaScript]          =       { { .i = 0 },     },
+ 	[KioskMode]           =       { { .i = 0 },     },
+ 	[LoadImages]          =       { { .i = 1 },     },
+ 	[MediaManualPlay]     =       { { .i = 1 },     },
+@@ -53,7 +53,7 @@ static Parameter defconfig[ParameterLast] = {
+ 	[StrictTLS]           =       { { .i = 1 },     },
+ 	[Style]               =       { { .i = 1 },     },
+ 	[WebGL]               =       { { .i = 0 },     },
+-	[ZoomLevel]           =       { { .f = 1.0 },   },
++	[ZoomLevel]           =       { { .f = 1.4 },   },
+ };
+ 
+ static UriParameters uriparams[] = {
+@@ -158,11 +158,9 @@ static Key keys[] = {
+ 	{ MODKEY,                GDK_KEY_u,      scrollh,    { .i = -10 } },
+ 
+ 
+-	{ MODKEY|GDK_SHIFT_MASK, GDK_KEY_j,      zoom,       { .i = -1 } },
+-	{ MODKEY|GDK_SHIFT_MASK, GDK_KEY_k,      zoom,       { .i = +1 } },
+-	{ MODKEY|GDK_SHIFT_MASK, GDK_KEY_q,      zoom,       { .i = 0  } },
++	{ MODKEY,                GDK_KEY_0,      zoom,       { .i = 0  } },
+ 	{ MODKEY,                GDK_KEY_minus,  zoom,       { .i = -1 } },
+-	{ MODKEY,                GDK_KEY_plus,   zoom,       { .i = +1 } },
++	{ MODKEY,                GDK_KEY_equal,  zoom,       { .i = +1 } },
+ 
+ 	{ MODKEY,                GDK_KEY_p,      clipboard,  { .i = 1 } },
+ 	{ MODKEY,                GDK_KEY_y,      clipboard,  { .i = 0 } },
 diff --git a/surf.c b/surf.c
 index ac832ff..cf23fa4 100644
 --- a/surf.c
