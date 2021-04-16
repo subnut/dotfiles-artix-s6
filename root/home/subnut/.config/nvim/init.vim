@@ -1,4 +1,4 @@
-" vim: fdm=marker ts=4 nowrap sw=0 sts=0
+" vim: fdm=marker ts=4 nowrap sw=0 sts=0 et
 scriptencoding utf-8
 " set nolpl
 
@@ -209,14 +209,14 @@ Plug 'subnut/ncm2-github-emoji', { 'do': 'python install.py' }
 " LSP
 " ------------------------------------------------------------------------
 " Enable from command line using
-" 	nvim --cmd 'let g:enable_lsp = 1'  ...
+"   nvim --cmd 'let g:enable_lsp = 1'  ...
 if get(g:,'enable_lsp', 0)
-	Plug 'prabirshrestha/vim-lsp'
-	Plug 'mattn/vim-lsp-settings'
+    Plug 'prabirshrestha/vim-lsp'
+    Plug 'mattn/vim-lsp-settings'
 
-	" Integration with ncm2
-	Plug 'ncm2/ncm2-vim-lsp'
-	let g:ncm2_vim_lsp_blocklist = ['vim-language-server']
+    " Integration with ncm2
+    Plug 'ncm2/ncm2-vim-lsp'
+    let g:ncm2_vim_lsp_blocklist = ['vim-language-server']
 endif
 " ------------------------------------------------------------------------
 
@@ -319,7 +319,7 @@ augroup delayed_plug_load
     au!
     au BufEnter *     ++once call timer_start(10, {->plug#load('nvim-ghost.nvim')})
     au BufEnter *     ++once call timer_start(800, {->plug#load('vim-sneak')})
-	au BufEnter *     ++once call timer_start(800, {->plug#load('vim-fugitive')})
+    au BufEnter *     ++once call timer_start(800, {->plug#load('vim-fugitive')})
     au BufEnter *     ++once call timer_start(100, {->plug#load('fzf')})
     au BufEnter *     ++once call timer_start(100, {->plug#load('fzf.vim')})
     au BufEnter *     ++once call timer_start(0, {->execute("call plug#load('vim-gitgutter')|doau gitgutter CursorHold")})
@@ -358,14 +358,14 @@ let g:gruvbox_material_background = 'hard'
 let g:gruvbox_material_palette = 'mix'
 " let g:gruvbox_material_diagnostic_line_highlight = 1
 au colorscheme_overrides ColorScheme gruvbox-material hi CurrentWord gui=underline cterm=underline
-			\|if get(g:,'gruvbox_material_transparent_background',0)
-				\| hi clear Cursorline
-			\|endif
-			\|silent! exec 'hi CursorLineNr'
-			\.' guibg='
-				\.synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'gui')
-			\.' ctermbg='
-				\.synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'cterm')
+            \|if get(g:,'gruvbox_material_transparent_background',0)
+                \| hi clear Cursorline
+            \|endif
+            \|silent! exec 'hi CursorLineNr'
+            \.' guibg='
+                \.synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'gui')
+            \.' ctermbg='
+                \.synIDattr(synIDtrans(hlID('CursorLine')), 'bg', 'cterm')
 
 " set colorscheme
 " -----------
@@ -447,7 +447,8 @@ augroup my_autoclose_au
     au!
     au BufEnter,FileType * if &l:ft =~ 'markdown\|html'
                 \|execute('inoremap <buffer> < <><Left>')
-                \|execute("imap <buffer><expr> <CR> ((getline('.')[col('.') - 2] == '<') ? '/' : ((getline('.')[col('.') - 1] == '>') ? '<C-o>A<CR>' : ( pumvisible() ? '<c-y><cr>'  : '<CR>')))")
+                \|execute("inoremap <buffer><expr> > getline('.')[col('.')-1] == '>' ? '<Right>' : '>'")
+                \|execute("imap <buffer><expr> <CR> ((getline('.')[col('.') - 2] == '<') ? '/' : ((getline('.')[col('.') - 1] == '>') ? '<Right><CR>' : ( pumvisible() ? '<c-y><cr>'  : '<CR>')))")
                 \|endif
 augroup end
 
@@ -467,14 +468,14 @@ fun! MyOnBattery() " {{{1
         return match(system('pmset -g batt'), "Now drawing from 'Battery Power'") != -1
     elseif has('unix')
         return
-				\(
-					\filereadable('/sys/class/power_supply/AC/online') &&
-					\(readfile('/sys/class/power_supply/AC/online') == ['0'])
-				\) ||
-				\(
-					\(system('uname') =~ 'OpenBSD') &&
-					\(system(['apm','-a']) != '1')
-				\)
+                \(
+                    \filereadable('/sys/class/power_supply/AC/online') &&
+                    \(readfile('/sys/class/power_supply/AC/online') == ['0'])
+                \) ||
+                \(
+                    \(system('uname') =~ 'OpenBSD') &&
+                    \(system(['apm','-a']) != '1')
+                \)
     endif
     return 0
 endfun
@@ -680,7 +681,7 @@ fun! SneakOmapOverride()
     omap <silent> z <Plug>Sneak_s
 endfun
 augroup SneakOmapOverride
-	au!
+    au!
     au BufWinEnter * ++once call SneakOmapOverride()
 augroup end
 
@@ -691,9 +692,9 @@ let g:qs_second_highlight = 0
 hi clear QuickScopePrimary
 hi QuickScopePrimary gui=reverse
 aug QuickScope
-	au!
-	au ColorScheme * hi clear QuickScopePrimary
-				\| hi QuickScopePrimary gui=reverse
+    au!
+    au ColorScheme * hi clear QuickScopePrimary
+                \| hi QuickScopePrimary gui=reverse
 aug END
 
 " vim-gitgutter

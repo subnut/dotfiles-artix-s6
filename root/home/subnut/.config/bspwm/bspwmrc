@@ -67,19 +67,15 @@ bspc config ignore_ewmh_fullscreen true
 bspc rule -a VirtualBoxVM state=floating
 bspc rule -a "VirtualBox Machine" state=tiled
 bspc rule -a jome state=floating
-bspc rule -a xdman-Main state=floating
-# bspc rule -a my_zoom state=floating
-# bspc rule -a Git-gui--askpass state=floating layer=above
-# bspc rule -a Yad state=floating layer=above
 bspc rule -a '*:*:Picture-in-Picture' state=floating layer=above sticky=on focus=off
 bspc rule -a '*:*:Picture-in-picture' state=floating layer=above sticky=on focus=off
 bspc rule -a Safeeyes state=floating layer=above fullscreen=off focus=off
 bspc rule -a Clipster layer=above
 bspc rule -a mpv state=pseudo_tiled
-# bspc rule -a Pulseaudio-equalizer-gtk state=floating
 bspc rule -a GParted state=floating layer=above
 bspc rule -a feh state=floating layer=above focus=on
 bspc rule -a Zathura state=tiled
+bspc rule -a Surf state=tiled
 
 killall xmousepasteblock
 sh -c "xmousepasteblock &> /dev/null &"

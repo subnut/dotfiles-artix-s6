@@ -39,7 +39,7 @@ super + Escape
 
 # run some custom programs
 super + ctrl + Return ; {a,s,d,f,g}
-	{librewolf,falkon,otter-browser --new-window,tabbed -c -r 2 surf -e pid -s -z 1.8 duck.com,firefox} &> /dev/null
+	{librewolf,falkon,otter-browser --new-window,surf -s -z 1.8 https://html.duckduckgo.com/html,firefox} &> /dev/null
 
 # exclude rounded corners current window
 super + {Delete,shift + BackSpace}
@@ -91,7 +91,6 @@ super + shift + backslash
 	bspc wm -h off; \
 	bspc node older.local -f; \
 	bspc wm -h on
-
 
 # toggle polybar
 super + p

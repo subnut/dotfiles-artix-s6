@@ -26,6 +26,7 @@ map <4-MiddleMouse> <Nop>
 
 nnoremap <leader>b :ls<CR>:b<Space>
 
+
 hi SignColumn ctermbg=none
 aug MyClearSignColumn
     au!

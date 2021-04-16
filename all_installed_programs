@@ -3,7 +3,6 @@
 acpi_call
 acpid
 acpid-s6
-alacritty
 alsa-utils
 artools-base
 avahi
@@ -28,6 +27,7 @@ evince
 falkon
 fd
 feh
+firefox
 flameshot
 git
 gnome-calculator
@@ -88,11 +88,13 @@ tcc
 tlp-s6
 tmux
 tpacpi-bat
+tree
 ttf-inconsolata
 ttf-joypixels
 unrar
 unzip
 vim
+webkit2gtk
 wget
 xcape
 xclip
