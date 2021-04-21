@@ -3,6 +3,11 @@
 echo "\"$(find -iname '*slushii*')\"" | tr '\n' ' ' | sed 's/ \.\//" "/g' | xargs mpv
 ```
 
+# How to use `pv` to indicate `dd` progress
+```
+pv install68.img | sudo dd of=/dev/sdb oflag=direct bs=4M conv=fsync iflag=fullblock
+```
+
 # Sleep / Suspend
 [This.](https://www.kernel.org/doc/Documentation/power/states.txt)  
 And [this](https://wiki.archlinux.org/index.php/Power_management#Power_management_with_systemd) too. (elogind provides this functionality)
