@@ -4,6 +4,8 @@ if [[ ! "$PATH" == *$HOME/.fzf/bin* ]]; then
   export PATH="${PATH:+${PATH}:}$HOME/.fzf/bin"
 fi
 
+return
+
 # Auto-completion
 # ---------------
 [[ $- == *i* ]] && source "$HOME/.fzf/shell/completion.zsh" 2> /dev/null

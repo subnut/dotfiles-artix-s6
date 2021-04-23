@@ -1,6 +1,6 @@
-my_run_bat () { cat $1 | powershell.exe -Command "& {cmd.exe}" - }
-my_run_bat_2 () { cat $1 | powershell.exe -Command "& {cd c:; cmd.exe /Q}" - }
-my_run_bat_3 () { powershell.exe "cd c:; & \"$( wslpath -w $1)\"" }
+# my_run_bat () { cat $1 | powershell.exe -Command "& {cmd.exe}" - }
+# my_run_bat_2 () { cat $1 | powershell.exe -Command "& {cd c:; cmd.exe /Q}" - }
+# my_run_bat_3 () { powershell.exe "cd c:; & \"$( wslpath -w $1)\"" }
 
 my_run_bat_4 () { # {{{
 	if [[ $* =~ (-h) || -z $* ]]

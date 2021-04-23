@@ -35,66 +35,36 @@ export PATH=./:$PATH
 
 
 
-### Added by Zinit's installer ###################
-if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
-	print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
-	command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
-	command git clone --depth 1 https://github.com/zdharma/zinit "$HOME/.zinit/bin" && \
-		print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
-		print -P "%F{160}▓▒░ The clone has failed.%f%b"
-fi
-
-source "$HOME/.zinit/bin/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
-
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
-# zinit light-mode for \
-# 	zinit-zsh/z-a-rust \
-# 	zinit-zsh/z-a-as-monitor \
-# 	zinit-zsh/z-a-patch-dl \
-# 	zinit-zsh/z-a-bin-gem-node
-### End of Zinit's installer chunk ###############
-
-zinit snippet ~/.zsh/prompt.zsh
-zinit snippet ~/.zsh/key_mappings.zsh
-zinit snippet ~/.zsh/git.zsh
-zinit snippet ~/.zsh/misc.zsh
-zinit snippet ~/.zsh/arch_pacman.zsh
-zinit snippet ~/.zsh/udisksctl_and_usb.zsh
-if [[ $TERM =~ 'kitty' ]]; then
-	zinit snippet ~/.zsh/kitty.zsh
-	zinit snippet ~/.zsh/kitty_kittyIDE.zsh
-fi
+source ~/.zsh/prompt.zsh
+source ~/.zsh/key_mappings.zsh
+source ~/.zsh/git.zsh
+source ~/.zsh/misc.zsh
+source ~/.zsh/arch_pacman.zsh
+source ~/.zsh/udisksctl_and_usb.zsh
 
 
-#### Plugins ##############################
-# use `zinit load` instead of `zinit light` to see how the plugin is being loaded
-# zinit light mfaerevaag/wd
-# zinit ice as'z' pick'z.sh'; zinit light rupa/z
-# zinit ice depth=1; zinit light romkatv/powerlevel10k; source ~/.p10k.zsh
 
-zinit wait lucid for \
-	atinit"ZINIT[COMPINIT_OPTS]=-C; zicompinit; zicdreplay" \
-		light-mode zdharma/fast-syntax-highlighting \
-	# atload"!_zsh_autosuggest_start" \
-	# 	light-mode zsh-users/zsh-autosuggestions
+source 	~/.zsh/OMZ_snippets/key-bindings.zsh || \
+    curl -L http://github.com/ohmyzsh/ohmyzsh/raw/master/lib/key-bindings.zsh \
+    -o  ~/.zsh/OMZ_snippets/key-bindings.zsh
 
-[ $TERM = 'rxvt-unicode-256color' ] && \
-	ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=7,bold,underline"
-	# ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
+source 	~/.zsh/OMZ_snippets/clipboard.zsh || \
+    curl -L http://github.com/ohmyzsh/ohmyzsh/raw/master/lib/key-bindings.zsh \
+    -o  ~/.zsh/OMZ_snippets/clipboard.zsh
 
 ### ohmyzsh plugins
-zinit wait lucid for \
-	OMZ::lib/clipboard.zsh \
-	OMZ::plugins/zsh_reload/zsh_reload.plugin.zsh \
-	OMZ::lib/key-bindings.zsh \
-	OMZ::lib/termsupport.zsh \
-	OMZ::plugins/sudo/sudo.plugin.zsh
+# 	OMZ::lib/termsupport.zsh \
+# 	OMZ::plugins/sudo/sudo.plugin.zsh
+
 
 ##### End of plugins ##########################
 
 
 ## fzf Fuzzy Finder
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#
+
+
+# Set terminal title
+function precmd    { print -Pn "\e]0;%n@%m: %~\a"; }   # user@host: ~/cur/dir
+function preexec   { printf    "\e]0;$2\a";        }   # name of running command

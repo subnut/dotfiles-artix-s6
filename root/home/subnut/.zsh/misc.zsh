@@ -38,9 +38,9 @@ alias nlsp="nvim --cmd 'let g:enable_lsp = 1'"
 
 alias vimrc="vim ~/.vimrc"
 alias init.vim="nvim ~/.config/nvim/init.vim"
-alias bspwmrc="$EDITOR ~/.config/bspwm/bspwmrc"
-alias sxhkdrc="$EDITOR ~/.config/sxhkd/sxhkdrc"
-alias zshrc="$EDITOR ~/.zshrc"
+alias bspwmrc='$EDITOR ~/.config/bspwm/bspwmrc'
+alias sxhkdrc='$EDITOR ~/.config/sxhkd/sxhkdrc'
+alias zshrc='$EDITOR ~/.zshrc'
 
 alias ra=ranger
 alias wifi="nmcli dev wifi list"

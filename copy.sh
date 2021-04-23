@@ -26,7 +26,7 @@ cp ~/.config/zathura		-t	./root/home/subnut/.config		-rv
 cp ~/.config/xsettingsd		-t	./root/home/subnut/.config		-rv
 cp ~/.local/bin				./root/home/subnut/.local/		-rv
 cp ~/.zsh			-t	./root/home/subnut/			-rv
-cp ~/.zshrc			-t	./root/home/subnut/
+ln -s .zsh/.zshrc ./root/home/subnut/.zshrc
 cp ~/.zprofile			-t	./root/home/subnut/
 cp ~/.fzf.zsh			-t	./root/home/subnut/
 cp ~/.p10k.zsh			-t	./root/home/subnut/
