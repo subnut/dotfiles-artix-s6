@@ -20,6 +20,7 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
+
 ## Config
 setopt AUTOPUSHD
 setopt CORRECT					# [nyae]? (Also see $SPROMPT)
@@ -34,7 +35,6 @@ export PATH=$HOME/.local/bin:$PATH
 export PATH=./:$PATH
 
 
-
 source ~/.zsh/prompt.zsh
 source ~/.zsh/key_mappings.zsh
 source ~/.zsh/git.zsh
@@ -43,28 +43,26 @@ source ~/.zsh/arch_pacman.zsh
 source ~/.zsh/udisksctl_and_usb.zsh
 
 
-
 source 	~/.zsh/OMZ_snippets/key-bindings.zsh || \
     curl -L http://github.com/ohmyzsh/ohmyzsh/raw/master/lib/key-bindings.zsh \
     -o  ~/.zsh/OMZ_snippets/key-bindings.zsh
 
 source 	~/.zsh/OMZ_snippets/clipboard.zsh || \
-    curl -L http://github.com/ohmyzsh/ohmyzsh/raw/master/lib/key-bindings.zsh \
+    curl -L http://github.com/ohmyzsh/ohmyzsh/raw/master/lib/clipboard.zsh \
     -o  ~/.zsh/OMZ_snippets/clipboard.zsh
+
 
 ### ohmyzsh plugins
 # 	OMZ::lib/termsupport.zsh \
 # 	OMZ::plugins/sudo/sudo.plugin.zsh
 
-
 ##### End of plugins ##########################
 
 
-## fzf Fuzzy Finder
+# fzf Fuzzy Finder
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-#
 
 
 # Set terminal title
 function precmd    { print -Pn "\e]0;%n@%m: %~\a"; }   # user@host: ~/cur/dir
-function preexec   { printf    "\e]0;$2\a";        }   # name of running command
+function preexec   { echo -n   "\e]0;$2\a";        }   # name of running command

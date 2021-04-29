@@ -23,24 +23,6 @@ sh -c "sxhkd &> /dev/null &"
 # /usr/lib/gsd-xsettings &> /dev/null &
 # disown
 
-if ! [[ `bspc query --desktops --names` =~ "Desktop" ]]
-then
-  for MONITOR in $(bspc query -M --names)
-  do
-    bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII \
-$(
-    for y in $(bspc query -D -m $MONITOR --names | grep temp)
-    do
-        echo -n "$y "
-    done
-)
- done
-else
-  for MONITOR in $(bspc query -M --names)
-  do
-    bspc monitor $MONITOR -d I II III IV V VI VII VIII IX T XI XII XIII XIV XV XVI XVII XVIII XIX XX XXI XXII
-  done
-fi
 
 kill $(pgrep --full "this is a comment for my borderer")
 zsh -c "while read -r my_auto_something; do if [[ \$my_auto_something =~ 'T@' ]];then bspc config border_width 10;else bspc config border_width 0;fi ;done < <(bspc subscribe); # this is a comment for my borderer" &
@@ -87,14 +69,6 @@ sh -c "clipster -d &> /dev/null &"
 # safeeyes -e &> /dev/null &
 sh -c "$(which safeeyes) -e &> /dev/null &"
 
-#if [[ $((10#$(date +'%H'))) -gt 5 && $((10#$(date +'%H'))) -lt 18 ]] ; then feh --bg-fill light.png; else feh --bg-fill dark.png; fi
-feh --bg-fill light.png  &
-
-# killall -q polybar
-# zsh -c "if ! [[ $(bspc config top_padding) -eq $((`bspc config bottom_padding` + 35)) ]]; then bspc config top_padding $((`bspc config bottom_padding` + 35)); fi &"
-# zsh <<< "polybar --list-monitors | cut -d':' -f1 | while IFS= read -r MONITOR; do if ! [[ \$MONITOR == \$(polybar --list-monitors | grep primary | cut -d':' -f1) ]]; then MONITOR=\$MONITOR polybar secondary_restack &> /dev/null &; else polybar mybar_restack &> /dev/null &; fi; done &"
-
-# zsh <<< 'if [[ $(bluetooth | cut -d"=" -f2 | cut -d" " -f2) =~ on ]] ; then notify-send.sh -u critical "Bluetooth is ON" -i bluetooth -t 0 -a Bluetooth $(if [[ -a bluetooth-on-notification.id ]] ; then echo -n "-r "; cat bluetooth-on-notification.id ; fi) -p > bluetooth-on-notification.id; fi'
 
 if pidof acpid; then true; else zsh <<< "kitty sh -c 'echo \"Starting acpid ...\"; sudo acpid' &"; fi &
 if [[ -r /dev/video0 || -r /dev/video1 ]]; then zsh <<< "kitty sh -c 'echo \"Disabling camera ...\"; sudo chmod -r /dev/video*' &"; fi &
@@ -103,4 +77,5 @@ pgrep urxvtd >/dev/null || urxvtd -q -f -o
 
 # killall -q picom
 # picom --experimental-backends &> /dev/null &
-disown
+
+exec /bin/sh -c 'bspc subscribe report | tcc -run ~/.config/bspwm/desktop_manager.c | /bin/sh'

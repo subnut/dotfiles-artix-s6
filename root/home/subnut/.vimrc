@@ -40,6 +40,7 @@ aug ManPlugin
     au BufWinEnter *.c,*.h setl kp=:Man
 aug END
 
+
 " Delete surrounding (ds) {{{
 nnoremap <silent><expr> ds 'di' . nr2char(getchar()) . 'vhp'
 " }}}
@@ -244,6 +245,9 @@ Plug 'sainnhe/gruvbox-material'
 call plug#end() "}}}
 endif
 
+if !empty($MY_NVIM_BG)
+    let &background = $MY_NVIM_BG
+endif
 
 if $TERM =~ 'alacritty\|st-256color' "{{{
     if $TERM =~ 'st-256color'
