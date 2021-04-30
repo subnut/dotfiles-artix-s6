@@ -242,12 +242,19 @@ Plug 'sainnhe/gruvbox-material'
         au ColorScheme gruvbox-material hi CurrentWord
                     \ term=underline cterm=underline gui=underline
     aug END
-call plug#end() "}}}
+call plug#end()
+else
+    echohl WarningMsg
+    echom 'vim-plug not installed. plugins not available.'
+    echohl None
 endif
+"}}}
+
 
 if !empty($MY_NVIM_BG)
     let &background = $MY_NVIM_BG
 endif
+
 
 if $TERM =~ 'alacritty\|st-256color' "{{{
     if $TERM =~ 'st-256color'
