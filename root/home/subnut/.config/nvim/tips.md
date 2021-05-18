@@ -1,3 +1,9 @@
+How to input date
+-----------------
+```vim
+nnoremap <leader>d "=stfrtime("%H:%M")<CR>p
+```
+
 Ternary operator's god!
 ----------------------
 `valueIfTrue ?? valueIfFalse` is the same as `valueiftrue ? valueiftrue : valueiffalse`
