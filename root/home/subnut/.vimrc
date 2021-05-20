@@ -8,7 +8,6 @@ set splitbelow
 set splitright
 set equalalways
 set helpheight=0
-set undofile
 set smarttab
 set updatetime=1000
 set timeoutlen=3500
@@ -41,6 +40,49 @@ aug ManPlugin
 aug END
 
 
+" Swap files {{{
+if !isdirectory(fnamemodify('~/.vimswap', ':p'))
+    if exists('*mkdir')
+        call mkdir(fnamemodify('~/.vimswap', ':p'), 'p', 0o0700)
+        if !isdirectory(fnamemodify('~/.vimswap', ':p'))
+            set directory=~/.vimswap//
+        endif
+    else
+        echohl WarningMsg
+        echom 'Please create ~/.vimswap directory with with permissions 0700'
+        echohl None
+    endif
+else
+    set directory=~/.vimswap//
+    if getfperm(fnamemodify('~/.vimswap', ':p')) !=# 'rwx------'
+        call setfperm(fnamemodify('~/.vimswap', ':p'), 'rwx------')
+    endif
+endif
+" }}}
+" Persistent undo {{{
+if has('persistent_undo')
+    if !isdirectory(fnamemodify('~/.vimundo', ':p'))
+        if exists('*mkdir')
+            " NOTE: The execute bit is nessecary, because otherwise we cannot
+            " cd into that directory, nor can we create new files in th directory
+            call mkdir(fnamemodify('~/.vimundo', ':p'), 'p', 0o0700)
+        else
+            echohl WarningMsg
+            echom 'Directory ~/.vimundo not available. Persistent undo disabled.'
+            echohl None
+        endif
+    endif
+    set undofile
+    set undodir=~/.vimundo
+    if getfperm(fnamemodify('~/.vimundo', ':p')) !=# 'rwx------'
+        call setfperm(fnamemodify('~/.vimundo', ':p'), 'rwx------')
+    endif
+else
+    echohl WarningMsg
+    echom 'Vim not compiled with +peristent_undo. Persistent undo disabled.'
+    echohl None
+endif
+" }}}
 " Delete surrounding (ds) {{{
 nnoremap <silent><expr> ds 'di' . nr2char(getchar()) . 'vhp'
 " }}}
